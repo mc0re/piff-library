@@ -4,8 +4,15 @@ PIFF - Protected Interoperable File Format - is used for transmitting video and 
 
 The library was created to be able to write a PIFF header for Smooth Streaming data protected with PlayReady. There are a lot of hard-coded values, mostly flags. The idea is to write the header and then append the data chunks.
 
+## Usage
+
+Main entry: `PiffWriter.WriteHeader()`.
+A helper method `PiffWriter.GetDuration()` might also come handy.
+
 ## Known issues
 
 There are two boxes I couldn't decifer yet - "avcC" and "esds". The data hardcoded in those is the data I extracted from a sample file.
+
+The audio and video duration are not separated, a single duration is used for both "audio", "video", and "total" (which is the longest of the other two).
 
 I actually don't know yet how well it works, the system isn't quite ready yet. I will update this file when I learn more.
