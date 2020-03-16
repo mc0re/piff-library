@@ -11,8 +11,8 @@ A helper method `PiffWriter.GetDuration()` might also come handy.
 
 ## Known issues
 
-There are two boxes I couldn't decifer yet - "avcC" and "esds". The data hardcoded in those is the data I extracted from a sample file.
+There are two boxes I couldn't decifer yet - `avcC` and `esds`. The data hardcoded in those is the data I extracted from a sample file.
 
 The audio and video duration are not separated, a single duration is used for both "audio", "video", and "total" (which is the longest of the other two).
 
-I actually don't know yet how well it works, the system isn't quite ready yet. I will update this file when I learn more.
+The library does produce the correct header for a certain manifest, but not for my own. Probably due to the configuration boxes. Have to keep looking.
