@@ -61,8 +61,13 @@
         Int64,
 
         /// <summary>
+        /// DYnamic-length integer, alike UTF8.
+        /// </summary>
+        DynamicInt,
+
+        /// <summary>
         /// A <see cref="System.Guid"/> as a byte array (16 bytes).
         /// </summary>
-        GuidBytes,
+        GuidBytes
     }
 }

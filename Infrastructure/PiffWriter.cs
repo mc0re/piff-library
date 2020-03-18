@@ -201,6 +201,10 @@ namespace PiffLibrary
                     dataBytes.AddRange(ConvertInt64ToBigEndian((long)value));
                     break;
 
+                case PiffDataFormats.DynamicInt:
+                    dataBytes.AddRange(ConvertInt32ToDynamic((int)value));
+                    break;
+
                 case PiffDataFormats.Ascii:
                     dataBytes.AddRange(Encoding.ASCII.GetBytes((string)value));
                     break;
@@ -275,6 +279,32 @@ namespace PiffLibrary
 
             if (BitConverter.IsLittleEndian)
                 bytes = bytes.Reverse();
+
+            return bytes;
+        }
+
+
+        /// <summary>
+        /// Write multiple bytes, with highest bit signifying that another byte follows.
+        /// </summary>
+        /// <remarks>
+        /// To simplify length calculation, always write 4 bytes.
+        /// </remarks>
+        private static IEnumerable<byte> ConvertInt32ToDynamic(int value)
+        {
+            var bytes = new byte[4];
+            var idx = 3;
+
+            while (value > 0)
+            {
+                var part = value & 0x7F;
+                value >>= 7;
+                bytes[idx] = (byte)part;
+                idx--;
+            }
+
+            for (var setBitIdx = 0; setBitIdx < 3; setBitIdx++)
+                bytes[setBitIdx] |= 0x80;
 
             return bytes;
         }

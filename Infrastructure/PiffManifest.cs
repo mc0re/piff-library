@@ -17,9 +17,15 @@ namespace PiffLibrary
 
         public ushort SamplingRate { get; internal set; }
 
+        public int BitRate { get; private set; }
+
+        public byte[] AudioCodecData { get; private set; }
+
         public short Width { get; internal set; }
 
         public short Height { get; internal set; }
+
+        public byte[] VideoCodecData { get; private set; }
 
         public Guid KeyIdentifier { get; internal set; }
 

@@ -106,16 +106,17 @@ namespace PiffLibrary
         }
 
 
-        public static PiffTrackHeader CreateAudio(DateTime created, TimeSpan duration, int timeScale)
+        public static PiffTrackHeader CreateAudio(
+            byte trackId, DateTime created, TimeSpan duration, int timeScale)
         {
-            return new PiffTrackHeader(created, duration, timeScale, 1, PiffTrackTypes.Audio, 0, 0);
+            return new PiffTrackHeader(created, duration, timeScale, trackId, PiffTrackTypes.Audio, 0, 0);
         }
 
 
         public static PiffTrackHeader CreateVideo(
-            DateTime created, TimeSpan duration, int timeScale, short width, short height)
+            byte trackId, DateTime created, TimeSpan duration, int timeScale, short width, short height)
         {
-            return new PiffTrackHeader(created, duration, timeScale, 2, PiffTrackTypes.Video, width, height);
+            return new PiffTrackHeader(created, duration, timeScale, trackId, PiffTrackTypes.Video, width, height);
         }
 
         #endregion

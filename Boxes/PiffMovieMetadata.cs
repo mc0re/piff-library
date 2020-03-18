@@ -30,6 +30,7 @@
             ProtectionHeader = new PiffProtectionInfo(manifest.ProtectionSystemId, manifest.ProtectionData);
             AudioTrack = PiffTrack.CreateAudio(
                 manifest.Channels, manifest.BitsPerSample, manifest.SamplingRate,
+                1, manifest.BitRate, manifest.AudioCodecData,
                 manifest.Created, manifest.Duration, manifest.TimeScale, manifest.KeyIdentifier);
             VideoTrack = PiffTrack.CreateVideo(
                 manifest.Width, manifest.Height, manifest.Created,

@@ -29,10 +29,12 @@ namespace PiffLibrary
 
 
         public static PiffMediaInformation CreateAudio(
-            short channels, short bitsPerSample, ushort samplingRate, Guid keyId)
+            short channels, short bitsPerSample, ushort samplingRate,
+            short streamId, int bitRate, byte[] codecData, Guid keyId)
         {
             return new PiffMediaInformation(new PiffSoundMediaHeader(), null,
-                                            PiffSampleTable.CreateAudio(channels, bitsPerSample, samplingRate, keyId));
+                PiffSampleTable.CreateAudio(channels, bitsPerSample, samplingRate,
+                                            streamId, bitRate, codecData, keyId));
         }
 
 

@@ -29,7 +29,7 @@ namespace PiffLibrary
 
         public uint SampleRate { get; }
 
-        public PiffEsds Esds { get; } = new PiffEsds();
+        public PiffElementaryStreamDescription StreamDescription { get; }
 
         public PiffProtectionSchemeInformation Scheme { get; }
 
@@ -38,7 +38,9 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffProtectedAudioSampleEntry(short channels, short bitsPerSample, ushort samplingRate, Guid keyId)
+        public PiffProtectedAudioSampleEntry(
+            short channels, short bitsPerSample, ushort samplingRate,
+            short streamId, int bitRate, byte[] codecData, Guid keyId)
         {
             if (channels != 2)
                 throw new ArgumentException("AudioSampleEntry must have 2 channels.");
@@ -47,6 +49,7 @@ namespace PiffLibrary
             SampleSize = bitsPerSample;
             SampleRate = ((uint)samplingRate) << 16;
             Scheme = PiffProtectionSchemeInformation.CreateAudio(keyId);
+            StreamDescription = PiffElementaryStreamDescription.Create(streamId, bitRate, codecData);
         }
 
         #endregion

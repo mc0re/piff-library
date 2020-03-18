@@ -20,6 +20,9 @@ namespace PiffLibrary
         public int Flags { get; } = 0;
 
 
+        /// <summary>
+        /// PSSH system ID.
+        /// </summary>
         public Guid SystemId { get; }
 
 

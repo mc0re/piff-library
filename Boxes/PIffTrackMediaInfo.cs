@@ -28,11 +28,13 @@ namespace PiffLibrary
 
         public static PIffTrackMediaInfo CreateAudio(
             short channels, short bitsPerSample, ushort samplingRate,
+            short streamId, int bitRate, byte[] codecData,
             DateTime created, TimeSpan duration, int timeScale, Guid keyId)
         {
-            return new PIffTrackMediaInfo(new PiffMediaHeader(created, duration, timeScale),
-                                          new PiffHandlerType(PiffTrackTypes.Audio),
-                                          PiffMediaInformation.CreateAudio(channels, bitsPerSample, samplingRate, keyId));
+            return new PIffTrackMediaInfo(
+                new PiffMediaHeader(created, duration, timeScale),
+                new PiffHandlerType(PiffTrackTypes.Audio),
+                PiffMediaInformation.CreateAudio(channels, bitsPerSample, samplingRate, streamId, bitRate, codecData, keyId));
         }
 
 
