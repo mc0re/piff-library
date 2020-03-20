@@ -74,12 +74,12 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffMovieHeader(DateTime created, TimeSpan duration, int timeScale)
+        public PiffMovieHeader(DateTime created, long duration, int timeScale)
         {
             CreationTime = PiffWriter.GetSecondsFromEpoch(created);
             ModificationTime = CreationTime;
             TimeScale = timeScale;
-            Duration = PiffWriter.GetTicks(duration, timeScale);
+            Duration = duration;
         }
 
         #endregion

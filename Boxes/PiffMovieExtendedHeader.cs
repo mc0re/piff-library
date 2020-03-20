@@ -27,9 +27,9 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffMovieExtendedHeader(TimeSpan duration, int timeScale)
+        public PiffMovieExtendedHeader(long duration)
         {
-            Duration = PiffWriter.GetTicks(duration, timeScale);
+            Duration = duration;
         }
 
         #endregion

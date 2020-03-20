@@ -29,6 +29,10 @@ namespace PiffLibrary
 
         public uint SampleRate { get; }
 
+        /// <summary>
+        /// This is for MP4A streams.
+        /// For WMA streams a "wfex" block comes instead.
+        /// </summary>
         public PiffElementaryStreamDescription StreamDescription { get; }
 
         public PiffProtectionSchemeInformation Scheme { get; }
@@ -38,18 +42,16 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffProtectedAudioSampleEntry(
-            short channels, short bitsPerSample, ushort samplingRate,
-            short streamId, int bitRate, byte[] codecData, Guid keyId)
+        public PiffProtectedAudioSampleEntry(short trackId, PiffAudioManifest audio, Guid keyId)
         {
-            if (channels != 2)
+            if (audio.Channels != 2)
                 throw new ArgumentException("AudioSampleEntry must have 2 channels.");
 
-            ChannelCount = channels;
-            SampleSize = bitsPerSample;
-            SampleRate = ((uint)samplingRate) << 16;
+            ChannelCount = audio.Channels;
+            SampleSize = audio.BitsPerSample;
+            SampleRate = ((uint)audio.SamplingRate) << 16;
             Scheme = PiffProtectionSchemeInformation.CreateAudio(keyId);
-            StreamDescription = PiffElementaryStreamDescription.Create(streamId, bitRate, codecData);
+            StreamDescription = PiffElementaryStreamDescription.Create(0, audio.BitRate, 6144, audio.CodecData);
         }
 
         #endregion

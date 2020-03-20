@@ -87,7 +87,7 @@ namespace PiffLibrary
 
 
         [PiffDataFormat(PiffDataFormats.Int24)]
-        public int BufferSizeDb { get; } = 0;
+        public int BufferSizeDb { get; }
 
 
         public int MaxBitRate { get; }
@@ -141,9 +141,10 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        private PiffElementaryStreamDescription(short streamId, int bitRate, byte[] codecData)
+        private PiffElementaryStreamDescription(short streamId, int bitRate, int bufferSize, byte[] codecData)
         {
             EsId = streamId;
+            BufferSizeDb = bufferSize;
             MaxBitRate = bitRate;
             AverageBitRate = bitRate;
             DsiData = codecData.ToArray();
@@ -153,9 +154,9 @@ namespace PiffLibrary
         }
 
 
-        public static PiffElementaryStreamDescription Create(short streamId, int bitRate, byte[] codecData)
+        public static PiffElementaryStreamDescription Create(short streamId, int bitRate, int bufferSize, byte[] codecData)
         {
-            return new PiffElementaryStreamDescription(streamId, bitRate, codecData);
+            return new PiffElementaryStreamDescription(streamId, bitRate, bufferSize, codecData);
         }
 
         #endregion

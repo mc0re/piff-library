@@ -50,12 +50,12 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffMediaHeader(DateTime created, TimeSpan duration, int timeScale)
+        public PiffMediaHeader(DateTime created, long duration, int timeScale)
         {
             CreationTime = PiffWriter.GetSecondsFromEpoch(created);
             ModificationTime = CreationTime;
             TimeScale = timeScale;
-            Duration = PiffWriter.GetTicks(duration, timeScale);
+            Duration = duration;
         }
 
         #endregion

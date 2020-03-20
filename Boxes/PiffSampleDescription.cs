@@ -34,12 +34,10 @@ namespace PiffLibrary
         }
 
 
-        public static PiffSampleDescription CreateAudio(
-            short channels, short bitsPerSample, ushort samplingRate,
-            short streamId, int bitRate, byte[] codecData, Guid keyId)
+        public static PiffSampleDescription CreateAudio(short trackId, PiffAudioManifest audio, Guid keyId)
         {
             return new PiffSampleDescription(
-                new PiffProtectedAudioSampleEntry(channels, bitsPerSample, samplingRate, streamId, bitRate, codecData, keyId),
+                new PiffProtectedAudioSampleEntry(trackId, audio, keyId),
                 null);
         }
 

@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using System;
+
+namespace PiffLibrary
 {
     [BoxName("moov")]
     internal class PiffMovieMetadata
@@ -26,16 +28,19 @@
 
         public PiffMovieMetadata(PiffManifest manifest)
         {
-            MovieHeader = new PiffMovieHeader(manifest.Created, manifest.Duration, manifest.TimeScale);
-            ProtectionHeader = new PiffProtectionInfo(manifest.ProtectionSystemId, manifest.ProtectionData);
+            var maxDuration = Math.Max(manifest.Audio.Duration, manifest.Video.Duration);
+            MovieHeader = new PiffMovieHeader(manifest.Created, maxDuration, manifest.TimeScale);
+
+            ProtectionHeader = new PiffProtectionInfo(
+                manifest.ProtectionSystemId, manifest.ProtectionData);
+
             AudioTrack = PiffTrack.CreateAudio(
-                manifest.Channels, manifest.BitsPerSample, manifest.SamplingRate,
-                1, manifest.BitRate, manifest.AudioCodecData,
-                manifest.Created, manifest.Duration, manifest.TimeScale, manifest.KeyIdentifier);
+                1, manifest.Audio, manifest.Created, manifest.TimeScale, manifest.KeyIdentifier);
+
             VideoTrack = PiffTrack.CreateVideo(
-                manifest.Width, manifest.Height, manifest.Created,
-                manifest.Duration, manifest.TimeScale, manifest.KeyIdentifier);
-            Extended = new PiffMovieExtended(manifest.Duration, manifest.TimeScale);
+                2, manifest.Video, manifest.Created, manifest.TimeScale, manifest.KeyIdentifier);
+
+            Extended = new PiffMovieExtended(maxDuration);
         }
 
         #endregion

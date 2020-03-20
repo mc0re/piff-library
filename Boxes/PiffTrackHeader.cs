@@ -83,13 +83,13 @@ namespace PiffLibrary
         #region Init and clean-up
 
         private PiffTrackHeader(
-            DateTime created, TimeSpan duration, int timeScale,
+            DateTime created, long duration,
             int trackId, PiffTrackTypes trackType, short width, short height)
         {
             CreationTime = PiffWriter.GetSecondsFromEpoch(created);
             ModificationTime = CreationTime;
             TrackId = trackId;
-            Duration = PiffWriter.GetTicks(duration, timeScale);
+            Duration = duration;
 
             if (trackType == PiffTrackTypes.Audio)
             {
@@ -106,17 +106,16 @@ namespace PiffLibrary
         }
 
 
-        public static PiffTrackHeader CreateAudio(
-            byte trackId, DateTime created, TimeSpan duration, int timeScale)
+        public static PiffTrackHeader CreateAudio(byte trackId, DateTime created, long duration)
         {
-            return new PiffTrackHeader(created, duration, timeScale, trackId, PiffTrackTypes.Audio, 0, 0);
+            return new PiffTrackHeader(created, duration, trackId, PiffTrackTypes.Audio, 0, 0);
         }
 
 
-        public static PiffTrackHeader CreateVideo(
-            byte trackId, DateTime created, TimeSpan duration, int timeScale, short width, short height)
+        public static PiffTrackHeader CreateVideo(byte trackId, DateTime created, PiffVideoManifest video)
         {
-            return new PiffTrackHeader(created, duration, timeScale, trackId, PiffTrackTypes.Video, width, height);
+            return new PiffTrackHeader(created, video.Duration, trackId, PiffTrackTypes.Video,
+                                       video.Width, video.Height);
         }
 
         #endregion

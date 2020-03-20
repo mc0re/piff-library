@@ -16,9 +16,9 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffMovieExtended(TimeSpan duration, int timeScale)
+        public PiffMovieExtended(long duration)
         {
-            Header = new PiffMovieExtendedHeader(duration, timeScale);
+            Header = new PiffMovieExtendedHeader(duration);
             Track = new[]
             {
                 new PiffTrackExtended(1),
