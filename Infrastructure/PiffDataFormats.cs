@@ -66,6 +66,17 @@
         DynamicInt,
 
         /// <summary>
+        /// The number is subtracted 1, put into 2 bits,
+        /// the other bits are set to 1.
+        /// </summary>
+        Int2Minus1,
+
+        /// <summary>
+        /// The left-most 3 bits are ignored (set to 1 when writing).
+        /// </summary>
+        Int5,
+
+        /// <summary>
         /// A <see cref="System.Guid"/> as a byte array (16 bytes).
         /// </summary>
         GuidBytes

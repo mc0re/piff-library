@@ -13,6 +13,4 @@ A helper method `PiffWriter.GetDuration()` might also come handy.
 
 There is one box I didn't decifer yet - `avcC`. The data hardcoded in it is the data I extracted from a sample file.
 
-The audio and video duration are not separated, a single duration is used for both "audio", "video", and "total" (which is the longest of the other two).
-
 The library does produce the correct header for a certain manifest, but not for my own. Probably due to the AVC configuration box. Have to keep looking.
