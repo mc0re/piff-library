@@ -205,6 +205,14 @@ namespace PiffLibrary
                     dataBytes.AddRange(ConvertInt32ToDynamic((int)value));
                     break;
 
+                case PiffDataFormats.Int2Minus1:
+                    dataBytes.Add((byte)(((byte)value - 1) | 0xFC));
+                    break;
+
+                case PiffDataFormats.Int5:
+                    dataBytes.Add((byte)((byte)value | 0xE0));
+                    break;
+
                 case PiffDataFormats.Ascii:
                     dataBytes.AddRange(Encoding.ASCII.GetBytes((string)value));
                     break;

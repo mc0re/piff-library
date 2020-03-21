@@ -42,7 +42,7 @@ namespace PiffLibrary
         {
             return new PIffTrackMediaInfo(new PiffMediaHeader(created, video.Duration, timeScale),
                                           new PiffHandlerType(PiffTrackTypes.Video),
-                                          PiffMediaInformation.CreateVideo(video.Width, video.Height, keyId));
+                                          PiffMediaInformation.CreateVideo(video, keyId));
         }
 
         #endregion

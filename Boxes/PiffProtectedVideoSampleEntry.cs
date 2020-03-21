@@ -46,7 +46,7 @@ namespace PiffLibrary
         public short Reserved5 { get; } = -1;
 
 
-        public PiffAvcConfiguration AvcConfiguration { get; } = new PiffAvcConfiguration();
+        public PiffAvcConfiguration AvcConfiguration { get; }
 
         public PiffProtectionSchemeInformation Scheme { get; }
 
@@ -55,11 +55,12 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffProtectedVideoSampleEntry(short width, short height, Guid keyId)
+        public PiffProtectedVideoSampleEntry(PiffVideoManifest video, Guid keyId)
         {
-            Width = width;
-            Height = height;
+            Width = video.Width;
+            Height = video.Height;
             Scheme = PiffProtectionSchemeInformation.CreateVideo(keyId);
+            AvcConfiguration = new PiffAvcConfiguration(video.CodecId, video.CodecData);
         }
 
         #endregion

@@ -36,10 +36,10 @@ namespace PiffLibrary
         }
 
 
-        public static PiffSampleTable CreateVideo(short width, short height, Guid keyId)
+        public static PiffSampleTable CreateVideo(PiffVideoManifest video, Guid keyId)
         {
             return new PiffSampleTable(
-                PiffSampleDescription.CreateVideo(width, height, keyId));
+                PiffSampleDescription.CreateVideo(video, keyId));
         }
 
         #endregion

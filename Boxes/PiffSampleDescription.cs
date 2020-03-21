@@ -42,11 +42,11 @@ namespace PiffLibrary
         }
 
 
-        public static PiffSampleDescription CreateVideo(short width, short height, Guid keyId)
+        public static PiffSampleDescription CreateVideo(PiffVideoManifest video, Guid keyId)
         {
             return new PiffSampleDescription(
                 null,
-                new PiffProtectedVideoSampleEntry(width, height, keyId));
+                new PiffProtectedVideoSampleEntry(video, keyId));
         }
 
         #endregion

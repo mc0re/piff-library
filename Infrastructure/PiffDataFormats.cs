@@ -61,7 +61,8 @@
         Int64,
 
         /// <summary>
-        /// DYnamic-length integer, alike UTF8.
+        /// DYnamic-length integer, alike UTF8: 7 bits of data,
+        /// highest bit set to 1 means "continues to the next byte".
         /// </summary>
         DynamicInt,
 

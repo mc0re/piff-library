@@ -1,8 +1,13 @@
-﻿namespace PiffLibrary
+﻿using System;
+using System.Linq;
+
+namespace PiffLibrary
 {
     [BoxName("avcC")]
     internal class PiffAvcConfiguration
     {
+        #region Properties
+
         public byte ConfigurationVersion { get; } = 1;
 
         /// <summary>
@@ -17,11 +22,11 @@
 	    ///  0x7A: High 4:2:2
 	    ///  0x90, 0xF4: High 4:4:4
         /// </summary>
-        public byte AvcProfile { get; } = 0x4D;
+        public byte AvcProfile { get; }
 
-        public byte ProfileCompatibility { get; } = 0x40;
+        public byte ProfileCompatibility { get; }
 
-        public byte AvcLevel { get; } = 0x1E;
+        public byte AvcLevel { get; }
 
         [PiffDataFormat(PiffDataFormats.Int2Minus1)]
         public byte NalUnitSize { get; } = 4;
@@ -33,10 +38,15 @@
         /// <summary>
         /// Length of <see cref="SequenceSlotData"/>
         /// </summary>
-        public short SequenceSlotLength { get; } = 29;
+        public short SequenceSlotLength { get; }
 
 
         /// <summary>
+        /// Codec sequence data.
+        /// </summary>
+        /// <remarks>
+        /// How to interpret.
+        /// 
         /// Remove emulation codes (03 in sequences 00 00 03 00, 00 00 03 01, 00 00 03 02, 00 00 03 03).
         ///
         /// The rest:
@@ -111,23 +121,56 @@
         ///   get the number of 0 bits Z before the first 1
         ///   read (Z + 1) bits
         ///   subtract 1
-        /// </summary>
-        public byte[] SequenceSlotData { get; } = new byte[]
-        {
-            0x67, 0x4D, 0x40, 0x1E, 0xE8, 0x80, 0x50, 0x17,
-            0xFC, 0xB8, 0x0B, 0x50, 0x10, 0x10, 0x14, 0x00,
-            0x00, 0x03, 0x00, 0x04, 0x00, 0x00, 0x03, 0x00,
-            0xC8, 0x3C, 0x58, 0xB4, 0x48
-        };
+        /// </remarks>
+        public byte[] SequenceSlotData { get; }
 
 
         public byte PictureSlotCount { get; } = 1;
 
-        public short PictureSlotLength { get; } = 4;
+        public short PictureSlotLength { get; }
 
-        public byte[] PictureSlotData { get; } = new byte[]
+        /// <summary>
+        /// Codec picture data.
+        /// </summary>
+        public byte[] PictureSlotData { get; }
+
+        #endregion
+
+
+        #region Init and clean-up
+
+        public PiffAvcConfiguration(string codecId, byte[] codecData)
         {
-            0x68, 0xEB, 0xEF, 0x20
-        };
+            if (codecId != "H264")
+                throw new ArgumentException($"Cannot process codec '{codecId}', only 'H264' is supported.");
+
+            var one = PiffReader.GetInt32(codecData, 0);
+            if (one != 1)
+                throw new ArgumentException($"I don't know how to interpret number {one} at offset 0.");
+
+            var seqId = codecData[4];
+            if (seqId != 0x67)
+                throw new ArgumentException($"I don't know how to interpret header 0x{seqId:X} at offset 4.");
+
+            AvcProfile = codecData[5];
+            ProfileCompatibility = codecData[6];
+            AvcLevel = codecData[7];
+
+            var seqEnd = 8;
+            while (PiffReader.GetInt32(codecData, seqEnd) != 1)
+                seqEnd++;
+
+            SequenceSlotData = codecData.Skip(4).Take(seqEnd - 4).ToArray();
+            SequenceSlotLength = (short)SequenceSlotData.Length;
+
+            var picId = codecData[seqEnd + 4];
+            if (picId != 0x68)
+                throw new ArgumentException($"I don't know how to interpret header 0x{picId:X} at offset {seqEnd + 4}.");
+
+            PictureSlotData = codecData.Skip(seqEnd + 4).ToArray();
+            PictureSlotLength = (short)PictureSlotData.Length;
+        }
+
+        #endregion
     };
 }

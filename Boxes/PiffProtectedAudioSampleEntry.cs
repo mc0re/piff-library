@@ -47,6 +47,9 @@ namespace PiffLibrary
             if (audio.Channels != 2)
                 throw new ArgumentException("AudioSampleEntry must have 2 channels.");
 
+            if (audio.CodecId != "AACL")
+                throw new ArgumentException($"Cannot process codec '{audio.CodecId}', only 'AACL' is supported.");
+
             ChannelCount = audio.Channels;
             SampleSize = audio.BitsPerSample;
             SampleRate = ((uint)audio.SamplingRate) << 16;
