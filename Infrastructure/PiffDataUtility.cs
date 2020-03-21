@@ -32,7 +32,7 @@ namespace PiffLibrary
                 return PiffDataFormats.GuidBytes;
 
             else if (valueType.IsClass)
-                return PiffDataFormats.Object;
+                return PiffDataFormats.Box;
 
             else
                 throw new ArgumentException($"Unsupported data type '{valueType.Name}'.");

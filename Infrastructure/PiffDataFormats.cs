@@ -11,11 +11,6 @@
         Skip,
 
         /// <summary>
-        /// Treat the value as a collection of properties.
-        /// </summary>
-        Object,
-
-        /// <summary>
         /// 1 byte per character, no 0-termination. Default for <see langword="string"/>.
         /// </summary>
         Ascii,
@@ -80,6 +75,16 @@
         /// <summary>
         /// A <see cref="System.Guid"/> as a byte array (16 bytes).
         /// </summary>
-        GuidBytes
+        GuidBytes,
+
+        /// <summary>
+        /// Treat the value as a box with length, ID, and collection of properties.
+        /// </summary>
+        Box,
+
+        /// <summary>
+        /// Treat the value as just a collection of properties.
+        /// </summary>
+        InlineObject
     }
 }

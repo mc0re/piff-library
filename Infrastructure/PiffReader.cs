@@ -62,7 +62,7 @@ namespace PiffLibrary
         }
 
 
-        internal static int GetInt32(byte[] bytes, int offset)
+        public static int GetInt32(byte[] bytes, int offset)
         {
             var res = (bytes[offset] << 24) +
                       (bytes[offset + 1] << 16) +
@@ -173,7 +173,7 @@ namespace PiffLibrary
                 case PiffDataFormats.Int32:
                     return GetInt32(bytes);
 
-                case PiffDataFormats.Object:
+                case PiffDataFormats.Box:
                     return ReadBox(bytes, targetType);
 
                 default:

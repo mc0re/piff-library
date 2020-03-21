@@ -38,9 +38,13 @@ namespace PiffLibrary
         }
 
 
-        public static void WriteFooter()
+        public static void WriteFooter(
+            Stream strm,
+            IEnumerable<PiffSampleOffsetV1> audioOffsets, IEnumerable<PiffSampleOffsetV1> videoOffsets)
         {
-
+            var access = new PiffMovieFragmentRandomAccess(audioOffsets, videoOffsets);
+            var mfraBytes = WriteBoxObject(access).ToArray();
+            strm.Write(mfraBytes, 0, mfraBytes.Length);
         }
 
 
@@ -76,21 +80,7 @@ namespace PiffLibrary
             if (boxNameAttr is null)
                 throw new ArgumentException($"Box name is not defined for type '{type.Name}'.");
 
-            var propValues =
-                from prop in type.GetProperties()
-                let val = prop.GetValue(obj, Array.Empty<object>())
-                let isArray = prop.PropertyType.IsArray
-                select new ValueToFormat
-                {
-                    Value = val,
-                    IsArray = isArray,
-                    Format = val == null
-                             ? PiffDataFormats.Skip
-                             : prop.GetCustomAttribute<PiffDataFormatAttribute>()?.Format
-                             ?? (isArray
-                                ? PiffDataUtility.GetDefaultFormat(prop.PropertyType.GetElementType())
-                                : PiffDataUtility.GetDefaultFormat(prop.PropertyType))
-                };
+            var propValues = CollectPropertiesForWriting(obj);
 
             return WriteBoxValues(boxNameAttr.Name, propValues.ToArray());
         }
@@ -139,6 +129,30 @@ namespace PiffLibrary
             }
 
             return dataBytes;
+        }
+
+
+        /// <summary>
+        /// Collect properties information of the given object.
+        /// </summary>
+        private static IEnumerable<ValueToFormat> CollectPropertiesForWriting(object obj)
+        {
+            var type = obj.GetType();
+
+            return from prop in type.GetProperties()
+                   let val = prop.GetValue(obj, Array.Empty<object>())
+                   let isArray = prop.PropertyType.IsArray
+                   select new ValueToFormat
+                   {
+                       Value = val,
+                       IsArray = isArray,
+                       Format = val == null
+                                ? PiffDataFormats.Skip
+                                : prop.GetCustomAttribute<PiffDataFormatAttribute>()?.Format
+                                ?? (isArray
+                                   ? PiffDataUtility.GetDefaultFormat(prop.PropertyType.GetElementType())
+                                   : PiffDataUtility.GetDefaultFormat(prop.PropertyType))
+                   };
         }
 
 
@@ -206,7 +220,12 @@ namespace PiffLibrary
                     dataBytes.AddRange(from i in new[] { 3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 } select guidBytes[i]);
                     break;
 
-                case PiffDataFormats.Object:
+                case PiffDataFormats.InlineObject:
+                    // Write the object
+                    dataBytes.AddRange(CollectPropertiesForWriting(value).SelectMany(p => WriteValue(p)));
+                    break;
+
+                case PiffDataFormats.Box:
                     dataBytes.AddRange(WriteBoxObject(value));
                     break;
 
