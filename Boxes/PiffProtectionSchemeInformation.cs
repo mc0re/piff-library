@@ -29,17 +29,17 @@ namespace PiffLibrary
         }
 
 
-        public static PiffProtectionSchemeInformation CreateAudio(Guid keyId)
+        public static PiffProtectionSchemeInformation CreateAudio(string codecId, Guid keyId)
         {
-            return new PiffProtectionSchemeInformation(PiffProtectionOriginalFormat.CreateAudio(),
+            return new PiffProtectionSchemeInformation(PiffProtectionOriginalFormat.CreateAudio(codecId),
                                                        PiffProtectionSchemaType.CreateAudio(),
                                                        keyId);
         }
 
 
-        public static PiffProtectionSchemeInformation CreateVideo(Guid keyId)
+        public static PiffProtectionSchemeInformation CreateVideo(string codecId, Guid keyId)
         {
-            return new PiffProtectionSchemeInformation(PiffProtectionOriginalFormat.CreateVideo(),
+            return new PiffProtectionSchemeInformation(PiffProtectionOriginalFormat.CreateVideo(codecId),
                                                        PiffProtectionSchemaType.CreateVideo(),
                                                        keyId);
         }

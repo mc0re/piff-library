@@ -9,8 +9,10 @@ namespace PiffLibrary
 
         public byte Version { get; } = 0;
 
+
         [PiffDataFormat(PiffDataFormats.Int24)]
         public int Flags { get; } = 0;
+
 
         /// <summary>
         /// The number of elements in the following array
@@ -18,7 +20,9 @@ namespace PiffLibrary
         /// </summary>
         public int Count { get; } = 1;
 
+
         public PiffProtectedAudioSampleEntry AudioEntry { get; }
+
 
         public PiffProtectedVideoSampleEntry VideoEntry { get; }
 

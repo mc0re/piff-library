@@ -7,10 +7,13 @@
 
         public byte Version { get; } = 0;
 
+
         [PiffDataFormat(PiffDataFormats.Int24)]
         public int Flags { get; } = 0;
 
+
         public int Reserved1 { get; } = 0;
+
 
         /// <summary>
         /// 4 bytes.
@@ -18,7 +21,9 @@
         /// </summary>
         public string HandlerType { get; set; }
 
+
         public int[] Reserved2 { get; } = { 0, 0, 0 };
+
 
         /// <summary>
         /// 0-terminated UTF-8 human-readable name.

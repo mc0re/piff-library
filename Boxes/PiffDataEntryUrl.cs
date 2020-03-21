@@ -10,6 +10,7 @@
         /// </summary>
         public byte Version { get; } = 0;
 
+
         /// <summary>
         /// Whether the data is in the same file as this box.
         /// </summary>

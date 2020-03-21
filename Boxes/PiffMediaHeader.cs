@@ -12,23 +12,28 @@ namespace PiffLibrary
         /// </summary>
         public byte Version { get; } = 1;
 
+
         [PiffDataFormat(PiffDataFormats.Int24)]
         public int Flags { get; } = 0;
+
 
         /// <summary>
         /// Seconds since 01.01.1904 00:00 UTC.
         /// </summary>
         public long CreationTime { get; }
 
+
         /// <summary>
         /// Seconds since 01.01.1904 00:00 UTC.
         /// </summary>
         public long ModificationTime { get; }
 
+
         /// <summary>
         /// How many units are in 1 second.
         /// </summary>
         public int TimeScale { get; }
+
 
         /// <summary>
         /// Longest track duration in <see cref="TimeScale"/>.
@@ -42,6 +47,7 @@ namespace PiffLibrary
         /// </summary>
         /// <remarks>0x55C4 = "und"</remarks>
         public short Language { get; } = 0x55C4;
+
 
         public short Reserved1 { get; } = 0;
 
