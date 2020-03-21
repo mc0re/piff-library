@@ -38,6 +38,12 @@ namespace PiffLibrary
         }
 
 
+        public static void WriteFooter()
+        {
+
+        }
+
+
         public static TimeSpan GetDuration(long duration, int timeScale)
             => TimeSpan.FromSeconds(duration / (double)timeScale);
 
@@ -79,9 +85,11 @@ namespace PiffLibrary
                     Value = val,
                     IsArray = isArray,
                     Format = val == null
-                            ? PiffDataFormats.Skip
-                            : prop.GetCustomAttribute<PiffDataFormatAttribute>()?.Format
-                            ?? (isArray ? GetDefaultFormat(prop.PropertyType.GetElementType()) : GetDefaultFormat(prop.PropertyType))
+                             ? PiffDataFormats.Skip
+                             : prop.GetCustomAttribute<PiffDataFormatAttribute>()?.Format
+                             ?? (isArray
+                                ? PiffDataUtility.GetDefaultFormat(prop.PropertyType.GetElementType())
+                                : PiffDataUtility.GetDefaultFormat(prop.PropertyType))
                 };
 
             return WriteBoxValues(boxNameAttr.Name, propValues.ToArray());
@@ -105,40 +113,6 @@ namespace PiffLibrary
                            Encoding.ASCII.GetBytes(boxName));
 
             return hdrBytes.Concat(dataBytes);
-        }
-
-
-        /// <summary>
-        /// Unless the format is explicitly specified, use the default one.
-        /// </summary>
-        private static PiffDataFormats GetDefaultFormat(Type valueType)
-        {
-            if (valueType == typeof(byte) || valueType == typeof(char))
-                return PiffDataFormats.Int8;
-
-            else if (valueType == typeof(short))
-                return PiffDataFormats.Int16;
-
-            else if (valueType == typeof(int))
-                return PiffDataFormats.Int32;
-
-            else if (valueType == typeof(uint))
-                return PiffDataFormats.UInt32;
-
-            else if (valueType == typeof(long))
-                return PiffDataFormats.Int64;
-
-            else if (valueType == typeof(string))
-                return PiffDataFormats.Ascii;
-
-            else if (valueType == typeof(Guid))
-                return PiffDataFormats.GuidBytes;
-
-            else if (valueType.IsClass)
-                return PiffDataFormats.Object;
-
-            else
-                throw new ArgumentException($"Unsupported data type '{valueType.Name}'.");
         }
 
 
