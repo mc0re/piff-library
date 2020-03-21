@@ -11,6 +11,4 @@ A helper method `PiffWriter.GetDuration()` might also come handy.
 
 ## Known issues
 
-There is one box I didn't decifer yet - `avcC`. The data hardcoded in it is the data I extracted from a sample file.
-
-The library does produce the correct header for a certain manifest, but not for my own. Probably due to the AVC configuration box. Have to keep looking.
+The library does produce the correct header for a certain manifest, but not for any manifest. So far the problem stays unresolved.
