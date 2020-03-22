@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 
+
 namespace PiffLibrary
 {
     [BoxName("esds")]
@@ -107,8 +108,13 @@ namespace PiffLibrary
         public byte SlcTag { get; } = PiffEsdsBlockIds.Slc;
 
 
-        [PiffDataFormat(PiffDataFormats.DynamicInt)]
-        public int SlcLength { get; } = 1;
+        /// <summary>
+        /// According to the standard, this should be <see cref="PiffDataFormats.DynamicInt"/>
+        /// just as the other lengths. But it can never take more than 7 bits,
+        /// so let's write it as a <see langword="byte"/> instead.
+        /// Aligned with the sample stream.
+        /// </summary>
+        public byte SlcLength { get; } = 1;
 
 
         /// <summary>
@@ -134,8 +140,11 @@ namespace PiffLibrary
             AverageBitRate = bitRate;
             DsiData = codecData.ToArray();
             DsiLength = DsiData.Length;
+
+            // Structure:
+            // ESD { DCD { DSI }, SLC }
             DcdLength = DsiLength + 18;
-            EsdLength = DsiLength + 32;
+            EsdLength = 3 + DsiLength + 18 + SlcLength + 1 + 6;
         }
 
 
