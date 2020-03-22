@@ -38,10 +38,10 @@ namespace PiffLibrary
         }
 
 
-        public static PiffSampleDescription CreateAudio(short trackId, PiffAudioManifest audio, Guid keyId)
+        public static PiffSampleDescription CreateAudio(PiffAudioManifest audio, Guid keyId)
         {
             return new PiffSampleDescription(
-                new PiffProtectedAudioSampleEntry(trackId, audio, keyId),
+                new PiffProtectedAudioSampleEntry(audio, keyId),
                 null);
         }
 

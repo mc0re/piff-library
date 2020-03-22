@@ -62,6 +62,15 @@ namespace PiffLibrary
         }
 
 
+        public static int GetTrackId(byte[] data)
+        {
+            var ms = new MemoryStream(data);
+            var moof = ReadBox<PiffMovieFragment>(ms);
+
+            return moof.Track.Header.TrackId;
+        }
+
+
         public static int GetInt32(byte[] bytes, int offset)
         {
             var res = (bytes[offset] << 24) +
@@ -173,6 +182,9 @@ namespace PiffLibrary
                 case PiffDataFormats.Int32:
                     return GetInt32(bytes);
 
+                case PiffDataFormats.Int64:
+                    return GetInt64(bytes);
+
                 case PiffDataFormats.Box:
                     return ReadBox(bytes, targetType);
 
@@ -198,6 +210,14 @@ namespace PiffLibrary
                       (bytes.ReadByte() << 16) +
                       (bytes.ReadByte() << 8) +
                        bytes.ReadByte();
+
+            return res;
+        }
+
+
+        internal static long GetInt64(Stream bytes)
+        {
+            var res = ((long)GetInt32(bytes) << 32) + GetInt32(bytes);
 
             return res;
         }

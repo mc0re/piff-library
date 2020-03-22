@@ -24,16 +24,15 @@ namespace PiffLibrary
 
 
         public static PiffTrack CreateAudio(
-            byte trackId, PiffAudioManifest audio,
-            DateTime created, int timeScale, Guid keyId)
+            int trackId, PiffAudioManifest audio, DateTime created, int timeScale, Guid keyId)
         {
             return new PiffTrack(PiffTrackHeader.CreateAudio(trackId, created, audio.Duration),
-                                 PIffTrackMediaInfo.CreateAudio(trackId, audio, created, audio.Duration, timeScale, keyId));
+                                 PIffTrackMediaInfo.CreateAudio(audio, created, audio.Duration, timeScale, keyId));
         }
 
 
         public static PiffTrack CreateVideo(
-            byte trackId, PiffVideoManifest video, DateTime created, int timeScale, Guid keyId)
+            int trackId, PiffVideoManifest video, DateTime created, int timeScale, Guid keyId)
         {
             return new PiffTrack(PiffTrackHeader.CreateVideo(trackId, created, video),
                                  PIffTrackMediaInfo.CreateVideo(video, created, timeScale, keyId));

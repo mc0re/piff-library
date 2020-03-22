@@ -11,12 +11,14 @@ The main idea is to write the header, append the data chunks, the write the foot
 Start with `PiffWriter.WriteHeader()`.
 A helper method `PiffWriter.GetDuration()` might also come handy.
 
+Use `PiffReader.GetTrackId()` to retrieve the track IDs from the data and put it into `PiffManifest`.
+
 Use `PiffReader.GetFragmentSequenceNumber()` to make sure the fragments come in increasing sequence order.
 
 Finalize the file with `PiffWriter.WriteFooter()`.
 
 ## Known issues
 
-The reading part is rudimentary, only to allow for certain functionality.
+The library is designed for streams having 1 video (H.264) and 1 audio (AAC-L) track.
 
-The library does produce the correct file for a certain manifest, but not for any manifest. So far the problem stays unresolved.
+The reading part is rudimentary, only to allow for required functionality.

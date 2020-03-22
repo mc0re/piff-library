@@ -35,10 +35,10 @@ namespace PiffLibrary
                 manifest.ProtectionSystemId, manifest.ProtectionData);
 
             AudioTrack = PiffTrack.CreateAudio(
-                1, manifest.Audio, manifest.Created, manifest.TimeScale, manifest.KeyIdentifier);
+                manifest.AudioTrackId, manifest.Audio, manifest.Created, manifest.TimeScale, manifest.KeyIdentifier);
 
             VideoTrack = PiffTrack.CreateVideo(
-                2, manifest.Video, manifest.Created, manifest.TimeScale, manifest.KeyIdentifier);
+                manifest.VideoTrackId, manifest.Video, manifest.Created, manifest.TimeScale, manifest.KeyIdentifier);
 
             Extended = new PiffMovieExtended(maxDuration);
         }

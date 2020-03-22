@@ -39,10 +39,12 @@ namespace PiffLibrary
 
 
         public static void WriteFooter(
-            Stream strm,
+            Stream strm, PiffManifest manifest,
             IEnumerable<PiffSampleOffsetV1> audioOffsets, IEnumerable<PiffSampleOffsetV1> videoOffsets)
         {
-            var access = new PiffMovieFragmentRandomAccess(audioOffsets, videoOffsets);
+            var access = new PiffMovieFragmentRandomAccess(
+                manifest.AudioTrackId, audioOffsets,
+                manifest.VideoTrackId, videoOffsets);
             var mfraBytes = WriteBoxObject(access).ToArray();
             strm.Write(mfraBytes, 0, mfraBytes.Length);
         }

@@ -59,7 +59,7 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffProtectedAudioSampleEntry(short trackId, PiffAudioManifest audio, Guid keyId)
+        public PiffProtectedAudioSampleEntry(PiffAudioManifest audio, Guid keyId)
         {
             if (audio.Channels != 2)
                 throw new ArgumentException("AudioSampleEntry must have 2 channels.");

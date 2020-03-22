@@ -30,9 +30,9 @@ namespace PiffLibrary
         }
 
 
-        public static PiffSampleTable CreateAudio(short trackId, PiffAudioManifest audio, Guid keyId)
+        public static PiffSampleTable CreateAudio(PiffAudioManifest audio, Guid keyId)
         {
-            return new PiffSampleTable(PiffSampleDescription.CreateAudio(trackId, audio, keyId));
+            return new PiffSampleTable(PiffSampleDescription.CreateAudio(audio, keyId));
         }
 
 

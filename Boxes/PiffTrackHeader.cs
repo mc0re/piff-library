@@ -32,6 +32,9 @@ namespace PiffLibrary
         public long ModificationTime { get; }
 
 
+        /// <summary>
+        /// 1-based.
+        /// </summary>
         public int TrackId { get; }
 
 
@@ -120,13 +123,13 @@ namespace PiffLibrary
         }
 
 
-        public static PiffTrackHeader CreateAudio(byte trackId, DateTime created, long duration)
+        public static PiffTrackHeader CreateAudio(int trackId, DateTime created, long duration)
         {
             return new PiffTrackHeader(created, duration, trackId, PiffTrackTypes.Audio, 0, 0);
         }
 
 
-        public static PiffTrackHeader CreateVideo(byte trackId, DateTime created, PiffVideoManifest video)
+        public static PiffTrackHeader CreateVideo(int trackId, DateTime created, PiffVideoManifest video)
         {
             return new PiffTrackHeader(created, video.Duration, trackId, PiffTrackTypes.Video,
                                        video.Width, video.Height);

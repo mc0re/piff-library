@@ -13,7 +13,11 @@ namespace PiffLibrary
 
         public PiffAudioManifest Audio { get; set; }
 
+        public int AudioTrackId { get; set; }
+
         public PiffVideoManifest Video { get; set; }
+
+        public int VideoTrackId { get; set; }
 
         public Guid KeyIdentifier { get; internal set; }
 

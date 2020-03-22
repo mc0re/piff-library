@@ -27,13 +27,12 @@ namespace PiffLibrary
 
 
         public static PIffTrackMediaInfo CreateAudio(
-            short trackId, PiffAudioManifest audio,
-            DateTime created, long duration, int timeScale, Guid keyId)
+            PiffAudioManifest audio, DateTime created, long duration, int timeScale, Guid keyId)
         {
             return new PIffTrackMediaInfo(
                 new PiffMediaHeader(created, duration, timeScale),
                 new PiffHandlerType(PiffTrackTypes.Audio),
-                PiffMediaInformation.CreateAudio(trackId, audio, keyId));
+                PiffMediaInformation.CreateAudio(audio, keyId));
         }
 
 

@@ -28,11 +28,11 @@ namespace PiffLibrary
         }
 
 
-        public static PiffMediaInformation CreateAudio(short trackId, PiffAudioManifest audio, Guid keyId)
+        public static PiffMediaInformation CreateAudio(PiffAudioManifest audio, Guid keyId)
         {
             return new PiffMediaInformation(new PiffSoundMediaHeader(),
                                             null,
-                                            PiffSampleTable.CreateAudio(trackId, audio, keyId));
+                                            PiffSampleTable.CreateAudio(audio, keyId));
         }
 
 

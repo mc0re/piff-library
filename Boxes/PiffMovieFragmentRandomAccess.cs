@@ -19,10 +19,12 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffMovieFragmentRandomAccess(IEnumerable<PiffSampleOffsetV1> audio, IEnumerable<PiffSampleOffsetV1> video)
+        public PiffMovieFragmentRandomAccess(
+            int audioTrackId, IEnumerable<PiffSampleOffsetV1> audio,
+            int videoTrackId, IEnumerable<PiffSampleOffsetV1> video)
         {
-            Audio = new PiffTrackFragmentRandomAccess(1, audio);
-            Video = new PiffTrackFragmentRandomAccess(2, video);
+            Audio = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
+            Video = new PiffTrackFragmentRandomAccess(videoTrackId, video);
 
             var len = 8 + Audio.GetLength() + Video.GetLength() + 16;
             Length = new PiffMovieFragmentRandomAccessOffset(len);
