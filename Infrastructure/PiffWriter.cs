@@ -219,7 +219,7 @@ namespace PiffLibrary
                 case PiffDataFormats.GuidBytes:
                     var guidBytes = ((Guid)value).ToByteArray();
                     // Need reformatting
-                    dataBytes.AddRange(from i in new[] { 3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 } select guidBytes[i]);
+                    dataBytes.AddRange(ToBigEndianArray(guidBytes));
                     break;
 
                 case PiffDataFormats.InlineObject:
@@ -242,6 +242,12 @@ namespace PiffLibrary
 
 
         #region Primitives utility
+
+        private static IEnumerable<byte> ToBigEndianArray(byte[] guid)
+        {
+            return from i in new[] { 3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 } select guid[i];
+        }
+
 
         private static IEnumerable<byte> ConvertInt16ToBigEndian(short value)
         {

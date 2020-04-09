@@ -8,7 +8,7 @@ namespace PiffLibrary
         #region Properties
 
         /// <summary>
-        /// This GUID corresponds to the protection box.
+        /// This GUID corresponds to the protection box PSSH.
         /// </summary>
         public Guid BoxId { get; } = Guid.Parse("d08a4f18-10f3-4a82-b6c8-32d8aba183d3");
 
