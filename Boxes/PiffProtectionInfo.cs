@@ -2,6 +2,7 @@
 
 namespace PiffLibrary
 {
+    // PlayReady uses "pssh" box instead.
     [BoxName("uuid")]
     internal class PiffProtectionInfo
     {
