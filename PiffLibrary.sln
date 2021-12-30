@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{87F53114-7575-4D9A-B208-D591FD87A1EB}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PiffLibrary", "PiffLibrary\PiffLibrary.csproj", "{527FF3BF-FF82-4A68-B546-BC084E3B3A49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PiffLibrary.Test", "PiffLibrary.Test\PiffLibrary.Test.csproj", "{95C74B0D-9228-4280-930E-CAA70576EA1E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{527FF3BF-FF82-4A68-B546-BC084E3B3A49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{527FF3BF-FF82-4A68-B546-BC084E3B3A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{527FF3BF-FF82-4A68-B546-BC084E3B3A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{527FF3BF-FF82-4A68-B546-BC084E3B3A49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95C74B0D-9228-4280-930E-CAA70576EA1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95C74B0D-9228-4280-930E-CAA70576EA1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95C74B0D-9228-4280-930E-CAA70576EA1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95C74B0D-9228-4280-930E-CAA70576EA1E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2C7E3A34-BA54-4832-80F9-64B096A2472C}
+	EndGlobalSection
+EndGlobal
