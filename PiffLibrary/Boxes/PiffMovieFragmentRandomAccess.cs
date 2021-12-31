@@ -4,7 +4,7 @@
 namespace PiffLibrary
 {
     [BoxName("mfra")]
-    internal class PiffMovieFragmentRandomAccess
+    internal class PiffMovieFragmentRandomAccess : PiffBoxBase
     {
         #region Properties
 

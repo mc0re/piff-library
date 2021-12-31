@@ -5,7 +5,7 @@ using System.Linq;
 namespace PiffLibrary
 {
     [BoxName("tfra")]
-    internal class PiffTrackFragmentRandomAccess
+    internal class PiffTrackFragmentRandomAccess : PiffBoxBase
     {
         #region Properties
 

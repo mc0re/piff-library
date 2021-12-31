@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("vmhd")]
-    internal class PiffVideoMediaHeader
+    internal class PiffVideoMediaHeader : PiffBoxBase
     {
         #region Properties
 

@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace PiffLibrary
+﻿namespace PiffLibrary
 {
     [BoxName("mehd")]
-    internal class PiffMovieExtendedHeader
+    internal class PiffMovieExtendedHeader : PiffBoxBase
     {
         #region Properties
 

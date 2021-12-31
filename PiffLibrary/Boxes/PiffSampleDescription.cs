@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("stsd")]
-    internal class PiffSampleDescription
+    internal class PiffSampleDescription : PiffBoxBase
     {
         #region Properties
 

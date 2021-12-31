@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("mdia")]
-    internal class PIffTrackMediaInfo
+    internal class PIffTrackMediaInfo : PiffBoxBase
     {
         #region Properties
 

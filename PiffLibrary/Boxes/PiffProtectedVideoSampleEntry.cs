@@ -4,7 +4,7 @@
 namespace PiffLibrary
 {
     [BoxName("encv")]
-    internal class PiffProtectedVideoSampleEntry
+    internal class PiffProtectedVideoSampleEntry : PiffBoxBase
     {
         #region Properties
 

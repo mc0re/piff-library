@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("smhd")]
-    internal class PiffSoundMediaHeader
+    internal class PiffSoundMediaHeader : PiffBoxBase
     {
         #region Properties
 

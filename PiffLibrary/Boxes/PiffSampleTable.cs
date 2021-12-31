@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("stbl")]
-    internal class PiffSampleTable
+    internal class PiffSampleTable : PiffBoxBase
     {
         #region Properties
 

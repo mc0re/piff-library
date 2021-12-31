@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("tkhd")]
-    internal class PiffTrackHeader
+    internal class PiffTrackHeader : PiffBoxBase
     {
         #region Properties
 

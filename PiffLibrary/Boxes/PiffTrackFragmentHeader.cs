@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("tfhd")]
-    public class PiffTrackFragmentHeader
+    internal class PiffTrackFragmentHeader : PiffBoxBase
     {
         #region Properties
 

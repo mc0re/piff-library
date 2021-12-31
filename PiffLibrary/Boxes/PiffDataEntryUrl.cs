@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("url ")]
-    internal class PiffDataEntryUrl
+    internal class PiffDataEntryUrl : PiffBoxBase
     {
         #region Properties
 

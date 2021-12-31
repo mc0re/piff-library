@@ -3,19 +3,30 @@
 namespace PiffLibrary
 {
     [BoxName("trak")]
-    internal class PiffTrack
+    internal class PiffTrack : PiffBoxBase
     {
         #region Properties
 
-        public PiffTrackHeader Header { get; }
+        public PiffTrackHeader Header { get; set; }
 
-        public PIffTrackMediaInfo Media { get; }
+        public PIffTrackMediaInfo Media { get; set; }
 
         #endregion
 
 
         #region Init and clean-up
 
+        /// <summary>
+        /// Constructor for parsing.
+        /// </summary>
+        public PiffTrack()
+        {
+        }
+
+
+        /// <summary>
+        /// Constructor for writing.
+        /// </summary>
         private PiffTrack(PiffTrackHeader header, PIffTrackMediaInfo info)
         {
             Header = header;
@@ -23,6 +34,9 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Constructor for writing.
+        /// </summary>
         public static PiffTrack CreateAudio(
             int trackId, PiffAudioManifest audio, DateTime created, int timeScale, Guid keyId)
         {
@@ -31,6 +45,9 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Constructor for writing.
+        /// </summary>
         public static PiffTrack CreateVideo(
             int trackId, PiffVideoManifest video, DateTime created, int timeScale, Guid keyId)
         {

@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("mfro")]
-    public class PiffMovieFragmentRandomAccessOffset
+    internal class PiffMovieFragmentRandomAccessOffset : PiffBoxBase
     {
         #region Properties
 

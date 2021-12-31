@@ -7,7 +7,7 @@ namespace PiffLibrary
     /// This is AudioSampleEntry, not AudioSampleEntryV1.
     /// </summary>
     [BoxName("enca")]
-    internal class PiffProtectedAudioSampleEntry
+    internal class PiffProtectedAudioSampleEntry : PiffBoxBase
     {
         #region Constants
 

@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("mfhd")]
-    internal class PiffMovieFragmentHeader
+    internal class PiffMovieFragmentHeader : PiffBoxBase
     {
         #region Properties
 

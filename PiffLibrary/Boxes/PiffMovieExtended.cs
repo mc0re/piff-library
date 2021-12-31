@@ -1,9 +1,7 @@
-﻿using System;
-
-namespace PiffLibrary
+﻿namespace PiffLibrary
 {
     [BoxName("mvex")]
-    internal class PiffMovieExtended
+    internal class PiffMovieExtended : PiffBoxBase
     {
         #region Properties
 

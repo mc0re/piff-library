@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("sinf")]
-    internal class PiffProtectionSchemeInformation
+    internal class PiffProtectionSchemeInformation : PiffBoxBase
     {
         #region Properties
 

@@ -5,7 +5,7 @@ using System.Linq;
 namespace PiffLibrary
 {
     [BoxName("esds")]
-    internal class PiffElementaryStreamDescription
+    internal class PiffElementaryStreamDescription : PiffBoxBase
     {
         #region Properties
 

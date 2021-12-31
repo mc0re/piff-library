@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("mdhd")]
-    internal class PiffMediaHeader
+    internal class PiffMediaHeader : PiffBoxBase
     {
         #region Properties
 

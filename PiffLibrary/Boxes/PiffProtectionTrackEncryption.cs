@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("uuid")]
-    internal class PiffProtectionTrackEncryption
+    internal class PiffProtectionTrackEncryption : PiffBoxBase
     {
         #region Properties
 

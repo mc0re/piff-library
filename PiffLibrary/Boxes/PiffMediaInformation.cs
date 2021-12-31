@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("minf")]
-    internal class PiffMediaInformation
+    internal class PiffMediaInformation : PiffBoxBase
     {
         #region Properties
 

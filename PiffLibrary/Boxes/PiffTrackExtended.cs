@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("trex")]
-    internal class PiffTrackExtended
+    internal class PiffTrackExtended : PiffBoxBase
     {
         #region Properties
 

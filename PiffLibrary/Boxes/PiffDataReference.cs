@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("dref")]
-    internal class PiffDataReference
+    internal class PiffDataReference : PiffBoxBase
     {
         #region Properties
 

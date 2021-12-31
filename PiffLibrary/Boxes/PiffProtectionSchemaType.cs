@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("schm")]
-    internal class PiffProtectionSchemaType
+    internal class PiffProtectionSchemaType : PiffBoxBase
     {
         #region Properties
 

@@ -5,7 +5,7 @@ using System.Linq;
 namespace PiffLibrary
 {
     [BoxName("avcC")]
-    internal class PiffAvcConfiguration
+    internal class PiffAvcConfiguration : PiffBoxBase
     {
         #region Constants
 
@@ -194,7 +194,7 @@ namespace PiffLibrary
             if (codecId != "H264")
                 throw new ArgumentException($"Cannot process codec '{codecId}', only 'H264' is supported.");
 
-            var one = PiffReader.GetInt32(codecData, 0);
+            var one = codecData.GetInt32(0);
             if (one != 1)
                 throw new ArgumentException($"I don't know how to interpret number {one} at offset 0.");
 
@@ -207,7 +207,7 @@ namespace PiffLibrary
             AvcLevel = codecData[7];
 
             var seqEnd = 8;
-            while (PiffReader.GetInt32(codecData, seqEnd) != 1)
+            while (codecData.GetInt32(seqEnd) != 1)
                 seqEnd++;
 
             SequenceSlotData = codecData.Skip(4).Take(seqEnd - 4).ToArray();

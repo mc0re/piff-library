@@ -53,6 +53,10 @@ namespace PiffLibrary
         public static TimeSpan GetDuration(long duration, int timeScale)
             => TimeSpan.FromSeconds(duration / (double)timeScale);
 
+        #endregion
+
+
+        #region Writing utility
 
         internal static long GetSecondsFromEpoch(DateTime time)
         {
@@ -63,10 +67,6 @@ namespace PiffLibrary
         internal static long GetTicks(TimeSpan duration, int timeScale)
             => (long)(duration.TotalSeconds * timeScale);
 
-        #endregion
-
-
-        #region Writing utility
 
         /// <summary>
         /// Create a byte stream representation of the given object.

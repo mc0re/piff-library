@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("schi")]
-    internal class PiffProtectionSchemeInfo
+    internal class PiffProtectionSchemeInfo : PiffBoxBase
     {
         #region Properties
 

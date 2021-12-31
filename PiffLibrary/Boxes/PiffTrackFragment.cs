@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("traf")]
-    public class PiffTrackFragment
+    internal class PiffTrackFragment : PiffBoxBase
     {
         public PiffTrackFragmentHeader Header { get; internal set; }
     }

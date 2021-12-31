@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("stsz")]
-    internal class PiffSampleSize
+    internal class PiffSampleSize : PiffBoxBase
     {
         #region Properties
 

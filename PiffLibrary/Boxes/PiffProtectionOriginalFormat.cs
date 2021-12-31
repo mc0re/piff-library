@@ -3,7 +3,7 @@
 namespace PiffLibrary
 {
     [BoxName("frma")]
-    internal class PiffProtectionOriginalFormat
+    internal class PiffProtectionOriginalFormat : PiffBoxBase
     {
         #region Properties
 

@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("hdlr")]
-    internal class PiffHandlerType
+    internal class PiffHandlerType : PiffBoxBase
     {
         #region Properties
 

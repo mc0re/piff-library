@@ -12,6 +12,7 @@
 
         /// <summary>
         /// 1 byte per character, no 0-termination. Default for <see langword="string"/>.
+        /// Length must be given by ...
         /// </summary>
         Ascii,
 
@@ -22,6 +23,7 @@
 
         /// <summary>
         /// 2 bytes per character, no 0-termination.
+        /// Length must be given by ...
         /// </summary>
         Ucs2,
 
@@ -56,7 +58,7 @@
         Int64,
 
         /// <summary>
-        /// DYnamic-length integer, alike UTF8: 7 bits of data,
+        /// Dynamic-length integer, alike UTF8: 7 bits of data,
         /// highest bit set to 1 means "continues to the next byte".
         /// </summary>
         DynamicInt,
