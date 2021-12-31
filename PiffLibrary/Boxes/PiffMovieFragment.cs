@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("moof")]
-    internal class PiffMovieFragment
+    internal class PiffMovieFragment : PiffBoxBase
     {
         public PiffMovieFragmentHeader Header { get; internal set; }
 

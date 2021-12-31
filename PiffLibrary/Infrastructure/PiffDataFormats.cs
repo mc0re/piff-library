@@ -11,21 +11,6 @@
         Skip,
 
         /// <summary>
-        /// 1 byte per character, no 0-termination. Default for <see langword="string"/>.
-        /// </summary>
-        Ascii,
-
-        /// <summary>
-        /// 1-4 bytes per character, 0-termination.
-        /// </summary>
-        Utf8Zero,
-
-        /// <summary>
-        /// 2 bytes per character, no 0-termination.
-        /// </summary>
-        Ucs2,
-
-        /// <summary>
         /// 1-byte integer. Default for <see langword="byte"/>.
         /// </summary>
         Int8,
@@ -56,7 +41,7 @@
         Int64,
 
         /// <summary>
-        /// DYnamic-length integer, alike UTF8: 7 bits of data,
+        /// Dynamic-length integer, alike UTF8: 7 bits of data,
         /// highest bit set to 1 means "continues to the next byte".
         /// </summary>
         DynamicInt,
@@ -73,6 +58,23 @@
         Int5,
 
         /// <summary>
+        /// 1 byte per character, no 0-termination. Default for <see langword="string"/>.
+        /// Length must be given by <see cref="PiffDataLengthAttribute"/>.
+        /// </summary>
+        Ascii,
+
+        /// <summary>
+        /// 1-4 bytes per character, 0-termination.
+        /// </summary>
+        Utf8Zero,
+
+        /// <summary>
+        /// 2 bytes per character, no 0-termination.
+        /// Length must be given by <see cref="PiffDataLengthAttribute"/>.
+        /// </summary>
+        Ucs2,
+
+        /// <summary>
         /// A <see cref="System.Guid"/> as a byte array (16 bytes).
         /// </summary>
         GuidBytes,
@@ -85,6 +87,6 @@
         /// <summary>
         /// Treat the value as just a collection of properties.
         /// </summary>
-        InlineObject
+        InlineObject,
     }
 }

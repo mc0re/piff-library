@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("stco")]
-    internal class PiffChunkOffset
+    internal class PiffChunkOffset : PiffBoxBase
     {
         #region Properties
 

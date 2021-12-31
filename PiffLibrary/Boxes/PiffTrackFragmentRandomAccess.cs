@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 
 namespace PiffLibrary
 {
     [BoxName("tfra")]
-    internal class PiffTrackFragmentRandomAccess
+    internal class PiffTrackFragmentRandomAccess : PiffBoxBase
     {
         #region Properties
 
@@ -45,10 +46,20 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
-        public PiffTrackFragmentRandomAccess(int trackId, IEnumerable<PiffSampleOffsetV1> offsets)
+        /// <summary>
+        /// Constructor for writing.
+        /// </summary>
+        public PiffTrackFragmentRandomAccess(int trackId, IEnumerable<PiffSampleOffset> offsets)
         {
             TrackId = trackId;
-            Offsets = offsets.ToArray();
+            Offsets = (from off in offsets select new PiffSampleOffsetV1(this)
+            {
+                Time = off.Time,
+                Offset = off.Offset,
+                TrafNumber = off.TrafNumber,
+                TrunNumber = off.TrunNumber,
+                SampleNumber = off.SampleNumber
+            }).ToArray();
             Count = Offsets.Length;
         }
 
@@ -63,41 +74,5 @@ namespace PiffLibrary
         }
 
         #endregion
-    }
-
-
-    public class PiffSampleOffsetV1
-    {
-        /// <summary>
-        /// Start time of a "moof" box.
-        /// </summary>
-        public long Time { get; set; }
-
-
-        /// <summary>
-        /// Offset of the that "moof" block from the beginning of the file.
-        /// </summary>
-        public long Offset { get; set; }
-
-
-        /// <summary>
-        /// Length is "length of TrafNumber field" + 1 bytes.
-        /// The number of "traf" box containing the sync sample. Starts with 1 in each "moof".
-        /// </summary>
-        public byte TrafNumber { get; } = 1;
-
-
-        /// <summary>
-        /// Length is "length of TrunNumber field" + 1 bytes.
-        /// The number of "trun" box containing the sync sample. Starts with 1 in each "traf".
-        /// </summary>
-        public byte TrunNumber { get; } = 1;
-
-
-        /// <summary>
-        /// Length is "length of SampleNumber field" + 1 bytes.
-        /// The number of the sync sample. Starts with 1 in each "trun".
-        /// </summary>
-        public byte SampleNumber { get; } = 1;
     }
 }

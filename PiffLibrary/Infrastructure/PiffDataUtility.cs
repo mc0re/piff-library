@@ -31,7 +31,7 @@ namespace PiffLibrary
             else if (valueType == typeof(Guid))
                 return PiffDataFormats.GuidBytes;
 
-            else if (valueType.IsClass)
+            else if (valueType.IsClass && typeof(PiffBoxBase).IsAssignableFrom(valueType))
                 return PiffDataFormats.Box;
 
             else

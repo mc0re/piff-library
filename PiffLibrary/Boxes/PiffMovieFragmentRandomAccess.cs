@@ -4,7 +4,7 @@
 namespace PiffLibrary
 {
     [BoxName("mfra")]
-    internal class PiffMovieFragmentRandomAccess
+    internal class PiffMovieFragmentRandomAccess : PiffBoxBase
     {
         #region Properties
 
@@ -20,8 +20,8 @@ namespace PiffLibrary
         #region Init and clean-up
 
         public PiffMovieFragmentRandomAccess(
-            int audioTrackId, IEnumerable<PiffSampleOffsetV1> audio,
-            int videoTrackId, IEnumerable<PiffSampleOffsetV1> video)
+            int audioTrackId, IEnumerable<PiffSampleOffset> audio,
+            int videoTrackId, IEnumerable<PiffSampleOffset> video)
         {
             Audio = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
             Video = new PiffTrackFragmentRandomAccess(videoTrackId, video);

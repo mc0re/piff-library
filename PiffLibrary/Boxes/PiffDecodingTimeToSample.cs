@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("stts")]
-    internal class PiffDecodingTimeToSample
+    internal class PiffDecodingTimeToSample : PiffBoxBase
     {
         #region Properties
 

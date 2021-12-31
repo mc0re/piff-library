@@ -1,7 +1,7 @@
 ﻿namespace PiffLibrary
 {
     [BoxName("stsc")]
-    internal class PiffSampleToChunk
+    internal class PiffSampleToChunk : PiffBoxBase
     {
         #region Properties
 
