@@ -38,7 +38,6 @@ namespace PiffLibrary
         public int Count { get; }
 
 
-        [PiffDataFormat(PiffDataFormats.InlineObject)]
         public PiffSampleOffsetV1[] Offsets { get; }
 
         #endregion

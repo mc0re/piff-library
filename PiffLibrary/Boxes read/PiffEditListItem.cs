@@ -25,7 +25,6 @@
         /// Individual edit entries.
         /// </summary>
         [PiffArraySize(nameof(EntryCount))]
-        [PiffDataFormat(PiffDataFormats.InlineObject)]
         public PiffEditListItemEntry[] Entries { get; set; }
 
         #endregion

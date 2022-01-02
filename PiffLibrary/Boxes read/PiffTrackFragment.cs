@@ -3,6 +3,6 @@
     [BoxName("traf")]
     internal class PiffTrackFragment : PiffBoxBase
     {
-        public PiffTrackFragmentHeader Header { get; internal set; }
+        public PiffTrackFragmentHeader Header { get; set; }
     }
 }

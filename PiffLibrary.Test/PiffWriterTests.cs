@@ -9,17 +9,12 @@ namespace PiffLibrary.Test
     [TestClass]
     public class PiffWriterTests
     {
-        private readonly Guid PlayReadyGuid = Guid.Parse("{9a04f079-9840-4286-ab92-e65be0885f95}");
+        private static readonly Guid PlayReadyGuid = Guid.Parse("{9a04f079-9840-4286-ab92-e65be0885f95}");
 
-        private readonly byte[] PlayReadyProtectionData =
+        private static readonly byte[] PlayReadyProtectionData =
             Convert.FromBase64String(@"jAMAAAEAAQCCAzwAVwBSAE0ASABFAEEARABFAFIAIAB4AG0AbABuAHMAPQAiAGgAdAB0AHAAOgAvAC8AcwBjAGgAZQBtAGEAcwAuAG0AaQBjAHIAbwBzAG8AZgB0AC4AYwBvAG0ALwBEAFIATQAvADIAMAAwADcALwAwADMALwBQAGwAYQB5AFIAZQBhAGQAeQBIAGUAYQBkAGUAcgAiACAAdgBlAHIAcwBpAG8AbgA9ACIANAAuADAALgAwAC4AMAAiAD4APABEAEEAVABBAD4APABQAFIATwBUAEUAQwBUAEkATgBGAE8APgA8AEsARQBZAEwARQBOAD4AMQA2ADwALwBLAEUAWQBMAEUATgA+ADwAQQBMAEcASQBEAD4AQQBFAFMAQwBUAFIAPAAvAEEATABHAEkARAA+ADwALwBQAFIATwBUAEUAQwBUAEkATgBGAE8APgA8AEsASQBEAD4AQQBtAGYAagBDAFQATwBQAGIARQBPAGwAMwBXAEQALwA1AG0AYwBlAGMAQQA9AD0APAAvAEsASQBEAD4APABDAEgARQBDAEsAUwBVAE0APgBCAEcAdwAxAGEAWQBaADEAWQBYAE0APQA8AC8AQwBIAEUAQwBLAFMAVQBNAD4APABDAFUAUwBUAE8ATQBBAFQAVABSAEkAQgBVAFQARQBTAD4APABJAEkAUwBfAEQAUgBNAF8AVgBFAFIAUwBJAE8ATgA+ADcALgAxAC4AMQAwADYANAAuADAAPAAvAEkASQBTAF8ARABSAE0AXwBWAEUAUgBTAEkATwBOAD4APAAvAEMAVQBTAFQATwBNAEEAVABUAFIASQBCAFUAVABFAFMAPgA8AEwAQQBfAFUAUgBMAD4AaAB0AHQAcAA6AC8ALwBwAGwAYQB5AHIAZQBhAGQAeQAuAGQAaQByAGUAYwB0AHQAYQBwAHMALgBuAGUAdAAvAHAAcgAvAHMAdgBjAC8AcgBpAGcAaAB0AHMAbQBhAG4AYQBnAGUAcgAuAGEAcwBtAHgAPAAvAEwAQQBfAFUAUgBMAD4APABEAFMAXwBJAEQAPgBBAEgAKwAwADMAagB1AEsAYgBVAEcAYgBIAGwAMQBWAC8AUQBJAHcAUgBBAD0APQA8AC8ARABTAF8ASQBEAD4APAAvAEQAQQBUAEEAPgA8AC8AVwBSAE0ASABFAEEARABFAFIAPgA=");
 
-
-        [TestMethod]
-        public void Writer_WriteSuperSpeedwayHeader()
-        {
-            using var ms = new MemoryStream();
-            var piffMf = new PiffManifest
+        internal static readonly PiffManifest SpeedwayManifest = new PiffManifest
             {
                 // Time gives 0xC98FDA78 = 3_381_647_992 seconds
                 Created = new DateTime(2011, 2, 27, 10, 39, 52),
@@ -60,9 +55,13 @@ namespace PiffLibrary.Test
                 ProtectionSystemId = PlayReadyGuid,
                 ProtectionData = PlayReadyProtectionData
             };
-            piffMf.AudioTrackId = 1;
-            piffMf.VideoTrackId = 2;
-            PiffWriter.WriteHeader(ms, piffMf);
+
+
+        [TestMethod]
+        public void Writer_WriteSuperSpeedwayHeader()
+        {
+            using var ms = new MemoryStream();
+            PiffWriter.WriteHeader(ms, SpeedwayManifest);
 
             Assert.AreEqual(2383, ms.Length);
 
@@ -111,38 +110,7 @@ namespace PiffLibrary.Test
         {
             using var output = new MemoryStream();
 
-            var piffManifest = new PiffManifest
-            {
-                // Time gives 0xC98FDA78 = 3_381_647_992 seconds
-                Created = new DateTime(2011, 2, 27, 10, 39, 52),
-                TotalDuration = TimeSpan.FromSeconds(1),
-                TimeScale = 1000,
-                AudioTrackId = 1,
-                VideoTrackId = 2,
-                KeyIdentifier = Guid.NewGuid(),
-                Audio = new PiffAudioManifest
-                {
-                    Duration = 1000,
-                    BitRate = 44100,
-                    Channels = 2,
-                    CodecId = "AACL",
-                    CodecData = new byte[] { 0, 0 }
-                },
-                Video = new PiffVideoManifest
-                {
-                    Duration = 1000,
-                    BitRate = 6000,
-                    Width = 128,
-                    Height = 96,
-                    CodecId = "H264",
-                    // See PiffAvcConfiguration
-                    CodecData = new byte[] { 0, 0, 0, 1, 0x67, 0x42, 1, 1, 0, 0, 0, 1, 0x68 }
-                },
-                ProtectionSystemId = Guid.NewGuid(),
-                ProtectionData = new byte[] { 3, 3, 3, 3 }
-            };
-
-            PiffWriter.WriteHeader(output, piffManifest);
+            PiffWriter.WriteHeader(output, SpeedwayManifest);
 
             // Data chunks are MOOF boxes
             var audioChunk = new byte[] { 1, 1, 1, 1 };
@@ -155,9 +123,9 @@ namespace PiffLibrary.Test
 
             var audioOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = audioOffset } };
             var videoOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = videoOffset } };
-            PiffWriter.WriteFooter(output, piffManifest, audioOffsets, videoOffsets);
+            PiffWriter.WriteFooter(output, SpeedwayManifest, audioOffsets, videoOffsets);
 
-            Assert.AreEqual(1544, output.Length);
+            Assert.AreEqual(2501, output.Length);
         }
     }
 }

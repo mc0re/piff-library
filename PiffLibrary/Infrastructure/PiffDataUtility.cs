@@ -34,6 +34,9 @@ namespace PiffLibrary
             else if (valueType.IsClass && typeof(PiffBoxBase).IsAssignableFrom(valueType))
                 return PiffDataFormats.Box;
 
+            else if (valueType.IsClass)
+                return PiffDataFormats.InlineObject;
+
             else
                 throw new ArgumentException($"Unsupported data type '{valueType.Name}'.");
         }

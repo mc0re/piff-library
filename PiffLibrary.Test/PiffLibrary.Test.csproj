@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\moof.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\SuperSpeedway_720_230.ismv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

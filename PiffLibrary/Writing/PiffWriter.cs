@@ -23,6 +23,10 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Write the finishing boxes of a file.
+        /// The <paramref name="manifest"/> is used to extract track iDs.
+        /// </summary>
         public static void WriteFooter(
             Stream strm, PiffManifest manifest,
             IEnumerable<PiffSampleOffset> audioOffsets, IEnumerable<PiffSampleOffset> videoOffsets)
