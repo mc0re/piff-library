@@ -57,7 +57,7 @@ namespace PiffLibrary.Test
             var videoOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = videoOffset } };
             PiffWriter.WriteFooter(output, piffManifest, audioOffsets, videoOffsets);
 
-            Assert.AreEqual(1416, output.Length);
+            Assert.AreEqual(1544, output.Length);
         }
     }
 }
