@@ -18,4 +18,10 @@
     <ProjectReference Include="..\PiffLibrary\PiffLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\SuperSpeedway_720_230.ismv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

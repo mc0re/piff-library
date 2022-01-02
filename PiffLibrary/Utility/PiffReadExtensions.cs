@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
+
+
+[assembly:InternalsVisibleTo("PiffLibrary.Test")]
 
 
 namespace PiffLibrary
