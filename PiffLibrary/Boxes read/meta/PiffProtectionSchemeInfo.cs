@@ -7,7 +7,7 @@ namespace PiffLibrary
     {
         #region Properties
 
-        public PiffProtectionTrackEncryption Data { get; set; }
+        public PiffExtensionBox Data { get; set; }
 
         #endregion
 
@@ -27,7 +27,7 @@ namespace PiffLibrary
         /// </summary>
         public PiffProtectionSchemeInfo(Guid keyId)
         {
-            Data = new PiffProtectionTrackEncryption(keyId);
+            Data = PiffExtensionBox.ProtectionTrackEncryption(keyId);
         }
 
         #endregion

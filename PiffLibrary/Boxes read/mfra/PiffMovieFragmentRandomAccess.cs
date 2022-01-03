@@ -8,17 +8,28 @@ namespace PiffLibrary
     {
         #region Properties
 
-        public PiffTrackFragmentRandomAccess Audio { get; }
+        public PiffTrackFragmentRandomAccess Audio { get; set; }
 
-        public PiffTrackFragmentRandomAccess Video { get; }
+        public PiffTrackFragmentRandomAccess Video { get; set; }
 
-        public PiffMovieFragmentRandomAccessOffset Length { get; }
+        public PiffMovieFragmentRandomAccessOffset Length { get; set; }
 
         #endregion
 
 
         #region Init and clean-up
 
+        /// <summary>
+        /// Constructor for reading.
+        /// </summary>
+        public PiffMovieFragmentRandomAccess()
+        {
+        }
+
+
+        /// <summary>
+        /// Constructor for writing.
+        /// </summary>
         public PiffMovieFragmentRandomAccess(
             int audioTrackId, IEnumerable<PiffSampleOffset> audio,
             int videoTrackId, IEnumerable<PiffSampleOffset> video)

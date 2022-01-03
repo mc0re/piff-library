@@ -14,12 +14,13 @@
 
         /// <summary>
         /// The number of elements in <see cref="Url"/>.
+        /// When the box is present, there should be at least one.
         /// </summary>
         public int Count { get; set; } = 1;
 
 
         /// <summary>
-        /// The array has <see cref="Count"/> elements.
+        /// The array or URLs.
         /// </summary>
         [PiffArraySize(nameof(Count))]
         public PiffDataEntryUrl[] Url { get; set; } = new[] { new PiffDataEntryUrl() };

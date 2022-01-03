@@ -17,19 +17,25 @@ namespace PiffLibrary.Test
             PiffWriter.WriteHeader(stream, PiffWriterTests.SpeedwayManifest);
 
             // Data chunks are MOOF boxes
-            var audioChunk = File.ReadAllBytes("Data/moof.bin");
+            var audioChunk = File.ReadAllBytes("Data/moof-1.bin");
             var audioOffset = stream.Position;
             stream.Write(audioChunk, 0, audioChunk.Length);
 
-            var videoChunk = new byte[] { 2, 2, 2, 2 };
+            var audioData = File.ReadAllBytes("Data/mdat.bin");
+            stream.Write(audioData, 0, audioData.Length);
+
+            var videoChunk = File.ReadAllBytes("Data/moof-2.bin");
             var videoOffset = stream.Position;
             stream.Write(videoChunk, 0, videoChunk.Length);
+
+            var videoData = File.ReadAllBytes("Data/mdat.bin");
+            stream.Write(videoData, 0, videoData.Length);
 
             var audioOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = audioOffset } };
             var videoOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = videoOffset } };
             PiffWriter.WriteFooter(stream, PiffWriterTests.SpeedwayManifest, audioOffsets, videoOffsets);
 
-            Assert.AreEqual(4092, stream.Length);
+            Assert.AreEqual(6112, stream.Length);
 
             // Dump for HEX viewer
             stream.Position = 0;

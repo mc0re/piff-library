@@ -7,17 +7,19 @@ namespace PiffLibrary
     {
         #region Properties
 
-        public PiffDecodingTimeToSample Decoding { get; set; } = new PiffDecodingTimeToSample();
+        public PiffDecodingTimeToSample Decoding { get; set; }
 
-        public PiffCompositionTimeToSample Composition { get; set; } = new PiffCompositionTimeToSample();
+        public PiffCompositionTimeToSample Composition { get; set; }
 
-        public PiffSampleToChunk Samples { get; set; } = new PiffSampleToChunk();
+        public PiffSampleToChunk Samples { get; set; }
 
-        public PiffChunkOffset Chunks { get; set; } = new PiffChunkOffset();
+        public PiffChunkOffset Chunks { get; set; }
 
-        public PiffSampleSize Sizes { get; set; } = new PiffSampleSize();
+        public PiffSampleSize Sizes { get; set; }
 
         public PiffSampleDescription Description { get; set; }
+
+        public PiffSampleDependency Dependencies { get; set; }
 
         #endregion
 
@@ -37,6 +39,11 @@ namespace PiffLibrary
         /// </summary>
         private PiffSampleTable(PiffSampleDescription description)
         {
+            Decoding = new PiffDecodingTimeToSample();
+            Composition = new PiffCompositionTimeToSample();
+            Samples = new PiffSampleToChunk();
+            Chunks = new PiffChunkOffset();
+            Sizes = new PiffSampleSize();
             Description = description;
         }
 

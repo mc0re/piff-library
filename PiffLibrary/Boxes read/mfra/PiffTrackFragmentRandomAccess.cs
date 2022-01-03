@@ -13,14 +13,14 @@ namespace PiffLibrary
         /// <summary>
         /// When 1, use 64-bit time and duration. When 0 - 32-bit.
         /// </summary>
-        public byte Version { get; } = 1;
+        public byte Version { get; set; } = 1;
 
 
         [PiffDataFormat(PiffDataFormats.Int24)]
-        public int Flags { get; } = 0;
+        public int Flags { get; set; } = 0;
 
 
-        public int TrackId { get; }
+        public int TrackId { get; set; }
 
 
         /// <summary>
@@ -29,21 +29,30 @@ namespace PiffLibrary
         /// 2 bits - length of TrunNumber field - 1 [bytes]
         /// 2 bits - length of SampleNumber field - 1 [bytes]
         /// </summary>
-        public int Reserved { get; } = 0;
+        public int Reserved { get; set; } = 0;
 
 
         /// <summary>
-        /// The number of elements in the array below.
+        /// The number of elements in <see cref="Offsets"/>.
         /// </summary>
-        public int Count { get; }
+        public int Count { get; set; }
 
 
-        public PiffSampleOffsetV1[] Offsets { get; }
+        [PiffArraySize(nameof(Count))]
+        public PiffSampleOffsetV1[] Offsets { get; set; }
 
         #endregion
 
 
         #region Init and clean-up
+
+        /// <summary>
+        /// Constructor for reading.
+        /// </summary>
+        public PiffTrackFragmentRandomAccess()
+        {
+        }
+
 
         /// <summary>
         /// Constructor for writing.

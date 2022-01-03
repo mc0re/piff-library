@@ -10,7 +10,7 @@ namespace PiffLibrary
         public PiffMovieHeader MovieHeader { get; set; }
 
 
-        public PiffProtectionInfo ProtectionHeader { get; set; }
+        public PiffExtensionBox ProtectionHeader { get; set; }
 
 
         public PiffTrack AudioTrack { get; set; }
@@ -43,7 +43,7 @@ namespace PiffLibrary
             var maxDuration = Math.Max(manifest.Audio.Duration, manifest.Video.Duration);
             MovieHeader = new PiffMovieHeader(manifest.Created, maxDuration, manifest.TimeScale);
 
-            ProtectionHeader = new PiffProtectionInfo(
+            ProtectionHeader = PiffExtensionBox.ProtectionInfo(
                 manifest.ProtectionSystemId, manifest.ProtectionData);
 
             AudioTrack = PiffTrack.CreateAudio(

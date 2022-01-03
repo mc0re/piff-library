@@ -4,26 +4,18 @@
 namespace PiffLibrary
 {
     /// <summary>
-    /// General extension box.
-    /// PlayReady uses "pssh" box for protection information.
+    /// PlayReady uses "pssh" extension box for protection information.
     /// </summary>
-    [BoxName("uuid")]
-    internal class PiffProtectionInfo : PiffBoxBase
+    internal class PiffProtectionInfo
     {
+        #region Constants
+
+        public static readonly Guid BoxId = Guid.Parse("d08a4f18-10f3-4a82-b6c8-32d8aba183d3");
+
+        #endregion
+
+
         #region Properties
-
-        /// <summary>
-        /// This GUID corresponds to the PIFF protection box "PSSH".
-        /// </summary>
-        public Guid BoxId { get; set; } = Guid.Parse("d08a4f18-10f3-4a82-b6c8-32d8aba183d3");
-
-
-        public byte Version { get; set; } = 0;
-
-
-        [PiffDataFormat(PiffDataFormats.Int24)]
-        public int Flags { get; set; } = 0;
-
 
         /// <summary>
         /// PSSH system ID.
@@ -51,29 +43,6 @@ namespace PiffLibrary
         /// </summary>
         [PiffArraySize(nameof(DataSize))]
         public byte[] BinData { get; set; }// = new byte[0];
-
-        #endregion
-
-
-        #region Init and clean-up
-
-        /// <summary>
-        /// Constructor for reading.
-        /// </summary>
-        public PiffProtectionInfo()
-        {
-        }
-
-
-        /// <summary>
-        /// Constructor for writing.
-        /// </summary>
-        public PiffProtectionInfo(Guid systemId, byte[] data)
-        {
-            SystemId = systemId;
-            BinData = data;
-            DataSize = data.Length;
-        }
 
         #endregion
     }
