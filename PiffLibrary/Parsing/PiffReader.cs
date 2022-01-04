@@ -81,7 +81,16 @@ namespace PiffLibrary
         /// <returns>Box object or <see langword="null"/> (if unexpected)</returns>
         internal static long ReadBox(Stream input, Type expectedType, out PiffBoxBase box)
         {
-            long length = input.ReadUInt32();
+            var buf = new byte[4];
+            var bytesInLen = input.Read(buf, 0, buf.Length);
+
+            if (bytesInLen < buf.Length)
+            {
+                box = null;
+                return 0;
+            }
+
+            long length = buf.GetInt32(0);
             
             if (length == 0)
             {

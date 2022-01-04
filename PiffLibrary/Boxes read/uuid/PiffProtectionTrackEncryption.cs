@@ -5,8 +5,7 @@ namespace PiffLibrary
 {
     /// <summary>
     /// Defines encryption parameters for all samples in a track,
-    /// unless overwritten by SampleEncryption extension box
-    /// (box ID 0xa2394f52-5a9b-4f14-a244-6c427c648df4).
+    /// unless overwritten by <see cref="PiffSampleEncryption"/> extension box.
     /// </summary>
     internal class PiffProtectionTrackEncryption
     {

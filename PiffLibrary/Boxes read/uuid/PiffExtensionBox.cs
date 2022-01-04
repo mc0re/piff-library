@@ -32,6 +32,10 @@ namespace PiffLibrary
         public PiffProtectionTrackEncryption Track { get; set; }
 
 
+        [PiffDataFormat(nameof(UseSampleEncryption))]
+        public PiffSampleEncryption Sample { get; set; }
+
+
         /// <summary>
         /// Catches all data not collected by the previous objects.
         /// I.e. if the box ID was not recognized.
@@ -93,6 +97,10 @@ namespace PiffLibrary
 
         public PiffDataFormats UseTrackEncryption() =>
             BoxId == PiffProtectionTrackEncryption.BoxId ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
+
+
+        public PiffDataFormats UseSampleEncryption() =>
+            BoxId == PiffSampleEncryption.BoxId ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 
         #endregion
     }
