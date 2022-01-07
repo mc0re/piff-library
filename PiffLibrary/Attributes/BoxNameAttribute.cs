@@ -6,7 +6,8 @@ namespace PiffLibrary
     /// <summary>
     /// Specifies the name of the box containing a given object.
     /// </summary>
-    public class BoxNameAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Class)]
+    internal sealed class BoxNameAttribute : Attribute
     {
         public string Name { get; }
 

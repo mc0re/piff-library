@@ -47,9 +47,9 @@ namespace PiffLibrary
 
         #region Writing utility
 
-        internal static long GetSecondsFromEpoch(DateTime time)
+        internal static ulong GetSecondsFromEpoch(DateTime time)
         {
-            return (long)(time - new DateTime(1904, 1, 1)).TotalSeconds;
+            return (ulong)(time - new DateTime(1904, 1, 1)).TotalSeconds;
         }
 
 
@@ -71,7 +71,7 @@ namespace PiffLibrary
             if (boxNameAttr is null)
                 throw new ArgumentException($"Box name is not defined for type '{type.Name}'.");
 
-            var propValues = type.GetProperties().Select(prop => new PiffPropertyInfo(prop, obj)).ToArray();
+            var propValues = PiffPropertyInfo.GetProperties(obj).ToArray();
 
             return WriteBoxValues(boxNameAttr.Name, obj, propValues);
         }

@@ -5,13 +5,13 @@
         /// <summary>
         /// In <see cref="PiffManifest.TimeScale"/> units.
         /// </summary>
-        public long Duration { get; set; }
+        public ulong Duration { get; set; }
 
         public int BitRate { get; set; }
 
-        public short Width { get; set; }
+        public ushort Width { get; set; }
 
-        public short Height { get; set; }
+        public ushort Height { get; set; }
 
         /// <summary>
         /// 4CC.

@@ -3,6 +3,7 @@
 
 namespace PiffLibrary
 {
+    [AttributeUsage(AttributeTargets.Property)]
     internal class PiffDataFormatAttribute : Attribute
     {
         public string FormatFn { get; }

@@ -11,7 +11,7 @@
         Skip,
 
         /// <summary>
-        /// 1-byte integer. Default for <see langword="byte"/>.
+        /// 1-byte unsigned nteger. Default for <see langword="byte"/>.
         /// </summary>
         Int8,
 
@@ -19,6 +19,11 @@
         /// 2-byte integer. Default for <see langword="short"/>.
         /// </summary>
         Int16,
+
+        /// <summary>
+        /// 2-byte unsigned integer. Default for <see langword="ushort"/>.
+        /// </summary>
+        UInt16,
 
         /// <summary>
         /// Write the 3 right-most bytes of the integer.
@@ -41,6 +46,11 @@
         Int64,
 
         /// <summary>
+        /// 8-byte unsigned integer. Default for <see langword="ulong"/>.
+        /// </summary>
+        UInt64,
+
+        /// <summary>
         /// Dynamic-length integer, alike UTF8: 7 bits of data,
         /// highest bit set to 1 means "continues to the next byte".
         /// </summary>
@@ -59,9 +69,14 @@
 
         /// <summary>
         /// 1 byte per character, no 0-termination. Default for <see langword="string"/>.
-        /// Length must be given by <see cref="PiffDataLengthAttribute"/>.
+        /// Length must be given by <see cref="PiffStringLengthAttribute"/>.
         /// </summary>
         Ascii,
+
+        /// <summary>
+        /// 1 byte per character, 0-termination.
+        /// </summary>
+        AsciiZero,
 
         /// <summary>
         /// 1-4 bytes per character, 0-termination.
@@ -70,7 +85,7 @@
 
         /// <summary>
         /// 2 bytes per character, no 0-termination.
-        /// Length must be given by <see cref="PiffDataLengthAttribute"/>.
+        /// Length must be given by <see cref="PiffStringLengthAttribute"/>.
         /// </summary>
         Ucs2,
 

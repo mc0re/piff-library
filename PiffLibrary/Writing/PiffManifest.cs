@@ -12,15 +12,15 @@ namespace PiffLibrary
         /// <summary>
         /// How many units are in 1 second.
         /// </summary>
-        public int TimeScale { get; set; }
+        public uint TimeScale { get; set; }
 
         public PiffAudioManifest Audio { get; set; }
 
-        public int AudioTrackId { get; set; }
+        public uint AudioTrackId { get; set; }
 
         public PiffVideoManifest Video { get; set; }
 
-        public int VideoTrackId { get; set; }
+        public uint VideoTrackId { get; set; }
 
         public Guid KeyIdentifier { get; set; }
 

@@ -5,7 +5,7 @@
         /// <summary>
         /// In <see cref="PiffManifest.TimeScale"/> units.
         /// </summary>
-        public long Duration { get; set; }
+        public ulong Duration { get; set; }
 
         public int BitRate { get; set; }
 

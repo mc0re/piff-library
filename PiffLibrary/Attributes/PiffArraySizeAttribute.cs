@@ -6,6 +6,7 @@ namespace PiffLibrary
     /// <summary>
     /// Defines the number of elements in the array value.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property)]
     internal class PiffArraySizeAttribute : Attribute
     {
         public string SizeProp { get; }
@@ -23,7 +24,8 @@ namespace PiffLibrary
 
 
         /// <summary>
-        /// The number of elements is defined by the given property.
+        /// The number of elements is defined by a property with the given name.
+        /// The type of property must be convertible to integer.
         /// </summary>
         public PiffArraySizeAttribute(string sizeProperty)
         {
