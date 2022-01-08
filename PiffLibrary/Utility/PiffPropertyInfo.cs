@@ -318,9 +318,7 @@ namespace PiffLibrary
                     break;
 
                 case PiffDataFormats.Box:
-                    ctx.Push((PiffBoxBase)targetObject);
                     readBytes = PiffReader.ReadBox(input, ctx, out PiffBoxBase box);
-                    ctx.Pop();
                     value = box;
                     break;
 

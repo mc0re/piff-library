@@ -95,7 +95,7 @@ namespace PiffLibrary
             }
             else
             {
-                output.WriteBytes(1.ToBigEndian());
+                output.WriteBytes(PiffBoxBase.Length64.ToBigEndian());
                 output.WriteBytes(Encoding.ASCII.GetBytes(boxNameAttr.Name));
                 output.WriteBytes(boxLength.ToBigEndian());
             }

@@ -96,16 +96,15 @@ namespace PiffLibrary
                 ctx.AddError($"Auto-extended boxes (at position {startPosition}) not implemented. Aborting.");
                 return 0;
             }
-            else if (length < PiffBoxBase.HeaderLength)
+            else if (length != PiffBoxBase.Length64 && length < PiffBoxBase.HeaderLength)
             {
-                ctx.AddWarning($"Too small box length {length} at position {startPosition}. Skipping.");
-                input.Read(buf, 0, (int)length - sizeof(uint));
+                ctx.AddWarning($"Too small box length {length} at position {startPosition}. Ignore.");
                 return length;
             }
 
             var id = input.ReadAsciiString(PiffBoxBase.BoxTypeLength);
             
-            if (length == 1)
+            if (length == PiffBoxBase.Length64)
             {
                 // 64-bit size follows the box type
                 var bytesInLen64 = input.Read(buf, 0, sizeof(ulong));
@@ -137,7 +136,9 @@ namespace PiffLibrary
                 ca.BoxType = id;
             }
 
+            ctx.Push(box, startPosition);
             var readBytes = PiffPropertyInfo.ReadObject(box, input, length - header, ctx);
+            ctx.Pop();
 
             return readBytes + header;
         }

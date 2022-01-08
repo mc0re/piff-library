@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 
 namespace PiffLibrary
 {
     internal sealed class PiffReadContext
     {
+        #region Properties
+
         /// <summary>
         /// Reading hierarchy. Must be empty when the file is read out.
         /// </summary>
@@ -27,7 +29,9 @@ namespace PiffLibrary
         /// <summary>
         /// Used for debugging.
         /// </summary>
-        public string CurrentBoxName => Hierarchy.Peek()?.ToString() ?? "top";
+        public string CurrentBoxName => Hierarchy.Any() ? Hierarchy.Peek().ToString() : "None";
+
+        #endregion
 
 
         /// <summary>
@@ -45,9 +49,9 @@ namespace PiffLibrary
         internal void AddError(string message) => Messages.Add(message);
 
 
-        internal void Push(PiffBoxBase box)
+        internal void Push(PiffBoxBase box, long position)
         {
-            Dump.Add(new string(' ', Hierarchy.Count * 2) + box.ToString());
+            Dump.Add(new string(' ', Hierarchy.Count * 2) + $"{box} (:{position})");
             Hierarchy.Push(box);
         }
 

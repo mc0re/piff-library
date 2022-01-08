@@ -51,6 +51,26 @@ namespace PiffLibrary.Test.Boxes
 
 
         [TestMethod]
+        public void Ftype_ReadNoCompat64bit()
+        {
+            var bytes = new byte[] {
+                0, 0, 0, 1, 0X66, 0X74, 0X79, 0X70, 0, 0, 0, 0, 0, 0, 0, 24, 0X6D, 0X61, 0X6A, 0X72, 0, 0, 0, 2 };
+            using var ms = new MemoryStream(bytes, false);
+            var ctx = new PiffReadContext();
+
+            var length = PiffReader.ReadBox(ms, ctx, out var box);
+
+            Assert.IsNotNull(box);
+            Assert.AreEqual(24uL, length);
+            var ftyp = box as PiffFileType;
+            Assert.IsNotNull(ftyp);
+            Assert.AreEqual("majr", ftyp.MajorBrand);
+            Assert.AreEqual(2u, ftyp.MinorVersion);
+            Assert.AreEqual(0, ftyp.CompatibleBrands.Length);
+        }
+
+
+        [TestMethod]
         public void Ftype_ReadLimitedCompat()
         {
             // Two items in the last array, but the box length limits to 1
