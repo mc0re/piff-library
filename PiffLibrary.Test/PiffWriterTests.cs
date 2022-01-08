@@ -60,8 +60,9 @@ namespace PiffLibrary.Test
         [TestMethod]
         public void Writer_WriteSuperSpeedwayHeader()
         {
+            var ctx = new PiffWriteContext();
             using var ms = new MemoryStream();
-            PiffWriter.WriteHeader(ms, SpeedwayManifest);
+            PiffWriter.WriteHeader(ms, SpeedwayManifest, ctx);
 
             Assert.AreEqual(2383, ms.Length);
 
@@ -91,8 +92,9 @@ namespace PiffLibrary.Test
                 new PiffSampleOffset{Time = 120, Offset = 2000},
             };
 
+            var ctx = new PiffWriteContext();
             using var ms = new MemoryStream();
-            PiffWriter.WriteFooter(ms, new PiffManifest(), audio, video);
+            PiffWriter.WriteFooter(ms, new PiffManifest(), audio, video, ctx);
 
             Assert.AreEqual(148, ms.Length);
 
@@ -108,9 +110,10 @@ namespace PiffLibrary.Test
         [TestMethod]
         public void Writer_MinimalFile()
         {
+            var ctx = new PiffWriteContext();
             using var output = new MemoryStream();
 
-            PiffWriter.WriteHeader(output, SpeedwayManifest);
+            PiffWriter.WriteHeader(output, SpeedwayManifest, ctx);
 
             // Data chunks are MOOF boxes
             var audioChunk = new byte[] { 1, 1, 1, 1 };
@@ -123,7 +126,7 @@ namespace PiffLibrary.Test
 
             var audioOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = audioOffset } };
             var videoOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = videoOffset } };
-            PiffWriter.WriteFooter(output, SpeedwayManifest, audioOffsets, videoOffsets);
+            PiffWriter.WriteFooter(output, SpeedwayManifest, audioOffsets, videoOffsets, ctx);
 
             Assert.AreEqual(2501, output.Length);
         }

@@ -118,8 +118,8 @@ namespace PiffLibrary
         public static IEnumerable<PiffPropertyInfo> GetProperties(object target)
         {
             var targetType = target.GetType();
-            var ownProps = targetType.GetProperties();
             var baseProps = targetType.BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            var ownProps = targetType.GetProperties().Where(p => !baseProps.Any(bp => bp.Name == p.Name));
             var before = baseProps.Where(p => p.GetCustomAttribute<BeforeDescendantsAttribute>() != null);
             var after = baseProps.Where(p => p.GetCustomAttribute<AfterDescendantsAttribute>() != null);
 
@@ -156,9 +156,9 @@ namespace PiffLibrary
         /// Write all properties of the given object.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<byte> WriteObject(object source)
+        public static IEnumerable<byte> WriteObject(object source, PiffWriteContext ctx)
         {
-            return GetProperties(source).SelectMany(p => p.WriteValue(source));
+            return GetProperties(source).SelectMany(p => p.WriteValue(source, ctx));
         }
 
 
@@ -211,7 +211,7 @@ namespace PiffLibrary
         /// Write a single value or array with the given format.
         /// Skip the writing alltogether if the valus is <see langword="null"/>.
         /// </summary>
-        public IEnumerable<byte> WriteValue(object target)
+        public IEnumerable<byte> WriteValue(object target, PiffWriteContext ctx)
         {
             var value = Property.GetValue(target);
 
@@ -224,12 +224,12 @@ namespace PiffLibrary
             {
                 foreach (var item in value as Array)
                 {
-                    dataBytes.AddRange(WriteSingleValue(item, Format));
+                    dataBytes.AddRange(WriteSingleValue(item, Format, ctx));
                 }
             }
             else
             {
-                dataBytes.AddRange(WriteSingleValue(value, Format));
+                dataBytes.AddRange(WriteSingleValue(value, Format, ctx));
             }
 
             return dataBytes;
@@ -422,7 +422,8 @@ namespace PiffLibrary
         /// <summary>
         /// Write a single value with the given format.
         /// </summary>
-        private static IEnumerable<byte> WriteSingleValue(object value, PiffDataFormats format)
+        private static IEnumerable<byte> WriteSingleValue(
+            object value, PiffDataFormats format, PiffWriteContext ctx)
         {
             var dataBytes = new List<byte>();
 
@@ -497,11 +498,11 @@ namespace PiffLibrary
 
                 case PiffDataFormats.InlineObject:
                     // Write the object
-                    dataBytes.AddRange(WriteObject(value));
+                    dataBytes.AddRange(WriteObject(value, ctx));
                     break;
 
                 case PiffDataFormats.Box:
-                    dataBytes.AddRange(PiffWriter.WriteBoxObject((PiffBoxBase)value));
+                    dataBytes.AddRange(PiffWriter.WriteBoxObject((PiffBoxBase)value, ctx));
                     break;
 
                 default:

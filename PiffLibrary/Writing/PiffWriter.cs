@@ -12,13 +12,13 @@ namespace PiffLibrary
     {
         #region API
 
-        public static void WriteHeader(Stream strm, PiffManifest manifest)
+        public static void WriteHeader(Stream strm, PiffManifest manifest, PiffWriteContext ctx)
         {
-            var ftypBytes = WriteBoxObject(new PiffFileType()).ToArray();
+            var ftypBytes = WriteBoxObject(new PiffFileType(), ctx).ToArray();
             strm.Write(ftypBytes, 0, ftypBytes.Length);
 
             var movie = new PiffMovieMetadata(manifest);
-            var hdrBytes = WriteBoxObject(movie).ToArray();
+            var hdrBytes = WriteBoxObject(movie, ctx).ToArray();
             strm.Write(hdrBytes, 0, hdrBytes.Length);
         }
 
@@ -29,12 +29,14 @@ namespace PiffLibrary
         /// </summary>
         public static void WriteFooter(
             Stream strm, PiffManifest manifest,
-            IEnumerable<PiffSampleOffset> audioOffsets, IEnumerable<PiffSampleOffset> videoOffsets)
+            IEnumerable<PiffSampleOffset> audioOffsets,
+            IEnumerable<PiffSampleOffset> videoOffsets,
+            PiffWriteContext ctx)
         {
             var access = new PiffMovieFragmentRandomAccess(
                 manifest.AudioTrackId, audioOffsets,
                 manifest.VideoTrackId, videoOffsets);
-            var mfraBytes = WriteBoxObject(access).ToArray();
+            var mfraBytes = WriteBoxObject(access, ctx).ToArray();
             strm.Write(mfraBytes, 0, mfraBytes.Length);
         }
 
@@ -60,11 +62,12 @@ namespace PiffLibrary
         /// <summary>
         /// Create a byte stream representation of the given object.
         /// </summary>
-        internal static IEnumerable<byte> WriteBoxObject(PiffBoxBase obj)
+        internal static IEnumerable<byte> WriteBoxObject(PiffBoxBase obj, PiffWriteContext ctx)
         {
             if (obj is null)
                 return Enumerable.Empty<byte>();
 
+            ctx.Start(obj);
             var type = obj.GetType();
 
             var boxNameAttr = type.GetCustomAttribute<BoxNameAttribute>();
@@ -73,20 +76,23 @@ namespace PiffLibrary
 
             var propValues = PiffPropertyInfo.GetProperties(obj).ToArray();
 
-            return WriteBoxValues(boxNameAttr.Name, obj, propValues);
+            var bytes = WriteBoxValues(boxNameAttr.Name, obj, propValues, ctx);
+            ctx.End(obj);
+            return bytes;
         }
 
 
         /// <summary>
         /// Write a box with values.
         /// </summary>
-        private static IEnumerable<byte> WriteBoxValues(string boxName, object obj, params PiffPropertyInfo[] values)
+        private static IEnumerable<byte> WriteBoxValues(
+            string boxName, object obj, PiffPropertyInfo[] values, PiffWriteContext ctx)
         {
             var dataBytes = new List<byte>();
 
             foreach (var value in values)
             {
-                dataBytes.AddRange(value.WriteValue(obj));
+                dataBytes.AddRange(value.WriteValue(obj, ctx));
             }
 
             var boxLength = sizeof(int) + boxName.Length + dataBytes.Count;

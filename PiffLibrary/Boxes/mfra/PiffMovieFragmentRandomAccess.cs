@@ -4,19 +4,10 @@
 namespace PiffLibrary
 {
     [BoxName("mfra")]
+    [ChildType(typeof(PiffTrackFragmentRandomAccess))]
+    [ChildType(typeof(PiffMovieFragmentRandomAccessOffset))]
     internal class PiffMovieFragmentRandomAccess : PiffBoxBase
     {
-        #region Properties
-
-        public PiffTrackFragmentRandomAccess Audio { get; set; }
-
-        public PiffTrackFragmentRandomAccess Video { get; set; }
-
-        public PiffMovieFragmentRandomAccessOffset Length { get; set; }
-
-        #endregion
-
-
         #region Init and clean-up
 
         /// <summary>
@@ -34,11 +25,15 @@ namespace PiffLibrary
             uint audioTrackId, IEnumerable<PiffSampleOffset> audio,
             uint videoTrackId, IEnumerable<PiffSampleOffset> video)
         {
-            Audio = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
-            Video = new PiffTrackFragmentRandomAccess(videoTrackId, video);
+            var audioBox = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
+            var videoBox = new PiffTrackFragmentRandomAccess(videoTrackId, video);
 
-            var len = 8 + Audio.GetLength() + Video.GetLength() + 16;
-            Length = new PiffMovieFragmentRandomAccessOffset(len);
+            var len = 8 + audioBox.GetLength() + videoBox.GetLength() + 16;
+
+            Childen = new PiffBoxBase[]
+            {
+                audioBox, videoBox, new PiffMovieFragmentRandomAccessOffset(len)
+            };
         }
 
         #endregion

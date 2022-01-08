@@ -10,10 +10,11 @@ namespace PiffLibrary.Test
         [TestMethod]
         public void Reader_MinimalRoundtrip()
         {
+            var ctx = new PiffWriteContext();
             using var stream = new MemoryStream();
 
             // Write the data
-            PiffWriter.WriteHeader(stream, PiffWriterTests.SpeedwayManifest);
+            PiffWriter.WriteHeader(stream, PiffWriterTests.SpeedwayManifest, ctx);
 
             // Data chunks are MOOF boxes
             var audioChunk = File.ReadAllBytes("Data/moof-1.bin");
@@ -32,7 +33,7 @@ namespace PiffLibrary.Test
 
             var audioOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = audioOffset } };
             var videoOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = videoOffset } };
-            PiffWriter.WriteFooter(stream, PiffWriterTests.SpeedwayManifest, audioOffsets, videoOffsets);
+            PiffWriter.WriteFooter(stream, PiffWriterTests.SpeedwayManifest, audioOffsets, videoOffsets, ctx);
 
             Assert.AreEqual(6112, stream.Length);
 
