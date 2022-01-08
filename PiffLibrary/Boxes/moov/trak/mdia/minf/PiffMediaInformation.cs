@@ -26,7 +26,24 @@ namespace PiffLibrary
         /// </summary>
         private PiffMediaInformation(PiffSoundMediaHeader sound, PiffVideoMediaHeader video, PiffSampleTable index)
         {
-            Childen = new PiffBoxBase[] { sound, video, index };
+            // There must be a dinf box
+            var dinf = new PiffDataInformation
+            {
+                Childen = new PiffBoxBase[]
+                {
+                    new PiffDataReference
+                    {
+                        Count = 1,
+                        Childen = new PiffBoxBase[]
+                        {
+                            new PiffDataEntryUrl { Flags = 1 }
+                        }
+                    }
+                }
+            };
+
+            var track = (PiffBoxBase)sound ?? video;
+            Childen = new PiffBoxBase[] { track, dinf, index };
         }
 
 

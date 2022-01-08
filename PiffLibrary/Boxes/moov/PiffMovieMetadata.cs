@@ -21,6 +21,7 @@ namespace PiffLibrary
 
         /// <summary>
         /// Constructor for writing.
+        /// Creates a lot of default information.
         /// </summary>
         /// <param name="manifest">Movie data</param>
         public PiffMovieMetadata(PiffManifest manifest)

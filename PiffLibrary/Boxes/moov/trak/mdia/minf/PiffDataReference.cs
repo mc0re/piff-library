@@ -11,7 +11,7 @@
         /// The number of child elements.
         /// When the box is present, there should be at least one.
         /// </summary>
-        public int Count { get; set; } = 1;
+        public int Count { get; set; }
 
         #endregion
     }
