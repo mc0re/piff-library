@@ -21,7 +21,7 @@ namespace PiffLibrary
             var file = new PiffFile();
             var ctx = new PiffReadContext();
 
-            while (PiffReader.ReadBox(input, null, out var box) > 0 && box != null)
+            while (PiffReader.ReadBox(input, ctx, out var box) > 0 && box != null)
             {
                 file.mBoxes.Add(box);
 

@@ -24,7 +24,7 @@ namespace PiffLibrary
         /// <summary>
         /// The number of elements in <see cref="Offsets"/>.
         /// </summary>
-        public int Count { get; set; }
+        public uint Count { get; set; }
 
 
         [PiffArraySize(nameof(Count))]
@@ -58,7 +58,7 @@ namespace PiffLibrary
                 TrunNumber = off.TrunNumber,
                 SampleNumber = off.SampleNumber
             }).ToArray();
-            Count = Childen.Length;
+            Count = (uint)Childen.Length;
         }
 
         #endregion
@@ -66,7 +66,7 @@ namespace PiffLibrary
 
         #region API
 
-        public int GetLength()
+        public uint GetLength()
         {
             return 24 + Count * 19 /* size of PiffSampleOffsetV1 */;
         }

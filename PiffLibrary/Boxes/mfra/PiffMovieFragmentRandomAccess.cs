@@ -28,7 +28,7 @@ namespace PiffLibrary
             var audioBox = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
             var videoBox = new PiffTrackFragmentRandomAccess(videoTrackId, video);
 
-            var len = 8 + audioBox.GetLength() + videoBox.GetLength() + 16;
+            var len = HeaderLength + audioBox.GetLength() + videoBox.GetLength() + 16;
 
             Childen = new PiffBoxBase[]
             {

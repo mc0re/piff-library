@@ -13,15 +13,6 @@ namespace PiffLibrary
     public class PiffReader
     {
         #region Fields
-
-        private const int BoxTypeLength = 4;
-
-
-        /// <summary>
-        /// Length field and box type.
-        /// </summary>
-        private const uint HeaderLength = sizeof(int) + BoxTypeLength;
-
         private static readonly Dictionary<string, Type> sBoxes;
 
         #endregion
@@ -87,7 +78,7 @@ namespace PiffLibrary
         internal static ulong ReadBox(Stream input, PiffReadContext ctx, out PiffBoxBase box)
         {
             var startPosition = input.Position;
-            var header = HeaderLength;
+            var header = PiffBoxBase.HeaderLength;
             box = null;
 
             // In case it's 64-bit length, prepare a larger buffer
@@ -105,14 +96,14 @@ namespace PiffLibrary
                 ctx.AddError($"Auto-extended boxes (at position {startPosition}) not implemented. Aborting.");
                 return 0;
             }
-            else if (length < HeaderLength)
+            else if (length < PiffBoxBase.HeaderLength)
             {
                 ctx.AddWarning($"Too small box length {length} at position {startPosition}. Skipping.");
                 input.Read(buf, 0, (int)length - sizeof(uint));
                 return length;
             }
 
-            var id = input.ReadAsciiString(BoxTypeLength);
+            var id = input.ReadAsciiString(PiffBoxBase.BoxTypeLength);
             
             if (length == 1)
             {

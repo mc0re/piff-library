@@ -14,11 +14,11 @@ namespace PiffLibrary
 
         public static void WriteHeader(Stream strm, PiffManifest manifest, PiffWriteContext ctx)
         {
-            var ftypBytes = WriteBoxObject(new PiffFileType(), ctx).ToArray();
+            var ftypBytes = WriteBox(new PiffFileType(), ctx).ToArray();
             strm.Write(ftypBytes, 0, ftypBytes.Length);
 
             var movie = new PiffMovieMetadata(manifest);
-            var hdrBytes = WriteBoxObject(movie, ctx).ToArray();
+            var hdrBytes = WriteBox(movie, ctx).ToArray();
             strm.Write(hdrBytes, 0, hdrBytes.Length);
         }
 
@@ -36,7 +36,7 @@ namespace PiffLibrary
             var access = new PiffMovieFragmentRandomAccess(
                 manifest.AudioTrackId, audioOffsets,
                 manifest.VideoTrackId, videoOffsets);
-            var mfraBytes = WriteBoxObject(access, ctx).ToArray();
+            var mfraBytes = WriteBox(access, ctx).ToArray();
             strm.Write(mfraBytes, 0, mfraBytes.Length);
         }
 
@@ -59,10 +59,16 @@ namespace PiffLibrary
             => (long)(duration.TotalSeconds * timeScale);
 
 
+        internal static ulong GetBoxLength(PiffBoxBase box)
+        {
+            return PiffBoxBase.HeaderLength + PiffPropertyInfo.GetObjectLength(box);
+        }
+
+
         /// <summary>
         /// Create a byte stream representation of the given object.
         /// </summary>
-        internal static IEnumerable<byte> WriteBoxObject(PiffBoxBase obj, PiffWriteContext ctx)
+        internal static IEnumerable<byte> WriteBox(PiffBoxBase obj, PiffWriteContext ctx)
         {
             if (obj is null)
                 return Enumerable.Empty<byte>();

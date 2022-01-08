@@ -102,7 +102,9 @@ namespace PiffLibrary.Test
 
             var firstLen = actual.GetInt32(0);
             var lastLen = actual.GetInt32(actual.Length - 4);
+            // "mfra" takes the whole footer
             Assert.AreEqual(ms.Length, firstLen);
+            // "mfro" keeps the length of "mfra"
             Assert.AreEqual(firstLen, lastLen);
         }
 

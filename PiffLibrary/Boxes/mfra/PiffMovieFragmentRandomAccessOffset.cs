@@ -5,7 +5,7 @@
     {
         #region Properties
 
-        public int MfraSize { get; set; }
+        public uint MfraSize { get; set; }
 
         #endregion
 
@@ -23,9 +23,9 @@
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public PiffMovieFragmentRandomAccessOffset(int mfraSize)
+        public PiffMovieFragmentRandomAccessOffset(uint mfraSize)
         {
-            MfraSize = mfraSize;
+            MfraSize = (uint)mfraSize;
         }
 
         #endregion

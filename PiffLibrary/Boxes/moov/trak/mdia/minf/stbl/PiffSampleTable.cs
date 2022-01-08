@@ -18,6 +18,8 @@ namespace PiffLibrary
     [ChildType(typeof(PiffChunkOffset64))]
     [ChildType(typeof(PiffPaddingBits))]
     [ChildType(typeof(PiffSubSampleInformation))]
+    [ChildType(typeof(PiffSampleAuxiliaryInformation))]
+    [ChildType(typeof(PiffSampleAuxiliaryOffset))]
     internal class PiffSampleTable : PiffBoxBase
     {
         #region Init and clean-up

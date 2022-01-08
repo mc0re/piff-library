@@ -163,47 +163,12 @@ namespace PiffLibrary
 
 
         /// <summary>
-        /// Read this value into the given <paramref name="targetObject"/>.
+        /// Get data length in bytes, if the box was written to a stream.
         /// </summary>
-        /// <returns>The number of bytes read</returns>
-        public ulong ReadValue(object targetObject, Stream input, ulong bytesLeft, PiffReadContext ctx)
+        public static ulong GetObjectLength(object source)
         {
-            var readBytes = 0uL;
-
-            if (IsArray)
-            {
-                var list = new List<object>();
-                var count = ArraySize ?? int.MaxValue;
-
-                while (count > 0 && bytesLeft > 0)
-                {
-                    var readSize = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object item);
-                    list.Add(item);
-                    readBytes += readSize;
-                    bytesLeft -= readSize;
-                    count--;
-                }
-
-                if (Property.CanWrite)
-                {
-                    var array = Array.CreateInstance(ElementType, list.Count);
-                    Property.SetValue(targetObject, array);
-
-                    for (var i = 0; i < list.Count; i++)
-                        array.SetValue(list[i], i);
-                }
-            }
-            else if (Format != PiffDataFormats.Skip)
-            {
-                readBytes = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object value);
-
-                if (Property.CanWrite)
-                {
-                    Property.SetValue(targetObject, value);
-                }
-            }
-
-            return readBytes;
+            // There is no Sum() for ulong, therefore using Aggregate
+            return GetProperties(source).Aggregate(0uL, (sz, p) => sz + p.GetValueLength(source));
         }
 
 
@@ -238,7 +203,7 @@ namespace PiffLibrary
         #endregion
 
 
-        #region Utility
+        #region Format utility
 
         /// <summary>
         /// Unless the format is explicitly specified, use the default one.
@@ -286,6 +251,51 @@ namespace PiffLibrary
 
 
         #region Reading utility
+
+        /// <summary>
+        /// Read this value into the given <paramref name="targetObject"/>.
+        /// </summary>
+        /// <returns>The number of bytes read</returns>
+        private ulong ReadValue(object targetObject, Stream input, ulong bytesLeft, PiffReadContext ctx)
+        {
+            var readBytes = 0uL;
+
+            if (IsArray)
+            {
+                var list = new List<object>();
+                var count = ArraySize ?? int.MaxValue;
+
+                while (count > 0 && bytesLeft > 0)
+                {
+                    var readSize = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object item);
+                    list.Add(item);
+                    readBytes += readSize;
+                    bytesLeft -= readSize;
+                    count--;
+                }
+
+                if (Property.CanWrite)
+                {
+                    var array = Array.CreateInstance(ElementType, list.Count);
+                    Property.SetValue(targetObject, array);
+
+                    for (var i = 0; i < list.Count; i++)
+                        array.SetValue(list[i], i);
+                }
+            }
+            else if (Format != PiffDataFormats.Skip)
+            {
+                readBytes = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object value);
+
+                if (Property.CanWrite)
+                {
+                    Property.SetValue(targetObject, value);
+                }
+            }
+
+            return readBytes;
+        }
+
 
         /// <summary>
         /// Read a box, a POCO, a fixed-length string, or a primitive value.
@@ -420,6 +430,92 @@ namespace PiffLibrary
         #region Writing utility
 
         /// <summary>
+        /// Return the length (in bytes) of a single value or array with the given format.
+        /// </summary>
+        private ulong GetValueLength(object source)
+        {
+            var value = Property.GetValue(source);
+
+            if (value is null || Format == PiffDataFormats.Skip)
+                return 0;
+
+            var sz = 0uL;
+
+            if (IsArray)
+            {
+                foreach (var item in value as Array)
+                {
+                   sz += GetSingleValueLength(item, Format);
+                }
+            }
+            else
+            {
+                sz += GetSingleValueLength(value, Format);
+            }
+
+            return sz;
+        }
+
+
+        /// <summary>
+        /// Get the length (in bytes) of a single value with the given format.
+        /// </summary>
+        private static ulong GetSingleValueLength(
+            object value, PiffDataFormats format)
+        {
+            switch (format)
+            {
+                case PiffDataFormats.Int2Minus1:
+                case PiffDataFormats.Int5:
+                case PiffDataFormats.Int8:
+                    return 1;
+
+                case PiffDataFormats.Int16:
+                case PiffDataFormats.UInt16:
+                    return 2;
+
+                case PiffDataFormats.Int24:
+                    return 3;
+
+                case PiffDataFormats.Int32:
+                case PiffDataFormats.UInt32:
+                    return 4;
+
+                case PiffDataFormats.Int64:
+                case PiffDataFormats.UInt64:
+                    return 8;
+
+                case PiffDataFormats.DynamicInt:
+                    return (ulong)((int)value).ToDynamic().Count();
+
+                case PiffDataFormats.Ascii:
+                    return (ulong)((string)value).Length;
+
+                case PiffDataFormats.AsciiZero:
+                    return (ulong)((string)value).Length + 1;
+
+                case PiffDataFormats.Utf8Zero:
+                    return (ulong)Encoding.UTF8.GetBytes((string)value).Count() + 1;
+
+                case PiffDataFormats.Ucs2:
+                    return (ulong)Encoding.Unicode.GetBytes((string)value).Count();
+
+                case PiffDataFormats.GuidBytes:
+                    return 16;
+
+                case PiffDataFormats.InlineObject:
+                    return GetObjectLength(value);
+
+                case PiffDataFormats.Box:
+                    return PiffWriter.GetBoxLength((PiffBoxBase)value);
+
+                default:
+                    throw new ArgumentException($"Unsupported format '{format}'.");
+            }
+        }
+
+
+        /// <summary>
         /// Write a single value with the given format.
         /// </summary>
         private static IEnumerable<byte> WriteSingleValue(
@@ -502,7 +598,7 @@ namespace PiffLibrary
                     break;
 
                 case PiffDataFormats.Box:
-                    dataBytes.AddRange(PiffWriter.WriteBoxObject((PiffBoxBase)value, ctx));
+                    dataBytes.AddRange(PiffWriter.WriteBox((PiffBoxBase)value, ctx));
                     break;
 
                 default:
