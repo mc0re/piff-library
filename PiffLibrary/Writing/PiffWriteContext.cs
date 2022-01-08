@@ -10,9 +10,9 @@ namespace PiffLibrary
         public IList<string> Dump { get; } = new List<string>();
 
 
-        internal void Start(PiffBoxBase obj)
+        internal void Start(PiffBoxBase box, long position)
         {
-            Dump.Add(new string(' ', mLevel * 2) + obj.ToString());
+            Dump.Add(new string(' ', mLevel * 2) + $"{box} (:{position})");
             mLevel++;
         }
 

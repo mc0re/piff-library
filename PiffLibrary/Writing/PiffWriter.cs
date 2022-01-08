@@ -12,14 +12,11 @@ namespace PiffLibrary
     {
         #region API
 
-        public static void WriteHeader(Stream strm, PiffManifest manifest, PiffWriteContext ctx)
+        public static void WriteHeader(Stream output, PiffManifest manifest, PiffWriteContext ctx)
         {
-            var ftypBytes = WriteBox(new PiffFileType(), ctx).ToArray();
-            strm.Write(ftypBytes, 0, ftypBytes.Length);
-
+            WriteBox(output, new PiffFileType(), ctx);
             var movie = new PiffMovieMetadata(manifest);
-            var hdrBytes = WriteBox(movie, ctx).ToArray();
-            strm.Write(hdrBytes, 0, hdrBytes.Length);
+            WriteBox(output, movie, ctx);
         }
 
 
@@ -28,7 +25,7 @@ namespace PiffLibrary
         /// The <paramref name="manifest"/> is used to extract track iDs.
         /// </summary>
         public static void WriteFooter(
-            Stream strm, PiffManifest manifest,
+            Stream output, PiffManifest manifest,
             IEnumerable<PiffSampleOffset> audioOffsets,
             IEnumerable<PiffSampleOffset> videoOffsets,
             PiffWriteContext ctx)
@@ -36,8 +33,7 @@ namespace PiffLibrary
             var access = new PiffMovieFragmentRandomAccess(
                 manifest.AudioTrackId, audioOffsets,
                 manifest.VideoTrackId, videoOffsets);
-            var mfraBytes = WriteBox(access, ctx).ToArray();
-            strm.Write(mfraBytes, 0, mfraBytes.Length);
+            WriteBox(output, access, ctx);
         }
 
 
@@ -61,51 +57,56 @@ namespace PiffLibrary
 
         internal static ulong GetBoxLength(PiffBoxBase box)
         {
-            return PiffBoxBase.HeaderLength + PiffPropertyInfo.GetObjectLength(box);
+            var body = PiffPropertyInfo.GetObjectLength(box);
+
+            if (body + PiffBoxBase.HeaderLength <= uint.MaxValue)
+            {
+                return body + PiffBoxBase.HeaderLength;
+            }
+            else
+            {
+                // 64-bit length
+                return body + PiffBoxBase.HeaderLength + sizeof(ulong);
+            }
         }
 
 
         /// <summary>
         /// Create a byte stream representation of the given object.
         /// </summary>
-        internal static IEnumerable<byte> WriteBox(PiffBoxBase obj, PiffWriteContext ctx)
+        internal static void WriteBox(Stream output, PiffBoxBase box, PiffWriteContext ctx)
         {
-            if (obj is null)
-                return Enumerable.Empty<byte>();
+            if (box is null)
+                return;
 
-            ctx.Start(obj);
-            var type = obj.GetType();
+            ctx.Start(box, output.Position);
 
+            var type = box.GetType();
             var boxNameAttr = type.GetCustomAttribute<BoxNameAttribute>();
             if (boxNameAttr is null)
                 throw new ArgumentException($"Box name is not defined for type '{type.Name}'.");
 
-            var propValues = PiffPropertyInfo.GetProperties(obj).ToArray();
+            var boxLength = GetBoxLength(box);
 
-            var bytes = WriteBoxValues(boxNameAttr.Name, obj, propValues, ctx);
-            ctx.End(obj);
-            return bytes;
-        }
-
-
-        /// <summary>
-        /// Write a box with values.
-        /// </summary>
-        private static IEnumerable<byte> WriteBoxValues(
-            string boxName, object obj, PiffPropertyInfo[] values, PiffWriteContext ctx)
-        {
-            var dataBytes = new List<byte>();
-
-            foreach (var value in values)
+            if (boxLength <= uint.MaxValue)
             {
-                dataBytes.AddRange(value.WriteValue(obj, ctx));
+                output.WriteBytes(((uint)boxLength).ToBigEndian());
+                output.WriteBytes(Encoding.ASCII.GetBytes(boxNameAttr.Name));
+            }
+            else
+            {
+                output.WriteBytes(1.ToBigEndian());
+                output.WriteBytes(Encoding.ASCII.GetBytes(boxNameAttr.Name));
+                output.WriteBytes(boxLength.ToBigEndian());
             }
 
-            var boxLength = sizeof(int) + boxName.Length + dataBytes.Count;
-            var hdrBytes = boxLength.ToBigEndian().Concat(
-                           Encoding.ASCII.GetBytes(boxName));
+            var propValues = PiffPropertyInfo.GetProperties(box).ToArray();
+            foreach (var value in propValues)
+            {
+                value.WriteValue(output, box, ctx);
+            }
 
-            return hdrBytes.Concat(dataBytes);
+            ctx.End(box);
         }
 
         #endregion

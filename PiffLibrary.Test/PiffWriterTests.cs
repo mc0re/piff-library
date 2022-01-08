@@ -73,7 +73,7 @@ namespace PiffLibrary.Test
             {
                 // During debugging - skip some addresses to get to the data
                 if ((new[] { 0x7FFFFFFF }).Contains(i)) continue;
-                Assert.AreEqual(expected[i], actual[i], $"Index {i}: expected {expected[i]:X}, actual {actual[i]:X}");
+                Assert.AreEqual(expected[i], actual[i], $"Index 0x{i:X}: expected 0x{expected[i]:X2}, actual 0x{actual[i]:X2}");
             }
         }
 

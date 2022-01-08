@@ -106,8 +106,9 @@ namespace PiffLibrary.Test.Boxes
                 0, 0, 0, 24, 0X66, 0X74, 0X79, 0X70, 0X6D, 0X61, 0X6A, 0X72, 0, 0, 0, 2,
                 0X63, 0X6F, 0X6D, 0X31, 0X63, 0X6F, 0X6D, 0X32 };
 
-            var written = PiffWriter.WriteBox(box, ctx).ToArray();
+            PiffWriter.WriteBox(ms, box, ctx);
 
+            var written = ms.GetBuffer().Take((int)ms.Length).ToArray();
             Assert.IsNotNull(written);
             Assert.AreEqual(24, written.Length);
             CollectionAssert.AreEqual(bytes, written);

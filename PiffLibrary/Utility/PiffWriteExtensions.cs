@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 
@@ -9,6 +10,8 @@ namespace PiffLibrary
     {
         public static int[] GuidByteOrder = new[] { 3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 };
 
+
+        #region Generate bytes
 
         /// <summary>
         /// Convert GUID to big-endian (as opposed to <see cref="Guid.ToByteArray"/>).
@@ -129,5 +132,18 @@ namespace PiffLibrary
 
             return bytes;
         }
+
+        #endregion
+
+
+        #region Stream writes
+
+        public static void WriteBytes(this Stream output, IEnumerable<byte> bytes)
+        {
+            var arr = bytes.ToArray();
+            output.Write(arr, 0, arr.Length);
+        }
+
+        #endregion
     }
 }

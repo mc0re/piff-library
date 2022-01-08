@@ -153,22 +153,25 @@ namespace PiffLibrary
 
 
         /// <summary>
-        /// Write all properties of the given object.
-        /// </summary>
-        /// <returns></returns>
-        public static IEnumerable<byte> WriteObject(object source, PiffWriteContext ctx)
-        {
-            return GetProperties(source).SelectMany(p => p.WriteValue(source, ctx));
-        }
-
-
-        /// <summary>
         /// Get data length in bytes, if the box was written to a stream.
         /// </summary>
         public static ulong GetObjectLength(object source)
         {
+            if (source is null)
+                return 0;
+
             // There is no Sum() for ulong, therefore using Aggregate
             return GetProperties(source).Aggregate(0uL, (sz, p) => sz + p.GetValueLength(source));
+        }
+
+
+        /// <summary>
+        /// Write all properties of the given object.
+        /// </summary>
+        public static void WriteObject(Stream output, object source, PiffWriteContext ctx)
+        {
+            foreach (var p in GetProperties(source))
+                p.WriteValue(output, source, ctx);
         }
 
 
@@ -176,28 +179,24 @@ namespace PiffLibrary
         /// Write a single value or array with the given format.
         /// Skip the writing alltogether if the valus is <see langword="null"/>.
         /// </summary>
-        public IEnumerable<byte> WriteValue(object target, PiffWriteContext ctx)
+        public void WriteValue(Stream output, object target, PiffWriteContext ctx)
         {
             var value = Property.GetValue(target);
 
             if (value is null || Format == PiffDataFormats.Skip)
-                return Enumerable.Empty<byte>();
-
-            var dataBytes = new List<byte>();
+                return;
 
             if (IsArray)
             {
                 foreach (var item in value as Array)
                 {
-                    dataBytes.AddRange(WriteSingleValue(item, Format, ctx));
+                    WriteSingleValue(output, item, Format, ctx);
                 }
             }
             else
             {
-                dataBytes.AddRange(WriteSingleValue(value, Format, ctx));
+                WriteSingleValue(output, value, Format, ctx);
             }
-
-            return dataBytes;
         }
 
         #endregion
@@ -518,94 +517,88 @@ namespace PiffLibrary
         /// <summary>
         /// Write a single value with the given format.
         /// </summary>
-        private static IEnumerable<byte> WriteSingleValue(
-            object value, PiffDataFormats format, PiffWriteContext ctx)
+        private static void WriteSingleValue(
+            Stream output, object value, PiffDataFormats format, PiffWriteContext ctx)
         {
-            var dataBytes = new List<byte>();
-
             switch (format)
             {
                 case PiffDataFormats.Int8:
-                    dataBytes.Add((byte)value);
+                    output.WriteByte((byte)value);
                     break;
 
                 case PiffDataFormats.Int16:
-                    dataBytes.AddRange(((short)value).ToBigEndian());
+                    output.WriteBytes(((short)value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt16:
-                    dataBytes.AddRange(((ushort)value).ToBigEndian());
+                    output.WriteBytes(((ushort)value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.Int24:
-                    dataBytes.AddRange(((int)value).ToBigEndian().Skip(1));
+                    output.WriteBytes(((int)value).ToBigEndian().Skip(1));
                     break;
 
                 case PiffDataFormats.Int32:
-                    dataBytes.AddRange(((int)value).ToBigEndian());
+                    output.WriteBytes(((int)value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt32:
-                    dataBytes.AddRange(((uint)value).ToBigEndian());
+                    output.WriteBytes(((uint)value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.Int64:
-                    dataBytes.AddRange(((long)value).ToBigEndian());
+                    output.WriteBytes(((long)value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt64:
-                    dataBytes.AddRange(((ulong)value).ToBigEndian());
+                    output.WriteBytes(((ulong)value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.DynamicInt:
-                    dataBytes.AddRange(((int)value).ToDynamic());
+                    output.WriteBytes(((int)value).ToDynamic());
                     break;
 
                 case PiffDataFormats.Int2Minus1:
-                    dataBytes.Add((byte)(((byte)value - 1) | 0xFC));
+                    output.WriteByte((byte)(((byte)value - 1) | 0xFC));
                     break;
 
                 case PiffDataFormats.Int5:
-                    dataBytes.Add((byte)((byte)value | 0xE0));
+                    output.WriteByte((byte)((byte)value | 0xE0));
                     break;
 
                 case PiffDataFormats.Ascii:
-                    dataBytes.AddRange(Encoding.ASCII.GetBytes((string)value));
+                    output.WriteBytes(Encoding.ASCII.GetBytes((string)value));
                     break;
 
                 case PiffDataFormats.AsciiZero:
-                    dataBytes.AddRange(Encoding.ASCII.GetBytes((string)value));
-                    dataBytes.Add(0);
+                    output.WriteBytes(Encoding.ASCII.GetBytes((string)value).Append((byte)0));
                     break;
 
                 case PiffDataFormats.Utf8Zero:
-                    dataBytes.AddRange(Encoding.UTF8.GetBytes((string)value));
-                    dataBytes.Add(0);
+                    output.WriteBytes(Encoding.UTF8.GetBytes((string)value).Append((byte)0));
                     break;
 
                 case PiffDataFormats.Ucs2:
-                    dataBytes.AddRange(Encoding.Unicode.GetBytes((string)value));
+                    output.WriteBytes(Encoding.Unicode.GetBytes((string)value));
                     break;
 
                 case PiffDataFormats.GuidBytes:
                     // Need reformatting
-                    dataBytes.AddRange(((Guid)value).ToBigEndianArray());
+                    output.WriteBytes(((Guid)value).ToBigEndianArray());
                     break;
 
                 case PiffDataFormats.InlineObject:
                     // Write the object
-                    dataBytes.AddRange(WriteObject(value, ctx));
+                    WriteObject(output, value, ctx);
                     break;
 
                 case PiffDataFormats.Box:
-                    dataBytes.AddRange(PiffWriter.WriteBox((PiffBoxBase)value, ctx));
+                    PiffWriter.WriteBox(output, (PiffBoxBase)value, ctx);
                     break;
 
                 default:
                     throw new ArgumentException($"Unsupported format '{format}'.");
             }
-
-            return dataBytes;
         }
 
         #endregion
