@@ -62,15 +62,5 @@ namespace PiffLibrary
         }
 
         #endregion
-
-
-        #region API
-
-        public uint GetLength()
-        {
-            return 24 + Count * 19 /* size of PiffSampleOffsetV1 */;
-        }
-
-        #endregion
     }
 }

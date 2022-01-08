@@ -27,13 +27,15 @@ namespace PiffLibrary
         {
             var audioBox = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
             var videoBox = new PiffTrackFragmentRandomAccess(videoTrackId, video);
-
-            var len = HeaderLength + audioBox.GetLength() + videoBox.GetLength() + 16;
+            var offsetBox = new PiffMovieFragmentRandomAccessOffset();
 
             Childen = new PiffBoxBase[]
             {
-                audioBox, videoBox, new PiffMovieFragmentRandomAccessOffset(len)
+                audioBox, videoBox, offsetBox
             };
+
+            var len = (uint)PiffWriter.GetBoxLength(this);
+            offsetBox.MfraSize = len;
         }
 
         #endregion
