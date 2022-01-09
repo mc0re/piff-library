@@ -11,7 +11,7 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Ftype_ReadNoCompat()
         {
-            var bytes = new byte[] { 0, 0, 0, 16, 0X66, 0X74, 0X79, 0X70, 0X6D, 0X61, 0X6A, 0X72, 0, 0, 0, 2 };
+            var bytes = new byte[] { 0, 0, 0, 16, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2 };
             using var ms = new MemoryStream(bytes, false);
             var ctx = new PiffReadContext();
 
@@ -31,8 +31,8 @@ namespace PiffLibrary.Test.Boxes
         public void Ftype_ReadTwoCompat()
         {
             var bytes = new byte[] {
-                0, 0, 0, 24, 0X66, 0X74, 0X79, 0X70, 0X6D, 0X61, 0X6A, 0X72, 0, 0, 0, 2,
-                0X63, 0X6F, 0X6D, 0X31, 0X63, 0X6F, 0X6D, 0X32 };
+                0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
+                0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
             using var ms = new MemoryStream(bytes, false);
             var ctx = new PiffReadContext();
 
@@ -54,7 +54,7 @@ namespace PiffLibrary.Test.Boxes
         public void Ftype_ReadNoCompat64bit()
         {
             var bytes = new byte[] {
-                0, 0, 0, 1, 0X66, 0X74, 0X79, 0X70, 0, 0, 0, 0, 0, 0, 0, 24, 0X6D, 0X61, 0X6A, 0X72, 0, 0, 0, 2 };
+                0, 0, 0, 1, 0x66, 0x74, 0x79, 0x70, 0, 0, 0, 0, 0, 0, 0, 24, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2 };
             using var ms = new MemoryStream(bytes, false);
             var ctx = new PiffReadContext();
 
@@ -75,8 +75,8 @@ namespace PiffLibrary.Test.Boxes
         {
             // Two items in the last array, but the box length limits to 1
             var bytes = new byte[] {
-                0, 0, 0, 20, 0X66, 0X74, 0X79, 0X70, 0X6D, 0X61, 0X6A, 0X72, 0, 0, 0, 2,
-                0X63, 0X6F, 0X6D, 0X31, 0X63, 0X6F, 0X6D, 0X32 };
+                0, 0, 0, 20, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
+                0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
             using var ms = new MemoryStream(bytes, false);
             var ctx = new PiffReadContext();
 
@@ -123,8 +123,8 @@ namespace PiffLibrary.Test.Boxes
                 CompatibleBrands = new [] { "com1", "com2" }
             };
             var bytes = new byte[] {
-                0, 0, 0, 24, 0X66, 0X74, 0X79, 0X70, 0X6D, 0X61, 0X6A, 0X72, 0, 0, 0, 2,
-                0X63, 0X6F, 0X6D, 0X31, 0X63, 0X6F, 0X6D, 0X32 };
+                0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
+                0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
 
             PiffWriter.WriteBox(ms, box, ctx);
 

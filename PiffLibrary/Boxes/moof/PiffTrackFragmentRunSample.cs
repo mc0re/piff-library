@@ -9,19 +9,19 @@
 
 
         [PiffDataFormat(nameof(FlagsHaveDuration))]
-        public int SampleDuration { get; set; }
+        public uint SampleDuration { get; set; }
 
 
         [PiffDataFormat(nameof(FlagsHaveSize))]
-        public int SampleSize { get; set; }
+        public uint SampleSize { get; set; }
 
 
         [PiffDataFormat(nameof(FlagsHaveFlags))]
-        public int SampleFlags { get; set; }
+        public uint SampleFlags { get; set; }
 
 
-        [PiffDataFormat(nameof(FlagsHaveOffset))]
-        public int SampleOffset { get; set; }
+        [PiffDataFormat(nameof(GetOffsetFormat))]
+        public long SampleOffset { get; set; }
 
         #endregion
 
@@ -39,22 +39,24 @@
         #region Format API
 
         public PiffDataFormats FlagsHaveDuration() =>
-            (Parent.Flags & 0x100) != 0 ? PiffDataFormats.Int32 : PiffDataFormats.Skip;
+            (Parent.Flags & 0x100) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         public PiffDataFormats FlagsHaveSize() =>
-            (Parent.Flags & 0x200) != 0 ? PiffDataFormats.Int32 : PiffDataFormats.Skip;
+            (Parent.Flags & 0x200) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         public PiffDataFormats FlagsHaveFlags() =>
-            (Parent.Flags & 0x400) != 0 ? PiffDataFormats.Int32 : PiffDataFormats.Skip;
+            (Parent.Flags & 0x400) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         /// <summary>
         /// Version = 0 - unsigned, otherwise signed.
         /// </summary>
-        public PiffDataFormats FlagsHaveOffset() =>
-            (Parent.Flags & 0x800) != 0 ? PiffDataFormats.Int32 : PiffDataFormats.Skip;
+        public PiffDataFormats GetOffsetFormat() =>
+            (Parent.Flags & 0x800) == 0 ? PiffDataFormats.Skip :
+            Parent.Version == 0 ? PiffDataFormats.UInt32 :
+            PiffDataFormats.Int32;
 
         #endregion
     }

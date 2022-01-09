@@ -31,8 +31,8 @@ namespace PiffLibrary.Test
             var videoData = File.ReadAllBytes("Data/mdat.bin");
             stream.Write(videoData, 0, videoData.Length);
 
-            var audioOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = audioOffset } };
-            var videoOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = videoOffset } };
+            var audioOffsets = new[] { new PiffSampleOffsetDto { Time = 0, Offset = (ulong) audioOffset } };
+            var videoOffsets = new[] { new PiffSampleOffsetDto { Time = 0, Offset = (ulong) videoOffset } };
             PiffWriter.WriteFooter(stream, PiffWriterTests.SpeedwayManifest, audioOffsets, videoOffsets, ctx);
 
             Assert.AreEqual(6112, stream.Length);

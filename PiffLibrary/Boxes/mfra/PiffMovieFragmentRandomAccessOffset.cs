@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Usually is put in the end of <see cref="PiffMovieFragmentRandomAccess"/>
-    /// for length verificarion.
+    /// for length verificarion and for simplifying seeking (look from the end of the file).
     /// </summary>
     [BoxName("mfro")]
     internal class PiffMovieFragmentRandomAccessOffset : PiffFullBoxBase

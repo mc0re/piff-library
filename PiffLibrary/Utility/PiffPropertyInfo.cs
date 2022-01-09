@@ -98,7 +98,16 @@ namespace PiffLibrary
                 if (sizeAttr.SizeProp != null)
                 {
                     var sizeProp = target.GetType().GetProperty(sizeAttr.SizeProp);
-                    ArraySize = (int)Convert.ChangeType(sizeProp.GetValue(target, null), typeof(int));
+                    object size = sizeProp.GetValue(target, null);
+
+                    try
+                    {
+                        ArraySize = (int) Convert.ChangeType(size, typeof(int));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ArgumentException($"Cannot convert property {sizeProp.DeclaringType.Name}.{sizeProp.Name} value {size} to an integer array size.", ex);
+                    }
                 }
                 else
                 {
@@ -143,6 +152,7 @@ namespace PiffLibrary
 
             foreach (var prop in GetProperties(target))
             {
+                if (prop.Format == PiffDataFormats.Skip) continue;
                 var readSize = prop.ReadValue(target, input, bytesLeft, ctx);
                 readBytes += readSize;
 
@@ -156,12 +166,6 @@ namespace PiffLibrary
                 bytesLeft -= readSize;
                 if (bytesLeft == 0)
                     break;
-            }
-
-            if (bytesLeft > 0)
-            {
-                ctx.AddWarning($"At position {input.Position} there are {bytesLeft} bytes left. Skipping.");
-                input.Seek((long) bytesLeft, SeekOrigin.Current);
             }
 
             return readBytes;
@@ -273,11 +277,6 @@ namespace PiffLibrary
         /// <returns>The number of bytes read</returns>
         private ulong ReadValue(object targetObject, Stream input, ulong bytesLeft, PiffReadContext ctx)
         {
-            if (Format == PiffDataFormats.Skip)
-            {
-                return 0;
-            }
-
             var readBytes = 0uL;
 
             if (IsArray)
@@ -367,13 +366,13 @@ namespace PiffLibrary
         /// </summary>
         /// <returns>The number of bytes read</returns>
         private static ulong ReadPoco(
-            object targetObject, Stream input, ulong bytesLeft, Type propertyType,
+            object parentObject, Stream input, ulong bytesLeft, Type propertyType,
             PiffReadContext ctx, out object obj)
         {
             if (propertyType.GetConstructor(Type.EmptyTypes) != null)
                 obj = Activator.CreateInstance(propertyType);
             else
-                obj = Activator.CreateInstance(propertyType, targetObject);
+                obj = Activator.CreateInstance(propertyType, parentObject);
         
             return ReadObject(obj, input, bytesLeft, ctx);
         }
@@ -642,7 +641,7 @@ namespace PiffLibrary
             {
                 case PiffDataFormats.InlineObject:
                 case PiffDataFormats.Box:
-                    fmt = Property.PropertyType.Name;
+                    fmt = IsArray ? Property.PropertyType.GetElementType().Name : Property.PropertyType.Name;
                     break;
 
                 default:

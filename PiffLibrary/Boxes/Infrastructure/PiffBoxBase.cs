@@ -53,5 +53,26 @@ namespace PiffLibrary
         public override string ToString() => GetType().GetCustomAttribute<BoxNameAttribute>().Name;
 
         #endregion
+
+
+        #region API
+
+        /// <summary>
+        /// Return the first child of the given type.
+        /// </summary>
+        public TBox First<TBox>() where TBox : PiffBoxBase
+        {
+            if (Childen is null) return default;
+
+            foreach (var child in Childen)
+            {
+                if (child is TBox box)
+                    return box;
+            }
+
+            return default;
+        }
+
+        #endregion
     }
 }

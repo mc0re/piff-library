@@ -1,19 +1,19 @@
 ﻿namespace PiffLibrary
 {
-    public class PiffSampleOffset
+    public class PiffSampleOffsetDto
     {
         #region Properties
 
         /// <summary>
         /// Start time of a "moof" box.
         /// </summary>
-        public long Time { get; set; }
+        public ulong Time { get; set; }
 
 
         /// <summary>
         /// Offset of the that "moof" block from the beginning of the file.
         /// </summary>
-        public long Offset { get; set; }
+        public ulong Offset { get; set; }
 
 
         /// <summary>

@@ -32,8 +32,8 @@ namespace PiffLibrary
         /// </summary>
         public static void WriteFooter(
             Stream output, PiffManifest manifest,
-            IEnumerable<PiffSampleOffset> audioOffsets,
-            IEnumerable<PiffSampleOffset> videoOffsets,
+            IEnumerable<PiffSampleOffsetDto> audioOffsets,
+            IEnumerable<PiffSampleOffsetDto> videoOffsets,
             PiffWriteContext ctx)
         {
             var access = new PiffMovieFragmentRandomAccess(

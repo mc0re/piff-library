@@ -81,15 +81,15 @@ namespace PiffLibrary.Test
         [TestMethod]
         public void Writer_WriteFooter()
         {
-            var audio = new List<PiffSampleOffset>
+            var audio = new List<PiffSampleOffsetDto>
             {
-                new PiffSampleOffset{Time = 0, Offset = 10},
-                new PiffSampleOffset{Time = 100, Offset = 1000},
+                new PiffSampleOffsetDto{Time = 0, Offset = 10},
+                new PiffSampleOffsetDto{Time = 100, Offset = 1000},
             };
-            var video = new List<PiffSampleOffset>
+            var video = new List<PiffSampleOffsetDto>
             {
-                new PiffSampleOffset{Time = 0, Offset = 500},
-                new PiffSampleOffset{Time = 120, Offset = 2000},
+                new PiffSampleOffsetDto{Time = 0, Offset = 500},
+                new PiffSampleOffsetDto{Time = 120, Offset = 2000},
             };
 
             var ctx = new PiffWriteContext();
@@ -126,8 +126,8 @@ namespace PiffLibrary.Test
             var videoOffset = output.Position;
             output.Write(videoChunk, 0, videoChunk.Length);
 
-            var audioOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = audioOffset } };
-            var videoOffsets = new[] { new PiffSampleOffset { Time = 0, Offset = videoOffset } };
+            var audioOffsets = new[] { new PiffSampleOffsetDto { Time = 0, Offset = (ulong) audioOffset } };
+            var videoOffsets = new[] { new PiffSampleOffsetDto { Time = 0, Offset = (ulong) videoOffset } };
             PiffWriter.WriteFooter(output, SpeedwayManifest, audioOffsets, videoOffsets, ctx);
 
             Assert.AreEqual(2501, output.Length);

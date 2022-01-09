@@ -4,10 +4,9 @@
     [ChildType(typeof(PiffSubSampleInformation))]
     [ChildType(typeof(PiffSampleAuxiliaryInformation))]
     [ChildType(typeof(PiffSampleAuxiliaryOffset))]
+    [ChildType(typeof(PiffTrackFragmentHeader))]
+    [ChildType(typeof(PiffTrackFragmentRun))]
     internal class PiffTrackFragment : PiffBoxBase
     {
-        public PiffTrackFragmentHeader Header { get; set; }
-        
-        public PiffTrackFragmentRun Run { get; set; }
     }
 }

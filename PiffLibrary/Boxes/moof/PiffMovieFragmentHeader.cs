@@ -6,9 +6,9 @@
         #region Properties
 
         /// <summary>
-        /// Fragment sequence number.
+        /// Fragment sequence number. Starts with 1 and increases throughout the file.
         /// </summary>
-        public int Sequence { get; set; }
+        public uint Sequence { get; set; }
 
         #endregion
     }

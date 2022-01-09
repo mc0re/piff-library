@@ -37,21 +37,21 @@ namespace PiffLibrary
 
         #region Fragment API
 
-        public static int GetFragmentSequenceNumber(byte[] data)
+        public static uint GetFragmentSequenceNumber(byte[] data)
         {
             var ms = new MemoryStream(data);
             var moof = ReadBox<PiffMovieFragment>(ms, new PiffReadContext());
 
-            return moof.Header.Sequence;
+            return moof.First<PiffMovieFragmentHeader>().Sequence;
         }
 
 
-        public static int GetTrackId(byte[] data)
+        public static uint GetTrackId(byte[] data)
         {
             var ms = new MemoryStream(data);
             var moof = ReadBox<PiffMovieFragment>(ms, new PiffReadContext());
 
-            return moof.Track.Header.TrackId;
+            return moof.First<PiffTrackFragment>().First<PiffTrackFragmentHeader>().TrackId;
         }
 
         #endregion

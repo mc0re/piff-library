@@ -3,6 +3,9 @@
 
 namespace PiffLibrary
 {
+    /// <summary>
+    /// Used to find sync samples.
+    /// </summary>
     [BoxName("mfra")]
     [ChildType(typeof(PiffTrackFragmentRandomAccess))]
     [ChildType(typeof(PiffMovieFragmentRandomAccessOffset))]
@@ -22,8 +25,8 @@ namespace PiffLibrary
         /// Constructor for writing.
         /// </summary>
         public PiffMovieFragmentRandomAccess(
-            uint audioTrackId, IEnumerable<PiffSampleOffset> audio,
-            uint videoTrackId, IEnumerable<PiffSampleOffset> video)
+            uint audioTrackId, IEnumerable<PiffSampleOffsetDto> audio,
+            uint videoTrackId, IEnumerable<PiffSampleOffsetDto> video)
         {
             var audioBox = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
             var videoBox = new PiffTrackFragmentRandomAccess(videoTrackId, video);
