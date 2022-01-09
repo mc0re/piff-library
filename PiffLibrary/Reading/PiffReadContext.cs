@@ -17,7 +17,7 @@ namespace PiffLibrary
         /// <summary>
         /// A list of read boxes.
         /// </summary>
-        public IList<string> Dump { get; } = new List<string>();
+        public IList<UpdateableString> Dump { get; } = new List<UpdateableString>();
 
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace PiffLibrary
         /// <summary>
         /// Used for debugging.
         /// </summary>
-        public string CurrentBoxName => Hierarchy.Any() ? Hierarchy.Peek().ToString() : "None";
+        public string CurrentBoxName => Hierarchy.Any() ? Hierarchy.Peek().ToString() : "- None -";
 
         #endregion
 
@@ -51,7 +51,9 @@ namespace PiffLibrary
 
         internal void Push(PiffBoxBase box, long position)
         {
-            Dump.Add(new string(' ', Hierarchy.Count * 2) + $"{box} (:{position})");
+            Dump.Add(new UpdateableString(
+                box, (o, st) => $"{st[0]}{o} (:{st[1]})",
+                new string(' ', Hierarchy.Count * 2), position));
             Hierarchy.Push(box);
         }
 

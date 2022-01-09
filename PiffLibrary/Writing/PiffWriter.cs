@@ -14,7 +14,13 @@ namespace PiffLibrary
 
         public static void WriteHeader(Stream output, PiffManifest manifest, PiffWriteContext ctx)
         {
-            WriteBox(output, new PiffFileType(), ctx);
+            var ftyp = new PiffFileType
+            {
+                MajorBrand = "isml",
+                MinorVersion = 1,
+                CompatibleBrands = new[] { "piff", "iso2" }
+            };
+            WriteBox(output, ftyp, ctx);
             var movie = new PiffMovieMetadata(manifest);
             WriteBox(output, movie, ctx);
         }

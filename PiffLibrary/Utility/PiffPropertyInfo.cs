@@ -145,7 +145,23 @@ namespace PiffLibrary
             {
                 var readSize = prop.ReadValue(target, input, bytesLeft, ctx);
                 readBytes += readSize;
+
+                if (bytesLeft < readSize)
+                {
+                    ctx.AddWarning($"At position {input.Position} read beyond box boundaries (bytes left {bytesLeft}, read {readSize}). Backtracking.");
+                    input.Seek(-(int)(readSize - bytesLeft), SeekOrigin.Current);
+                    break;
+                }
+
                 bytesLeft -= readSize;
+                if (bytesLeft == 0)
+                    break;
+            }
+
+            if (bytesLeft > 0)
+            {
+                ctx.AddWarning($"At position {input.Position} there are {bytesLeft} bytes left. Skipping.");
+                input.Seek((long) bytesLeft, SeekOrigin.Current);
             }
 
             return readBytes;
@@ -257,6 +273,11 @@ namespace PiffLibrary
         /// <returns>The number of bytes read</returns>
         private ulong ReadValue(object targetObject, Stream input, ulong bytesLeft, PiffReadContext ctx)
         {
+            if (Format == PiffDataFormats.Skip)
+            {
+                return 0;
+            }
+
             var readBytes = 0uL;
 
             if (IsArray)
@@ -267,6 +288,12 @@ namespace PiffLibrary
                 while (count > 0 && bytesLeft > 0)
                 {
                     var readSize = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object item);
+                    if (readSize == 0)
+                    {
+                        ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
+                        break;
+                    }
+
                     list.Add(item);
                     readBytes += readSize;
                     bytesLeft -= readSize;
@@ -282,9 +309,13 @@ namespace PiffLibrary
                         array.SetValue(list[i], i);
                 }
             }
-            else if (Format != PiffDataFormats.Skip)
+            else
             {
                 readBytes = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object value);
+                if (readBytes == 0)
+                {
+                    ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
+                }
 
                 if (Property.CanWrite)
                 {
@@ -597,6 +628,30 @@ namespace PiffLibrary
                 default:
                     throw new ArgumentException($"Unsupported format '{format}'.");
             }
+        }
+
+        #endregion
+
+
+        #region ToString
+
+        public override string ToString()
+        {
+            string fmt;
+            switch (Format)
+            {
+                case PiffDataFormats.InlineObject:
+                case PiffDataFormats.Box:
+                    fmt = Property.PropertyType.Name;
+                    break;
+
+                default:
+                    fmt = Format.ToString();
+                    break;
+            }
+
+            var arr = IsArray ? $"[{(ArraySize.HasValue ? ArraySize.ToString() : "")}]" : "";
+            return $"{fmt}{arr} {Property.Name}";
         }
 
         #endregion

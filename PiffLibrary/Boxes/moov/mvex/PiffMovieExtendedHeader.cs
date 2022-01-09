@@ -1,14 +1,19 @@
 ﻿namespace PiffLibrary
 {
+    /// <summary>
+    /// Duration of the movie, if known.
+    /// </summary>
     [BoxName("mehd")]
     internal class PiffMovieExtendedHeader : PiffFullBoxBase
     {
         #region Properties
 
         /// <summary>
-        /// Length of the whole movie including fragments.
+        /// Length of the whole movie including fragments
+        /// in <see cref="PiffMovieHeader.TimeScale"/> units.
+        /// This is the duration of the longest track.
         /// </summary>
-        [PiffDataFormat(nameof(GetDateFormat))]
+        [PiffDataFormat(nameof(GetDurationFormat))]
         public ulong Duration { get; set; }
 
         #endregion
@@ -38,7 +43,7 @@
         
         #region Format API
 
-        public PiffDataFormats GetDateFormat()
+        public PiffDataFormats GetDurationFormat()
         {
             return Version == 0 ? PiffDataFormats.UInt32 : PiffDataFormats.UInt64;
         }

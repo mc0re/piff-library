@@ -2,6 +2,9 @@
 
 namespace PiffLibrary
 {
+    /// <summary>
+    /// There might be <see cref="PiffMovieFragment"/> boxes in this file.
+    /// </summary>
     [BoxName("mvex")]
     [ChildType(typeof(PiffMovieExtendedHeader))]
     [ChildType(typeof(PiffTrackExtended))]
@@ -20,12 +23,12 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public PiffMovieExtended(ulong duration, int nofTracks)
+        public PiffMovieExtended(ulong duration, uint nofTracks)
         {
             Childen =
                 new PiffBoxBase[] { new PiffMovieExtendedHeader(duration) }
                 .Concat(
-                Enumerable.Range(1, nofTracks).Select(t => new PiffTrackExtended(t)))
+                Enumerable.Range(1, (int)nofTracks).Select(t => new PiffTrackExtended((uint)t)))
                 .ToArray();
         }
 

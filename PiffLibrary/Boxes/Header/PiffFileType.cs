@@ -1,16 +1,23 @@
-﻿namespace PiffLibrary
+﻿using System;
+
+
+namespace PiffLibrary
 {
     [BoxName("ftyp")]
     internal class PiffFileType : PiffBoxBase
     {
-        [PiffStringLength(4)]
-        public string MajorBrand { get; set; } = "isml";
-
-
-        public uint MinorVersion { get; set; } = 1;
-
+        #region Properties
 
         [PiffStringLength(4)]
-        public string[] CompatibleBrands { get; set; } = { "piff", "iso2" };
+        public string MajorBrand { get; set; }
+
+
+        public uint MinorVersion { get; set; }
+
+
+        [PiffStringLength(4)]
+        public string[] CompatibleBrands { get; set; } = Array.Empty<string>();
+
+        #endregion
     }
 }
