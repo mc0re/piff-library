@@ -5,7 +5,7 @@ using System.Linq;
 namespace PiffLibrary
 {
     [BoxName("esds")]
-    internal class PiffElementaryStreamDescription : PiffFullBoxBase
+    internal class PiffElementaryStreamDescriptionMp4a : PiffFullBoxBase
     {
         #region Properties
 
@@ -129,7 +129,7 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffElementaryStreamDescription()
+        public PiffElementaryStreamDescriptionMp4a()
         {
         }
 
@@ -137,7 +137,7 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        private PiffElementaryStreamDescription(short streamId, int bitRate, int bufferSize, byte[] codecData)
+        private PiffElementaryStreamDescriptionMp4a(short streamId, int bitRate, int bufferSize, byte[] codecData)
         {
             EsId = streamId;
             BufferSizeDb = bufferSize;
@@ -156,13 +156,13 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public static PiffElementaryStreamDescription Create(
+        public static PiffElementaryStreamDescriptionMp4a Create(
             string codecId, short streamId, int bitRate, int bufferSize, byte[] codecData)
         {
             if (codecId != "AACL")
                 throw new ArgumentException($"Don't know how to deal with '{codecId}'.");
 
-            return new PiffElementaryStreamDescription(streamId, bitRate, bufferSize, codecData);
+            return new PiffElementaryStreamDescriptionMp4a(streamId, bitRate, bufferSize, codecData);
         }
 
         #endregion

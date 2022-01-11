@@ -4,7 +4,8 @@
     /// Flags:
     /// 
     /// 0x10000 - Duration is empty (there are no samples)
-    /// 0x20000 - Default base is "moof". if <see cref="BaseDataOffset"/> is set,
+    /// 0x20000 - Default base is <see cref="PiffMovieFragment"/>.
+    ///           if <see cref="BaseDataOffset"/> is set,
     ///           this flag is ignored. If not, this indicates that the
     ///           base‐data‐offset for this track fragment is the position of the first byte
     ///           of the enclosing <see cref="PiffMovieFragment"/> box.

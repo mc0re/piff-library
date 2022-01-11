@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace PiffLibrary
 {
@@ -12,7 +13,7 @@ namespace PiffLibrary
         /// <summary>
         /// The number of sample tracks.
         /// </summary>
-        public uint Count { get; set; } = 1;
+        public uint Count { get; set; }
 
         #endregion
 
@@ -33,6 +34,7 @@ namespace PiffLibrary
         /// </summary>
         private PiffSampleDescription(PiffProtectedAudioSampleEntry audio, PiffProtectedVideoSampleEntry video)
         {
+            Count = 1;
             Childen = new PiffBoxBase[]
             {
                 audio is null ? (PiffBoxBase)video : audio

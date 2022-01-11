@@ -7,6 +7,8 @@ namespace PiffLibrary
     /// This is AudioSampleEntry, not AudioSampleEntryV1.
     /// </summary>
     [BoxName("enca")]
+    [ChildType(typeof(PiffProtectionSchemeInformation))]
+    [ChildType(typeof(PiffElementaryStreamDescriptionMp4a))] // For WMA streams a "wfex" block comes instead
     internal class PiffProtectedAudioSampleEntry : PiffBoxBase
     {
         #region Constants
@@ -47,16 +49,6 @@ namespace PiffLibrary
 
         public uint SampleRate { get; set; }
 
-
-        /// <summary>
-        /// This is for MP4A streams.
-        /// For WMA streams a "wfex" block comes instead.
-        /// </summary>
-        public PiffElementaryStreamDescription StreamDescription { get; set; }
-
-
-        public PiffProtectionSchemeInformation Scheme { get; set; }
-
         #endregion
 
 
@@ -84,9 +76,10 @@ namespace PiffLibrary
             ChannelCount = audio.Channels;
             SampleSize = audio.BitsPerSample;
             SampleRate = ((uint)audio.SamplingRate) << 16;
-            Scheme = PiffProtectionSchemeInformation.CreateAudio(audio.CodecId, keyId);
-            StreamDescription = PiffElementaryStreamDescription.Create(
+            var scheme = PiffProtectionSchemeInformation.CreateAudio(audio.CodecId, keyId);
+            var desc = PiffElementaryStreamDescriptionMp4a.Create(
                 audio.CodecId, 0, audio.BitRate, BufferSize, audio.CodecData);
+            Childen = new PiffBoxBase[] { scheme, desc };
         }
 
         #endregion

@@ -18,21 +18,21 @@
 
         /// <summary>
         /// Length is "length of TrafNumber field" + 1 bytes.
-        /// The number of "traf" box containing the sync sample. Starts with 1 in each "moof".
+        /// The index of "traf" box containing the sync sample. Starts with 1 in each "moof".
         /// </summary>
         public byte TrafNumber { get; set; } = 1;
 
 
         /// <summary>
         /// Length is "length of TrunNumber field" + 1 bytes.
-        /// The number of "trun" box containing the sync sample. Starts with 1 in each "traf".
+        /// The index of "trun" box containing the sync sample. Starts with 1 in each "traf".
         /// </summary>
         public byte TrunNumber { get; set; } = 1;
 
 
         /// <summary>
         /// Length is "length of SampleNumber field" + 1 bytes.
-        /// The number of the sync sample. Starts with 1 in each "trun".
+        /// The index of the sync sample. Starts with 1 in each "trun".
         /// </summary>
         public byte SampleNumber { get; set; } = 1;
 

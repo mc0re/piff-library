@@ -8,6 +8,8 @@ namespace PiffLibrary
     [BoxName("mvex")]
     [ChildType(typeof(PiffMovieExtendedHeader))]
     [ChildType(typeof(PiffTrackExtended))]
+    [ChildType(typeof(PiffLevelAssignment))]
+    [ChildType(typeof(PiffTrackExtensionProperties))]
     internal class PiffMovieExtended : PiffBoxBase
     {
         #region Init and clean-up

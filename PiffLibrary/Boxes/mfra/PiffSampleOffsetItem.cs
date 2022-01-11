@@ -12,14 +12,15 @@
         #region Properties
 
         /// <summary>
-        /// Start time of a "moof" box, in time scale units.
+        /// Start time of a <see cref="PiffMovieFragment"/> box,
+        /// in time scale units.
         /// </summary>
         [PiffDataFormat(nameof(GetDateFormat))]
         public ulong Time { get; set; }
 
 
         /// <summary>
-        /// Offset of the that "moof" block from the beginning of the file.
+        /// Offset of the that <see cref="PiffMovieFragment"/> from the beginning of the file.
         /// </summary>
         [PiffDataFormat(nameof(GetOffsetFormat))]
         public ulong Offset { get; set; }
@@ -27,7 +28,8 @@
 
         /// <summary>
         /// Length is "length of TrafNumber field" + 1 bytes.
-        /// The number of "traf" box containing the sync sample. Starts with 1 in each "moof".
+        /// The index of <see cref="PiffTrackFragment"/> box containing the sync sample.
+        /// Starts with 1 in each <see cref="PiffMovieFragment"/>.
         /// </summary>
         [PiffArraySize(nameof(TrafNumberLength))]
         public byte[] TrafNumber { get; set; }
@@ -35,7 +37,8 @@
 
         /// <summary>
         /// Length is "length of TrunNumber field" + 1 bytes.
-        /// The number of "trun" box containing the sync sample. Starts with 1 in each "traf".
+        /// The index of "trun" box containing the sync sample.
+        /// Starts with 1 in each <see cref="PiffTrackFragment"/>.
         /// </summary>
         [PiffArraySize(nameof(TrunNumberLength))]
         public byte[] TrunNumber { get; set; }
@@ -43,7 +46,7 @@
 
         /// <summary>
         /// Length is "length of SampleNumber field" + 1 bytes.
-        /// The number of the sync sample. Starts with 1 in each "trun".
+        /// The index of the sync sample. Starts with 1 in each "trun".
         /// </summary>
         [PiffArraySize(nameof(SampleNumberLength))]
         public byte[] SampleNumber { get; set; }

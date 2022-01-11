@@ -20,6 +20,8 @@ namespace PiffLibrary
     [ChildType(typeof(PiffSubSampleInformation))]
     [ChildType(typeof(PiffSampleAuxiliaryInformation))]
     [ChildType(typeof(PiffSampleAuxiliaryOffset))]
+    [ChildType(typeof(PiffSampleToGroup))]
+    [ChildType(typeof(PiffSampleGroupDescription))]
     internal class PiffSampleTable : PiffBoxBase
     {
         #region Init and clean-up

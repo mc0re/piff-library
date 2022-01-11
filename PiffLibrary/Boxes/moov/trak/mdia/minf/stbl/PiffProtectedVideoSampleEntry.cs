@@ -4,6 +4,8 @@
 namespace PiffLibrary
 {
     [BoxName("encv")]
+    [ChildType(typeof(PiffProtectionSchemeInformation))]
+    [ChildType(typeof(PiffAvcConfiguration))]
     internal class PiffProtectedVideoSampleEntry : PiffBoxBase
     {
         #region Properties
@@ -62,12 +64,6 @@ namespace PiffLibrary
 
         public short Reserved5 { get; } = -1;
 
-
-        public PiffAvcConfiguration AvcConfiguration { get; set; }
-
-
-        public PiffProtectionSchemeInformation Scheme { get; set; }
-
         #endregion
 
 
@@ -88,8 +84,9 @@ namespace PiffLibrary
         {
             Width = video.Width;
             Height = video.Height;
-            Scheme = PiffProtectionSchemeInformation.CreateVideo(video.CodecId, keyId);
-            AvcConfiguration = new PiffAvcConfiguration(video.CodecId, video.CodecData);
+            var scheme = PiffProtectionSchemeInformation.CreateVideo(video.CodecId, keyId);
+            var config = new PiffAvcConfiguration(video.CodecId, video.CodecData);
+            Childen = new PiffBoxBase[] {scheme, config};
         }
 
         #endregion

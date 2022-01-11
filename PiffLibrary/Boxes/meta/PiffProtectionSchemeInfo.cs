@@ -3,15 +3,9 @@
 namespace PiffLibrary
 {
     [BoxName("schi")]
+    [ChildType(typeof(PiffExtensionBox))] // Expects PiffProtectionTrackEncryption
     internal class PiffProtectionSchemeInfo : PiffBoxBase
     {
-        #region Properties
-
-        public PiffExtensionBox Data { get; set; }
-
-        #endregion
-
-
         #region Init and clean-up
 
         /// <summary>
@@ -27,7 +21,7 @@ namespace PiffLibrary
         /// </summary>
         public PiffProtectionSchemeInfo(Guid keyId)
         {
-            Data = PiffExtensionBox.ProtectionTrackEncryption(keyId);
+            Childen = new[] { PiffExtensionBox.ProtectionTrackEncryption(keyId) };
         }
 
         #endregion
