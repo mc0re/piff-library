@@ -9,7 +9,7 @@
         #region Properties
 
         /// <summary>
-        /// Same as in <see cref="PiffSampleGroupDescription"/>.
+        /// Same as in <see cref="PiffSampleGroupDescription.GroupingType"/>.
         /// </summary>
         public uint GroupingType { get; set; }
 
