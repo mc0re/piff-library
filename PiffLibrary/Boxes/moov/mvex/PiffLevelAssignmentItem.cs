@@ -1,24 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    /// <summary>
-    /// Levels give dependencis. Samples on level N
-    /// may depend on samples on levels less than N
-    /// and shall not depend on any samples on levels greater then N.
-    /// </summary>
-    [BoxName("leva")]
-    internal class PiffLevelAssignment : PiffFullBoxBase
-    {
-        /// <summary>
-        /// The number of specified levels.
-        /// </summary>
-        public byte Count { get; set; }
-
-
-        [PiffArraySize(nameof(Count))]
-        public PiffLevelAssignmentItem[] Assignments { get; set; }
-    }
-
-    public class PiffLevelAssignmentItem
+    public sealed class PiffLevelAssignmentItem
     {
         #region Properties
 
@@ -72,15 +54,15 @@
 
         #region Format API
 
-        public PiffDataFormats UseGroupType() =>
+        private PiffDataFormats UseGroupType() =>
             (AssignmentType & 0x7F) == 0 || (AssignmentType & 0x7F) == 1 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
-        public PiffDataFormats UseGroupTypeParam() =>
+        private PiffDataFormats UseGroupTypeParam() =>
             (AssignmentType & 0x7F) == 1 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
-        public PiffDataFormats UseSubTrackId() =>
+        private PiffDataFormats UseSubTrackId() =>
             (AssignmentType & 0x7F) == 4 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
         #endregion

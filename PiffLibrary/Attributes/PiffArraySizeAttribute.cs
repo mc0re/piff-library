@@ -27,6 +27,9 @@ namespace PiffLibrary
         /// The number of elements is defined by a property with the given name.
         /// The type of property must be convertible to integer.
         /// </summary>
+        /// <param name="sizeProperty">
+        /// Property name (use nameof). Can be a public or a private property.
+        /// </param>
         public PiffArraySizeAttribute(string sizeProperty)
         {
             SizeProp = sizeProperty;

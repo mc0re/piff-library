@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     /// <summary>
     /// Duration of the movie, if known.

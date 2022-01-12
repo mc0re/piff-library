@@ -1,9 +1,7 @@
-﻿using System.Drawing;
-
-namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     [BoxName("stz2")]
-    internal class PiffCompactSampleSize : PiffFullBoxBase
+    public sealed class PiffCompactSampleSizeBox : PiffFullBoxBase
     {
         #region Properties
 
@@ -38,8 +36,7 @@ namespace PiffLibrary
         /// <summary>
         /// Round up to the next byte.
         /// </summary>
-        [PiffDataFormat(PiffDataFormats.Skip)]
-        public uint NumberOfBytes => (SampleCount * FieldSize + 7) / 8;
+        private uint NumberOfBytes => (SampleCount * FieldSize + 7) / 8;
 
         #endregion
     }

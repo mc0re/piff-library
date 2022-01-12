@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     /// <summary>
     /// A set of tracks with a particular feature in common.

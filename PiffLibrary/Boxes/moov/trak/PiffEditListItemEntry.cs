@@ -1,13 +1,13 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffEditListItemEntry
+    public sealed class PiffEditListItemEntry
     {
         #region Fields
 
         /// <summary>
         /// Explicit parent.
         /// </summary>
-        private readonly PiffEditListItem mParent;
+        private readonly PiffEditListItemBox mParent;
 
         #endregion
 
@@ -41,7 +41,7 @@
 
         #region Init and clean-up
 
-        public PiffEditListItemEntry(PiffEditListItem parent)
+        public PiffEditListItemEntry(PiffEditListItemBox parent)
         {
             mParent = parent;
         }
@@ -51,16 +51,12 @@
 
         #region Format API
 
-        public PiffDataFormats GetDurationFormat()
-        {
-            return mParent.Version == 0 ? PiffDataFormats.UInt32 : PiffDataFormats.UInt64;
-        }
+        private PiffDataFormats GetDurationFormat() =>
+            mParent.Version == 0 ? PiffDataFormats.UInt32 : PiffDataFormats.UInt64;
 
 
-        public PiffDataFormats GetTimeFormat()
-        {
-            return mParent.Version == 0 ? PiffDataFormats.Int32 : PiffDataFormats.Int64;
-        }
+        private PiffDataFormats GetTimeFormat() =>
+            mParent.Version == 0 ? PiffDataFormats.Int32 : PiffDataFormats.Int64;
 
         #endregion
     }

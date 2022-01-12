@@ -1,10 +1,10 @@
 ﻿using System;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     [BoxName("ftyp")]
-    internal class PiffFileType : PiffBoxBase
+    public sealed class PiffFileTypeBox : PiffBoxBase
     {
         #region Properties
 

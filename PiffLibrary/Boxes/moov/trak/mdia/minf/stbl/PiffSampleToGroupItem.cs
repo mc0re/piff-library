@@ -1,6 +1,8 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
-    internal class PiffSampleToGroupItem
+    public sealed class PiffSampleToGroupItem
     {
         /// <summary>
         /// The number of consequtive samples with the same characteristics.
@@ -9,7 +11,7 @@
 
 
         /// <summary>
-        /// Index into <see cref="PiffSampleGroupDescription"/> box. Starts with 1.
+        /// Index into <see cref="PiffSampleGroupDescriptionBox"/> box. Starts with 1.
         /// 0 means the sample is not a member of a group of this type.
         /// </summary>
         public uint GroupDescriptionIndex { get; set; }

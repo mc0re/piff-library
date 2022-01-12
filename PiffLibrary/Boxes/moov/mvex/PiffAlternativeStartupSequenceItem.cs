@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    public class PiffAlternativeStartupSequenceItem
+    public sealed class PiffAlternativeStartupSequenceItem
     {
         /// <summary>
         /// Parameter to match in "sgbp" box.
@@ -9,7 +9,7 @@
 
 
         /// <summary>
-        /// No value of sample offset in the corresponding <see cref="PiffSampleToGroup"/>
+        /// No value of sample offset in the corresponding <see cref="PiffSampleToGroupBox"/>
         /// shall be smaller than this value.
         /// </summary>
         public int MinStartupOffset { get; set; }

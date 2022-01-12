@@ -2,14 +2,14 @@
 using System.Linq;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Location and presentation time of sync samples.
     /// Not every sync sample needs to be listed.
     /// </summary>
     [BoxName("tfra")]
-    internal class PiffTrackFragmentRandomAccess : PiffFullBoxBase
+    public sealed class PiffTrackFragmentRandomAccessBox : PiffFullBoxBase
     {
         #region Properties
 
@@ -43,7 +43,7 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffTrackFragmentRandomAccess()
+        public PiffTrackFragmentRandomAccessBox()
         {
         }
 
@@ -51,19 +51,20 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public PiffTrackFragmentRandomAccess(uint trackId, IEnumerable<PiffSampleOffsetDto> offsets)
+        public PiffTrackFragmentRandomAccessBox(uint trackId, IEnumerable<PiffSampleOffsetDto> offsets)
         {
             Version = 1;
             TrackId = trackId;
-            Offsets = (from off in offsets select new PiffSampleOffsetItem(this)
-            {
-                Time = off.Time,
-                Offset = off.Offset,
-                TrafNumber = new byte[] { off.TrafNumber },
-                TrunNumber = new byte[] { off.TrunNumber },
-                SampleNumber = new byte[] { off.SampleNumber }
-            }).ToArray();
-            Count = (uint)Childen.Length;
+            Offsets = (from off in offsets
+                       select new PiffSampleOffsetItem(this)
+                       {
+                           Time = off.Time,
+                           Offset = off.Offset,
+                           TrafNumber = new byte[] { off.TrafNumber },
+                           TrunNumber = new byte[] { off.TrunNumber },
+                           SampleNumber = new byte[] { off.SampleNumber }
+                       }).ToArray();
+            Count = (uint) Childen.Length;
         }
 
         #endregion

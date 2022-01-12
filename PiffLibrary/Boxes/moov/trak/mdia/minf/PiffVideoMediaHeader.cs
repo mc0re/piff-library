@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     [BoxName("vmhd")]
     internal class PiffVideoMediaHeader : PiffFullBoxBase

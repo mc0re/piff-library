@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
 
-
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     [BoxName("esds")]
-    internal class PiffElementaryStreamDescriptionMp4a : PiffFullBoxBase
+    public sealed class PiffElementaryStreamDescriptionMp4aBox : PiffFullBoxBase
     {
         #region Properties
 
@@ -62,7 +61,7 @@ namespace PiffLibrary
         /// 0x02 - upstream flag
         /// 0x01 - reserved (1)
         /// </summary>
-        public byte StreamType { get; set; } = (5 << 2) | 1;
+        public byte StreamType { get; set; } = 5 << 2 | 1;
 
 
         [PiffDataFormat(PiffDataFormats.Int24)]
@@ -129,7 +128,7 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffElementaryStreamDescriptionMp4a()
+        public PiffElementaryStreamDescriptionMp4aBox()
         {
         }
 
@@ -137,7 +136,7 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        private PiffElementaryStreamDescriptionMp4a(short streamId, int bitRate, int bufferSize, byte[] codecData)
+        private PiffElementaryStreamDescriptionMp4aBox(short streamId, int bitRate, int bufferSize, byte[] codecData)
         {
             EsId = streamId;
             BufferSizeDb = bufferSize;
@@ -156,80 +155,15 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public static PiffElementaryStreamDescriptionMp4a Create(
+        public static PiffElementaryStreamDescriptionMp4aBox Create(
             string codecId, short streamId, int bitRate, int bufferSize, byte[] codecData)
         {
             if (codecId != "AACL")
                 throw new ArgumentException($"Don't know how to deal with '{codecId}'.");
 
-            return new PiffElementaryStreamDescriptionMp4a(streamId, bitRate, bufferSize, codecData);
+            return new PiffElementaryStreamDescriptionMp4aBox(streamId, bitRate, bufferSize, codecData);
         }
 
         #endregion
-    }
-
-
-    /// <summary>
-    /// Object descriptor type ID.
-    /// </summary>
-    internal class PiffEsdsBlockIds
-    {
-        /// <summary>
-        /// Elementary Stream Descriptor.
-        /// </summary>
-        public const byte Esd = 3;
-
-
-        /// <summary>
-        /// Decoder Config Descriptor.
-        /// </summary>
-        public const byte Dcd = 4;
-
-
-        /// <summary>
-        /// Decoder Specific Info.
-        /// </summary>
-        public const byte Dsi = 5;
-
-
-        /// <summary>
-        /// Sync Layer Config Descriptor.
-        /// </summary>
-        public const byte Slc = 6;
-    }
-
-
-    /// <summary>
-    /// For audio:
-    /// 0x40 - MPEG-4 AAC
-    /// 0x66 - MPEG-2 AAC Main profile
-    /// 0x67 - MPEG-2 AAC Low-complexity profile
-    /// 0x68 - MPEG-2 AAC Scalable sampling rate profile
-    /// 0x69 - MP3
-    /// 0x6B - MPEG1 audio
-    /// 0xA0 - EVRC voice
-    /// 0xA1 - SMV voice
-    /// 0xA5 - AC-3
-    /// 0xA6 - Enhanced AC-3
-    /// 0xA7 - DRA
-    /// 0xA8 - ITU G719
-    /// 0xA9 - DTS Coherent Acoustics
-    /// 0xAA - DTS-HD High Resolution
-    /// 0xAB - DTS-HD Master
-    /// 0xE1 - QCELP 13K voice
-    /// </summary>
-    internal class PiffAudioObjectTypes
-    {
-        public const byte Aac = 0x40;
-
-        public const byte AacMain = 0x66;
-
-        public const byte AacLc = 0x67;
-
-        public const byte AacSsr = 0x68;
-
-        public const byte Mp3 = 0x69;
-
-        public const byte Mpeg1 = 0x6b;
     }
 }

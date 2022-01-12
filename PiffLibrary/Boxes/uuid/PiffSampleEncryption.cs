@@ -1,11 +1,12 @@
 ﻿using System;
 
-namespace PiffLibrary
+
+namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Defines encryption parameters a single sample.
     /// </summary>
-    internal class PiffSampleEncryption
+    public sealed class PiffSampleEncryption
     {
         #region Constants
 
@@ -52,7 +53,7 @@ namespace PiffLibrary
 
         #region Format API
 
-        public PiffDataFormats UseAlgorithmInfo() =>
+        private PiffDataFormats UseAlgorithmInfo() =>
             (Parent.Flags & 1) != 0 ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 
         #endregion

@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     /// <summary>
     /// Usually is put in the end of <see cref="PiffMovieFragmentRandomAccess"/>

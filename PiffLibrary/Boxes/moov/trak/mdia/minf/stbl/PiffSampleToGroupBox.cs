@@ -1,15 +1,17 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     /// <summary>
     /// Find the group a sample belongs to.
     /// </summary>
     [BoxName("sbgp")]
-    internal class PiffSampleToGroup : PiffFullBoxBase
+    public sealed class PiffSampleToGroupBox : PiffFullBoxBase
     {
         #region Properties
 
         /// <summary>
-        /// Same as in <see cref="PiffSampleGroupDescription.GroupingType"/>.
+        /// Same as in <see cref="PiffSampleGroupDescriptionBox.GroupingType"/>.
         /// </summary>
         public uint GroupingType { get; set; }
 
@@ -32,7 +34,7 @@
 
         #region Format API
 
-        public PiffDataFormats UseParameter() =>
+        internal PiffDataFormats UseParameter() =>
             Version == 1 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
         #endregion

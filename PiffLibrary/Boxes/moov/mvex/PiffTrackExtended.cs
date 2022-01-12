@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     /// <summary>
     /// Defaults for fragments <see cref="PiffMovieFragment"/> / <see cref="PiffTrackFragment"/>.
@@ -34,7 +36,7 @@
         public ushort DefaultFlags { get; set; }
 
         /// <summary>
-        /// Default for <see cref="PiffDegradationPriority"/>.
+        /// Default for <see cref="PiffDegradationPriorityBox"/>.
         /// </summary>
         public ushort DefaultDegradationPriority { get; set; }
 

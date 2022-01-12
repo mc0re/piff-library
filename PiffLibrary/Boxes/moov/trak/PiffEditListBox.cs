@@ -1,10 +1,10 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Maps presentation timeline to media timeline.
     /// </summary>
     [BoxName("edts")]
-    internal class PiffEditList : PiffBoxBase
+    public sealed class PiffEditListBox : PiffBoxBase
     {
     }
 }

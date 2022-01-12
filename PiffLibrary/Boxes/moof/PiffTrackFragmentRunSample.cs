@@ -1,11 +1,11 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffTrackFragmentRunSample
+    public sealed class PiffTrackFragmentRunSample
     {
         #region Properties
 
         [PiffDataFormat(PiffDataFormats.Skip)]
-        public PiffTrackFragmentRun Parent { get; }
+        public PiffTrackFragmentRunBox Parent { get; }
 
 
         [PiffDataFormat(nameof(FlagsHaveDuration))]
@@ -28,7 +28,7 @@
 
         #region Init and clean-up
 
-        public PiffTrackFragmentRunSample(PiffTrackFragmentRun parent)
+        public PiffTrackFragmentRunSample(PiffTrackFragmentRunBox parent)
         {
             Parent = parent;
         }
@@ -38,22 +38,22 @@
 
         #region Format API
 
-        public PiffDataFormats FlagsHaveDuration() =>
+        private PiffDataFormats FlagsHaveDuration() =>
             (Parent.Flags & 0x100) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
-        public PiffDataFormats FlagsHaveSize() =>
+        private PiffDataFormats FlagsHaveSize() =>
             (Parent.Flags & 0x200) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
-        public PiffDataFormats FlagsHaveFlags() =>
+        private PiffDataFormats FlagsHaveFlags() =>
             (Parent.Flags & 0x400) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         /// <summary>
         /// Version = 0 - unsigned, otherwise signed.
         /// </summary>
-        public PiffDataFormats GetOffsetFormat() =>
+        private PiffDataFormats GetOffsetFormat() =>
             (Parent.Flags & 0x800) == 0 ? PiffDataFormats.Skip :
             Parent.Version == 0 ? PiffDataFormats.UInt32 :
             PiffDataFormats.Int32;

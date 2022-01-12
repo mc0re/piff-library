@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PiffLibrary.Boxes;
+using System.Collections.Generic;
 
 
 namespace PiffLibrary
@@ -7,7 +8,7 @@ namespace PiffLibrary
     /// Used to find sync samples.
     /// </summary>
     [BoxName("mfra")]
-    [ChildType(typeof(PiffTrackFragmentRandomAccess))]
+    [ChildType(typeof(PiffTrackFragmentRandomAccessBox))]
     [ChildType(typeof(PiffMovieFragmentRandomAccessOffset))]
     internal class PiffMovieFragmentRandomAccess : PiffBoxBase
     {
@@ -28,8 +29,8 @@ namespace PiffLibrary
             uint audioTrackId, IEnumerable<PiffSampleOffsetDto> audio,
             uint videoTrackId, IEnumerable<PiffSampleOffsetDto> video)
         {
-            var audioBox = new PiffTrackFragmentRandomAccess(audioTrackId, audio);
-            var videoBox = new PiffTrackFragmentRandomAccess(videoTrackId, video);
+            var audioBox = new PiffTrackFragmentRandomAccessBox(audioTrackId, audio);
+            var videoBox = new PiffTrackFragmentRandomAccessBox(videoTrackId, video);
             var offsetBox = new PiffMovieFragmentRandomAccessOffset();
 
             Childen = new PiffBoxBase[]

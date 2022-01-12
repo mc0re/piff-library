@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal abstract class PiffFullBoxBase : PiffBoxBase
+    public abstract class PiffFullBoxBase : PiffBoxBase
     {
         [BeforeDescendants]
         public byte Version { get; set; }

@@ -1,14 +1,16 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     [BoxName("traf")]
-    [ChildType(typeof(PiffSubSampleInformation))]
+    [ChildType(typeof(PiffSubSampleInformationBox))]
     [ChildType(typeof(PiffSampleAuxiliaryInformation))]
     [ChildType(typeof(PiffSampleAuxiliaryOffset))]
     [ChildType(typeof(PiffTrackFragmentHeader))]
-    [ChildType(typeof(PiffTrackFragmentRun))]
+    [ChildType(typeof(PiffTrackFragmentRunBox))]
     [ChildType(typeof(PiffTrackFragmentDecodeTime))]
-    [ChildType(typeof(PiffSampleToGroup))]
-    [ChildType(typeof(PiffSampleGroupDescription))]
+    [ChildType(typeof(PiffSampleToGroupBox))]
+    [ChildType(typeof(PiffSampleGroupDescriptionBox))]
     internal class PiffTrackFragment : PiffBoxBase
     {
     }

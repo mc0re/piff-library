@@ -1,7 +1,7 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     [BoxName("ctts")]
-    internal class PiffCompositionTimeToSample : PiffFullBoxBase
+    public sealed class PiffCompositionTimeToSampleBox : PiffFullBoxBase
     {
         #region Properties
 

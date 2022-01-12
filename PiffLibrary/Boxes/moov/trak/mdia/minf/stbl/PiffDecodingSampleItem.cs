@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffDecodingSampleItem
+    public sealed class PiffDecodingSampleItem
     {
         /// <summary>
         /// The number of consecutive samples that have the given duration.
@@ -10,7 +10,7 @@
 
         /// <summary>
         /// Delta of these samples from the previous entry
-        /// (for the first entry - from the first item in <see cref="PiffEditList"/>)
+        /// (for the first entry - from the first item in <see cref="PiffEditListBox"/>)
         /// in time scale of the media.
         /// </summary>
         public uint Delta { get; set; }

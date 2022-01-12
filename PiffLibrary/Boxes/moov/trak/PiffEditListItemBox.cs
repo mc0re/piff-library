@@ -1,10 +1,10 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// An explicit timeline map.
     /// </summary>
     [BoxName("elst")]
-    internal class PiffEditListItem : PiffFullBoxBase
+    public sealed class PiffEditListItemBox : PiffFullBoxBase
     {
         #region Properties
 

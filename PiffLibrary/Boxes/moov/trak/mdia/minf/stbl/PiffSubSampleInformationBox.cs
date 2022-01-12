@@ -1,7 +1,7 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     [BoxName("subs")]
-    internal class PiffSubSampleInformation : PiffFullBoxBase
+    public sealed class PiffSubSampleInformationBox : PiffFullBoxBase
     {
         public uint Count { get; set; }
 

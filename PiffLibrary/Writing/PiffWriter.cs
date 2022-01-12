@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiffLibrary.Boxes;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace PiffLibrary
 
         public static void WriteHeader(Stream output, PiffManifest manifest, PiffWriteContext ctx)
         {
-            var ftyp = new PiffFileType
+            var ftyp = new PiffFileTypeBox
             {
                 MajorBrand = "isml",
                 MinorVersion = 1,

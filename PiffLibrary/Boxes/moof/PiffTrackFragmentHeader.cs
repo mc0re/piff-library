@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     /// <summary>
     /// Flags:
@@ -22,7 +24,7 @@
 
 
         /// <summary>
-        /// Identical to the chunk offset in <see cref="PiffChunkOffset"/>.
+        /// Identical to the chunk offset in <see cref="PiffChunkOffsetBox"/>.
         /// If not, the offsets need to be established relative to the movie fragment.
         /// </summary>
         [PiffDataFormat(nameof(FlagsHaveBaseOffset))]

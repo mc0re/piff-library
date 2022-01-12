@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PiffLibrary.Boxes;
+using System.Collections.Generic;
 using System.IO;
 
 
@@ -8,7 +9,7 @@ namespace PiffLibrary
     {
         private readonly List<PiffBoxBase> mBoxes = new List<PiffBoxBase>();
 
-        private PiffFileType mFileTypeBox;
+        private PiffFileTypeBox mFileTypeBox;
 
 
         private PiffFile()
@@ -27,7 +28,7 @@ namespace PiffLibrary
 
                 switch (box)
                 {
-                    case PiffFileType ftyp:
+                    case PiffFileTypeBox ftyp:
                         file.mFileTypeBox = ftyp;
                         break;
                 }

@@ -1,13 +1,12 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Base class for all boxes with some common functionality.
     /// </summary>
-    internal abstract class PiffBoxBase
+    public abstract class PiffBoxBase
     {
         #region Constants
 

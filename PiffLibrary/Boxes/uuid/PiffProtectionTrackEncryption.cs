@@ -1,13 +1,13 @@
 ﻿using System;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Defines encryption parameters for all samples in a track,
     /// unless overwritten by <see cref="PiffSampleEncryption"/> extension box.
     /// </summary>
-    internal class PiffProtectionTrackEncryption
+    public sealed class PiffProtectionTrackEncryption
     {
         #region Constants
 

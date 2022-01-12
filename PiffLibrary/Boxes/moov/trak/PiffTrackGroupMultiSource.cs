@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     [BoxName("msrc")]
     internal class PiffTrackGroupMultiSource : PiffFullBoxBase

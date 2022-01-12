@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffSampleEncryptionItem
+    public sealed class PiffSampleEncryptionItem
     {
         #region Fields
 
@@ -45,7 +45,7 @@
 
         #region Format API
 
-        public PiffDataFormats UseSubSample() =>
+        private PiffDataFormats UseSubSample() =>
             (mParent.Parent.Flags & 2) != 0 ? PiffDataFormats.Int16 : PiffDataFormats.Skip;
 
         #endregion

@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     [BoxName("tref")]
     [ChildType(typeof(PiffTrackReferenceHint))]

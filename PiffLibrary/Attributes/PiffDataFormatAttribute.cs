@@ -1,10 +1,10 @@
 ﻿using System;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    internal class PiffDataFormatAttribute : Attribute
+    internal sealed class PiffDataFormatAttribute : Attribute
     {
         public string FormatFn { get; }
 

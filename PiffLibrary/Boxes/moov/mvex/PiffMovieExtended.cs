@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using PiffLibrary.Boxes;
+using System.Linq;
 
 namespace PiffLibrary
 {
@@ -8,7 +9,7 @@ namespace PiffLibrary
     [BoxName("mvex")]
     [ChildType(typeof(PiffMovieExtendedHeader))]
     [ChildType(typeof(PiffTrackExtended))]
-    [ChildType(typeof(PiffLevelAssignment))]
+    [ChildType(typeof(PiffLevelAssignmentBox))]
     [ChildType(typeof(PiffTrackExtensionProperties))]
     internal class PiffMovieExtended : PiffBoxBase
     {

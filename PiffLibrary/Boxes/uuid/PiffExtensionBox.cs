@@ -1,13 +1,13 @@
 ﻿using System;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// General extension box.
     /// </summary>
     [BoxName("uuid")]
-    internal class PiffExtensionBox : PiffBoxBase
+    public sealed class PiffExtensionBox : PiffBoxBase
     {
         #region Properties
 
@@ -91,15 +91,15 @@ namespace PiffLibrary
 
         #region Format API
 
-        public PiffDataFormats UseProtectionInfo() =>
+        private PiffDataFormats UseProtectionInfo() =>
             BoxId == PiffProtectionInfo.BoxId ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 
 
-        public PiffDataFormats UseTrackEncryption() =>
+        private PiffDataFormats UseTrackEncryption() =>
             BoxId == PiffProtectionTrackEncryption.BoxId ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 
 
-        public PiffDataFormats UseSampleEncryption() =>
+        private PiffDataFormats UseSampleEncryption() =>
             BoxId == PiffSampleEncryption.BoxId ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 
         #endregion

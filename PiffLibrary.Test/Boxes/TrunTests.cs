@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PiffLibrary.Boxes;
 using System.IO;
 using System.Linq;
 
@@ -119,7 +120,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.IsNotNull(box);
             Assert.AreEqual(16uL, length);
-            var trun = box as PiffTrackFragmentRun;
+            var trun = box as PiffTrackFragmentRunBox;
             Assert.IsNotNull(trun);
             Assert.AreEqual(0u, trun.SampleCount);
             Assert.AreEqual(0, trun.DataOffset);
@@ -140,7 +141,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.IsNotNull(box);
             Assert.AreEqual(24uL, length);
-            var trun = box as PiffTrackFragmentRun;
+            var trun = box as PiffTrackFragmentRunBox;
             Assert.IsNotNull(trun);
             Assert.AreEqual(0u, trun.SampleCount);
             Assert.AreEqual(-1, trun.DataOffset);
@@ -157,7 +158,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.IsNotNull(box);
             Assert.AreEqual(0x2CCuL, length);
-            var trun = box as PiffTrackFragmentRun;
+            var trun = box as PiffTrackFragmentRunBox;
             Assert.IsNotNull(trun);
             Assert.AreEqual(87u, trun.SampleCount);
         }

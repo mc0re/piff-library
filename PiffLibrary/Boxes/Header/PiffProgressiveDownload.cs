@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     [BoxName("pdin")]
     internal class PiffProgressiveDownload : PiffFullBoxBase

@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffSampleEncryptionSubSample
+    public sealed class PiffSampleEncryptionSubSample
     {
         /// <summary>
         /// The number of bytes of clear data at the beginning of this subsample. May be 0.

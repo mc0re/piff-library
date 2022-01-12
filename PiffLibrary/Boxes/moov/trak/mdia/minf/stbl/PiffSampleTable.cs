@@ -1,27 +1,28 @@
-﻿using System;
+﻿using PiffLibrary.Boxes;
+using System;
 
 namespace PiffLibrary
 {
     [BoxName("stbl")]
     [ChildType(typeof(PiffSampleDescription))]
-    [ChildType(typeof(PiffDegradationPriority))]
-    [ChildType(typeof(PiffDecodingTimeToSample))]
-    [ChildType(typeof(PiffCompositionTimeToSample))]
-    [ChildType(typeof(PiffCompositionToDecode))]
+    [ChildType(typeof(PiffDegradationPriorityBox))]
+    [ChildType(typeof(PiffDecodingTimeToSampleBox))]
+    [ChildType(typeof(PiffCompositionTimeToSampleBox))]
+    [ChildType(typeof(PiffCompositionToDecodeBox))]
     [ChildType(typeof(PiffSyncSample))]
     [ChildType(typeof(PiffShadowSyncSample))]
     [ChildType(typeof(PiffSampleDependency))]
     [ChildType(typeof(PiffSampleSize))]
-    [ChildType(typeof(PiffCompactSampleSize))]
+    [ChildType(typeof(PiffCompactSampleSizeBox))]
     [ChildType(typeof(PiffSampleToChunk))]
-    [ChildType(typeof(PiffChunkOffset))]
-    [ChildType(typeof(PiffChunkOffset64))]
+    [ChildType(typeof(PiffChunkOffsetBox))]
+    [ChildType(typeof(PiffChunkOffset64Box))]
     [ChildType(typeof(PiffPaddingBits))]
-    [ChildType(typeof(PiffSubSampleInformation))]
+    [ChildType(typeof(PiffSubSampleInformationBox))]
     [ChildType(typeof(PiffSampleAuxiliaryInformation))]
     [ChildType(typeof(PiffSampleAuxiliaryOffset))]
-    [ChildType(typeof(PiffSampleToGroup))]
-    [ChildType(typeof(PiffSampleGroupDescription))]
+    [ChildType(typeof(PiffSampleToGroupBox))]
+    [ChildType(typeof(PiffSampleGroupDescriptionBox))]
     internal class PiffSampleTable : PiffBoxBase
     {
         #region Init and clean-up
@@ -41,10 +42,10 @@ namespace PiffLibrary
         {
             Childen = new PiffBoxBase[]
             {
-                new PiffDecodingTimeToSample(),
-                new PiffCompositionTimeToSample(),
+                new PiffDecodingTimeToSampleBox(),
+                new PiffCompositionTimeToSampleBox(),
                 new PiffSampleToChunk(),
-                new PiffChunkOffset(),
+                new PiffChunkOffsetBox(),
                 new PiffSampleSize(),
                 description
             };

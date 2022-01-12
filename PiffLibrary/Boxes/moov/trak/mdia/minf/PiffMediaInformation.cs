@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PiffLibrary.Boxes;
+using System;
 
 namespace PiffLibrary
 {
     [BoxName("minf")]
     [ChildType(typeof(PiffNullMediaHeader))]
     [ChildType(typeof(PiffSampleTable))]
-    [ChildType(typeof(PiffDataInformation))]
+    [ChildType(typeof(PiffDataInformationBox))]
 
     [ChildType(typeof(PiffSoundMediaHeader))]
     [ChildType(typeof(PiffVideoMediaHeader))]
@@ -27,16 +28,16 @@ namespace PiffLibrary
         private PiffMediaInformation(PiffSoundMediaHeader sound, PiffVideoMediaHeader video, PiffSampleTable index)
         {
             // There must be a dinf box
-            var dinf = new PiffDataInformation
+            var dinf = new PiffDataInformationBox
             {
                 Childen = new PiffBoxBase[]
                 {
-                    new PiffDataReference
+                    new PiffDataReferenceBox
                     {
                         Count = 1,
                         Childen = new PiffBoxBase[]
                         {
-                            new PiffDataEntryUrl { Flags = 1 }
+                            new PiffDataEntryUrlBox { Flags = 1 }
                         }
                     }
                 }

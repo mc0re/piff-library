@@ -1,7 +1,7 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     [BoxName("cslg")]
-    internal class PiffCompositionToDecode : PiffFullBoxBase
+    public sealed class PiffCompositionToDecodeBox : PiffFullBoxBase
     {
         #region Properties
 
@@ -29,7 +29,7 @@
 
         #region Format API
 
-        public PiffDataFormats GetOffsetFormat() =>
+        private PiffDataFormats GetOffsetFormat() =>
             Version == 0 ? PiffDataFormats.Int32 : PiffDataFormats.Int64;
 
         #endregion

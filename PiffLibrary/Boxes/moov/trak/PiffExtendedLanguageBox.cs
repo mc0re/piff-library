@@ -1,10 +1,10 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Language information based on RFC 4646.
     /// </summary>
     [BoxName("elng")]
-    internal class PiffExtendedLanguage : PiffFullBoxBase
+    public sealed class PiffExtendedLanguageBox : PiffFullBoxBase
     {
         /// <summary>
         /// Language variant definition, e.g. "en-US".

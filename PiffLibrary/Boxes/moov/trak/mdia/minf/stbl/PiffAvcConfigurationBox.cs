@@ -2,10 +2,10 @@
 using System.Linq;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     [BoxName("avcC")]
-    internal class PiffAvcConfiguration : PiffBoxBase
+    public sealed class PiffAvcConfigurationBox : PiffBoxBase
     {
         #region Constants
 
@@ -197,7 +197,7 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffAvcConfiguration()
+        public PiffAvcConfigurationBox()
         {
         }
 
@@ -205,7 +205,7 @@ namespace PiffLibrary
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public PiffAvcConfiguration(string codecId, byte[] codecData)
+        public PiffAvcConfigurationBox(string codecId, byte[] codecData)
         {
             if (codecId != "H264")
                 throw new ArgumentException($"Cannot process codec '{codecId}', only 'H264' is supported.");
@@ -227,14 +227,14 @@ namespace PiffLibrary
                 seqEnd++;
 
             SequenceSlotData = codecData.Skip(4).Take(seqEnd - 4).ToArray();
-            SequenceSlotLength = (short)SequenceSlotData.Length;
+            SequenceSlotLength = (short) SequenceSlotData.Length;
 
             var picId = codecData[seqEnd + 4];
             if (picId != NalPictureHeader)
                 throw new ArgumentException($"I don't know how to interpret header 0x{picId:X} at offset {seqEnd + 4}.");
 
             PictureSlotData = codecData.Skip(seqEnd + 4).ToArray();
-            PictureSlotLength = (short)PictureSlotData.Length;
+            PictureSlotLength = (short) PictureSlotData.Length;
         }
 
         #endregion

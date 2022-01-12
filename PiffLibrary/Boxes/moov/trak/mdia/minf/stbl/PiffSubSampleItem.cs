@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffSubSampleItem
+    public sealed class PiffSubSampleItem
     {
         #region Fields
 
@@ -49,7 +49,7 @@
 
         #region Format API
 
-        public PiffDataFormats GetSizeFormat() =>
+        private PiffDataFormats GetSizeFormat() =>
             mParent.Parent.Version == 0 ? PiffDataFormats.UInt16 : PiffDataFormats.UInt32;
 
         #endregion

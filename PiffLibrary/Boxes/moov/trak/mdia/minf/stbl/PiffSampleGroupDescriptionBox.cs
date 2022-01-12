@@ -1,10 +1,10 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Characteristics of a single sample grouping.
     /// </summary>
     [BoxName("sgpd")]
-    internal class PiffSampleGroupDescription : PiffFullBoxBase
+    public sealed class PiffSampleGroupDescriptionBox : PiffFullBoxBase
     {
         #region Properties
 
@@ -24,7 +24,7 @@
 
         /// <summary>
         /// Index of the entry in <see cref="Entries"/>, which applies
-        /// to all samples without group (see <see cref="PiffSampleToGroup"/>.
+        /// to all samples without group (see <see cref="PiffSampleToGroupBox"/>.
         /// 0 - samples are not mapped to any group.
         /// </summary>
         [PiffDataFormat(nameof(UseDefaultIndex))]
@@ -42,11 +42,11 @@
 
         #region Format API
 
-        public PiffDataFormats UseDefaultLength() =>
+        private PiffDataFormats UseDefaultLength() =>
             Version == 1 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
-        public PiffDataFormats UseDefaultIndex() =>
+        private PiffDataFormats UseDefaultIndex() =>
             Version >= 2 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
         #endregion

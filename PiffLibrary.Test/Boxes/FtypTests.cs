@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PiffLibrary.Boxes;
 using System.IO;
 using System.Linq;
 
@@ -19,7 +20,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.IsNotNull(box);
             Assert.AreEqual(16uL, length);
-            var ftyp = box as PiffFileType;
+            var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
             Assert.AreEqual(2u, ftyp.MinorVersion);
@@ -40,7 +41,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.IsNotNull(box);
             Assert.AreEqual(24uL, length);
-            var ftyp = box as PiffFileType;
+            var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
             Assert.AreEqual(2u, ftyp.MinorVersion);
@@ -62,7 +63,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.IsNotNull(box);
             Assert.AreEqual(24uL, length);
-            var ftyp = box as PiffFileType;
+            var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
             Assert.AreEqual(2u, ftyp.MinorVersion);
@@ -84,7 +85,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.IsNotNull(box);
             Assert.AreEqual(20uL, length);
-            var ftyp = box as PiffFileType;
+            var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
             Assert.AreEqual(2u, ftyp.MinorVersion);
@@ -96,7 +97,7 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Ftype_LengthTwoCompat()
         {
-            var box = new PiffFileType()
+            var box = new PiffFileTypeBox()
             {
                 MajorBrand = "majr",
                 MinorVersion = 2,
@@ -116,7 +117,7 @@ namespace PiffLibrary.Test.Boxes
             using var ms = new MemoryStream();
             var ctx = new PiffWriteContext();
 
-            var box = new PiffFileType()
+            var box = new PiffFileTypeBox()
             {
                 MajorBrand = "majr",
                 MinorVersion = 2,

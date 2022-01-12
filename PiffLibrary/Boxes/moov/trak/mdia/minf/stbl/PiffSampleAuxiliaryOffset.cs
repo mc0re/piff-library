@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     [BoxName("saio")]
     internal class PiffSampleAuxiliaryOffset : PiffFullBoxBase

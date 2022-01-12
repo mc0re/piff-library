@@ -1,12 +1,12 @@
 ﻿using System;
 
 
-namespace PiffLibrary
+namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// PlayReady uses "pssh" extension box for protection information.
     /// </summary>
-    internal class PiffProtectionInfo
+    public sealed class PiffProtectionInfo
     {
         #region Constants
 
@@ -42,7 +42,7 @@ namespace PiffLibrary
         /// Used by Windows.Media.Protection.PlayReady.PlayReadyLicenseAcquisitionServiceRequest
         /// </summary>
         [PiffArraySize(nameof(DataSize))]
-        public byte[] BinData { get; set; }// = new byte[0];
+        public byte[] BinData { get; set; }
 
         #endregion
     }

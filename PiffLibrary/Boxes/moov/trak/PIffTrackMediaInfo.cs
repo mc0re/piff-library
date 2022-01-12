@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiffLibrary.Boxes;
+using System;
 
 namespace PiffLibrary
 {
@@ -6,7 +7,7 @@ namespace PiffLibrary
     [ChildType(typeof(PiffMediaHeader))]
     [ChildType(typeof(PiffHandlerType))]
     [ChildType(typeof(PiffMediaInformation))]
-    [ChildType(typeof(PiffExtendedLanguage))]
+    [ChildType(typeof(PiffExtendedLanguageBox))]
     internal class PIffTrackMediaInfo : PiffBoxBase
     {
         #region Init and clean-up

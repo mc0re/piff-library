@@ -1,10 +1,10 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Index of each chunk into the containing file.
     /// </summary>
-    [BoxName("stco")]
-    internal class PiffChunkOffset : PiffFullBoxBase
+    [BoxName("co64")]
+    public sealed class PiffChunkOffset64Box : PiffFullBoxBase
     {
         #region Properties
 
@@ -18,7 +18,7 @@
         /// Offset of each chunk from the beginning of the file.
         /// </summary>
         [PiffArraySize(nameof(Count))]
-        public uint[] Offsets { get; set; }
+        public ulong[] Offsets { get; set; }
 
         #endregion
     }

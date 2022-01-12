@@ -1,8 +1,9 @@
 ﻿using System;
 
-namespace PiffLibrary
+
+namespace PiffLibrary.Boxes
 {
-    internal class PiffSampleEncryptionAlgorithm
+    public sealed class PiffSampleEncryptionAlgorithm
     {
         #region Properties
 

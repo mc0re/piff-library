@@ -1,8 +1,10 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     [BoxName("trep")]
-    [ChildType(typeof(PiffAlternativeStartupSequence))]
-    [ChildType(typeof(PiffCompositionToDecode))]
+    [ChildType(typeof(PiffAlternativeStartupSequenceBox))]
+    [ChildType(typeof(PiffCompositionToDecodeBox))]
     internal class PiffTrackExtensionProperties : PiffFullBoxBase
     {
         /// <summary>

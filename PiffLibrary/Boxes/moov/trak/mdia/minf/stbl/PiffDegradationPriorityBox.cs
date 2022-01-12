@@ -1,7 +1,7 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     [BoxName("stdp")]
-    internal class PiffDegradationPriority : PiffFullBoxBase
+    public sealed class PiffDegradationPriorityBox : PiffFullBoxBase
     {
         /// <summary>
         /// The number of items is <see cref="PiffSampleSize.SampleCount"/>.

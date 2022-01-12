@@ -1,11 +1,11 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffSubSampleChunk
+    public sealed class PiffSubSampleChunk
     {
         #region Properties
 
         [PiffDataFormat(PiffDataFormats.Skip)]
-        public PiffSubSampleInformation Parent { get; set; }
+        public PiffSubSampleInformationBox Parent { get; set; }
 
 
         /// <summary>
@@ -29,7 +29,7 @@
 
         #region Init and clean-up
 
-        public PiffSubSampleChunk(PiffSubSampleInformation parent)
+        public PiffSubSampleChunk(PiffSubSampleInformationBox parent)
         {
             Parent = parent;
         }

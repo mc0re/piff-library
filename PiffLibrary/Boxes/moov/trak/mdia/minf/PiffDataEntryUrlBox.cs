@@ -1,7 +1,7 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     [BoxName("url ")]
-    internal class PiffDataEntryUrl : PiffFullBoxBase
+    public sealed class PiffDataEntryUrlBox : PiffFullBoxBase
     {
         #region Properties
 
@@ -16,10 +16,8 @@
 
         #region Format API
 
-        public PiffDataFormats GetStringFormat()
-        {
-            return (Flags & 1) == 0 ? PiffDataFormats.Utf8Zero : PiffDataFormats.Skip;
-        }
+        private PiffDataFormats GetStringFormat() =>
+            (Flags & 1) == 0 ? PiffDataFormats.Utf8Zero : PiffDataFormats.Skip;
 
         #endregion
     }

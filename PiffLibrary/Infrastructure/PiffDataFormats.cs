@@ -3,7 +3,7 @@
     /// <summary>
     /// In which format shall the data be written to the file.
     /// </summary>
-    public enum PiffDataFormats
+    internal enum PiffDataFormats
     {
         /// <summary>
         /// Do not write this value.

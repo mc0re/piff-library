@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PiffLibrary.Boxes;
+using System;
 
 
 namespace PiffLibrary
@@ -8,7 +9,7 @@ namespace PiffLibrary
     /// </summary>
     [BoxName("enca")]
     [ChildType(typeof(PiffProtectionSchemeInformation))]
-    [ChildType(typeof(PiffElementaryStreamDescriptionMp4a))] // For WMA streams a "wfex" block comes instead
+    [ChildType(typeof(PiffElementaryStreamDescriptionMp4aBox))] // For WMA streams a "wfex" block comes instead
     internal class PiffProtectedAudioSampleEntry : PiffBoxBase
     {
         #region Constants
@@ -77,7 +78,7 @@ namespace PiffLibrary
             SampleSize = audio.BitsPerSample;
             SampleRate = ((uint)audio.SamplingRate) << 16;
             var scheme = PiffProtectionSchemeInformation.CreateAudio(audio.CodecId, keyId);
-            var desc = PiffElementaryStreamDescriptionMp4a.Create(
+            var desc = PiffElementaryStreamDescriptionMp4aBox.Create(
                 audio.CodecId, 0, audio.BitRate, BufferSize, audio.CodecData);
             Childen = new PiffBoxBase[] { scheme, desc };
         }

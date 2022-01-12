@@ -1,4 +1,6 @@
-﻿namespace PiffLibrary
+﻿using PiffLibrary.Boxes;
+
+namespace PiffLibrary
 {
     /// <summary>
     /// Additional meta data for the actual streams, placed in <see cref="PiffMediaData"/> boxes.

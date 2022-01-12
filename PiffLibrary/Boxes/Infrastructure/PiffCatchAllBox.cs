@@ -1,10 +1,10 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// All unrecognized boxes are given this type.
     /// </summary>
     [BoxName("unknown")]
-    internal sealed class PiffCatchAllBox : PiffBoxBase
+    public sealed class PiffCatchAllBox : PiffBoxBase
     {
         public byte[] Data { get; set; }
 

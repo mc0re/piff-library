@@ -1,13 +1,13 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class CompositionSampleItem
+    public sealed class CompositionSampleItem
     {
         #region Fields
 
         /// <summary>
         /// Explicit parent.
         /// </summary>
-        private readonly PiffCompositionTimeToSample mParent;
+        private readonly PiffCompositionTimeToSampleBox mParent;
 
         #endregion
 
@@ -31,7 +31,7 @@
 
         #region Init and clean-up
 
-        public CompositionSampleItem(PiffCompositionTimeToSample parent)
+        public CompositionSampleItem(PiffCompositionTimeToSampleBox parent)
         {
             mParent = parent;
         }
@@ -41,7 +41,7 @@
 
         #region Format API
 
-        public PiffDataFormats GetOffsetFormat() =>
+        private PiffDataFormats GetOffsetFormat() =>
             mParent.Version == 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Int32;
 
         #endregion

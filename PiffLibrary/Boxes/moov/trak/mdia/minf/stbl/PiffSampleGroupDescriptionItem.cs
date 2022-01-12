@@ -1,18 +1,18 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffSampleGroupDescriptionItem
+    public sealed class PiffSampleGroupDescriptionItem
     {
         #region Fields
 
-        private PiffSampleGroupDescription mParent;
+        private PiffSampleGroupDescriptionBox mParent;
 
         #endregion
 
 
         #region Properties
-        
+
         /// <summary>
-        /// Length of this entry when <see cref="PiffSampleGroupDescription.DefaultLength"/> is 0.
+        /// Length of this entry when <see cref="PiffSampleGroupDescriptionBox.DefaultLength"/> is 0.
         /// </summary>
         [PiffDataFormat(nameof(UseLength))]
         public uint DescriptionLength { get; set; }
@@ -37,7 +37,7 @@
 
         #region Init and clean-up
 
-        public PiffSampleGroupDescriptionItem(PiffSampleGroupDescription parent)
+        public PiffSampleGroupDescriptionItem(PiffSampleGroupDescriptionBox parent)
         {
             mParent = parent;
         }
@@ -47,12 +47,11 @@
 
         #region Format API
 
-        public PiffDataFormats UseLength() =>
+        private PiffDataFormats UseLength() =>
             mParent.Version == 1 && mParent.DefaultLength == 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
-        [PiffDataFormat(PiffDataFormats.Skip)]
-        public uint EntrySize => mParent.DefaultLength > 0 ? mParent.DefaultLength : DescriptionLength;
+        private uint EntrySize => mParent.DefaultLength > 0 ? mParent.DefaultLength : DescriptionLength;
 
         #endregion
     }

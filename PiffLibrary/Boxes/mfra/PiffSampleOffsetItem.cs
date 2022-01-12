@@ -1,10 +1,10 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffSampleOffsetItem
+    public sealed class PiffSampleOffsetItem
     {
         #region Fields
 
-        private readonly PiffTrackFragmentRandomAccess mParent;
+        private readonly PiffTrackFragmentRandomAccessBox mParent;
 
         #endregion
 
@@ -56,7 +56,7 @@
 
         #region Init and clean-up
 
-        public PiffSampleOffsetItem(PiffTrackFragmentRandomAccess parent)
+        public PiffSampleOffsetItem(PiffTrackFragmentRandomAccessBox parent)
         {
             mParent = parent;
         }
@@ -66,28 +66,21 @@
 
         #region Format API
 
-        public PiffDataFormats GetDateFormat()
-        {
-            return mParent.Version != 1 ? PiffDataFormats.UInt32 : PiffDataFormats.UInt64;
-        }
+        private PiffDataFormats GetDateFormat() =>
+            mParent.Version != 1 ? PiffDataFormats.UInt32 : PiffDataFormats.UInt64;
 
 
-        public PiffDataFormats GetOffsetFormat()
-        {
-            return mParent.Version != 1 ? PiffDataFormats.UInt32 : PiffDataFormats.UInt64;
-        }
+        private PiffDataFormats GetOffsetFormat() =>
+            mParent.Version != 1 ? PiffDataFormats.UInt32 : PiffDataFormats.UInt64;
 
 
-        [PiffDataFormat(PiffDataFormats.Skip)]
-        public int TrafNumberLength => mParent.GetTrafNumberSize();
+        private int TrafNumberLength => mParent.GetTrafNumberSize();
 
 
-        [PiffDataFormat(PiffDataFormats.Skip)]
-        public int TrunNumberLength => mParent.GetTrunNumberSize();
+        private int TrunNumberLength => mParent.GetTrunNumberSize();
 
 
-        [PiffDataFormat(PiffDataFormats.Skip)]
-        public int SampleNumberLength => mParent.GetSampleNumberSize();
+        private int SampleNumberLength => mParent.GetSampleNumberSize();
 
         #endregion
     }

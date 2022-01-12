@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PiffLibrary.Boxes;
+using System;
 
 
 namespace PiffLibrary
 {
     [BoxName("encv")]
     [ChildType(typeof(PiffProtectionSchemeInformation))]
-    [ChildType(typeof(PiffAvcConfiguration))]
+    [ChildType(typeof(PiffAvcConfigurationBox))]
     internal class PiffProtectedVideoSampleEntry : PiffBoxBase
     {
         #region Properties
@@ -85,7 +86,7 @@ namespace PiffLibrary
             Width = video.Width;
             Height = video.Height;
             var scheme = PiffProtectionSchemeInformation.CreateVideo(video.CodecId, keyId);
-            var config = new PiffAvcConfiguration(video.CodecId, video.CodecData);
+            var config = new PiffAvcConfigurationBox(video.CodecId, video.CodecData);
             Childen = new PiffBoxBase[] {scheme, config};
         }
 
