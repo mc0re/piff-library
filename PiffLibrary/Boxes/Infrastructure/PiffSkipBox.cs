@@ -1,12 +1,10 @@
-﻿using PiffLibrary.Boxes;
-
-namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
-    /// Ignore this.
+    /// Ignore this box.
     /// </summary>
     [BoxName("skip")]
-    internal sealed class PiffSkipBox : PiffBoxBase
+    public sealed class PiffSkipBox : PiffBoxBase
     {
         public byte[] Data { get; set; }
     }

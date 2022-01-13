@@ -72,12 +72,21 @@ namespace PiffLibrary.Boxes
 
         #region API
 
+        /// <summary>
+        /// Used from <see cref="PiffSampleOffsetItem"/>.
+        /// </summary>
         internal int GetTrafNumberSize() => ((Lengths & 0b110000) >> 4) + 1;
 
 
+        /// <summary>
+        /// Used from <see cref="PiffSampleOffsetItem"/>.
+        /// </summary>
         internal int GetTrunNumberSize() => ((Lengths & 0b001100) >> 2) + 1;
 
 
+        /// <summary>
+        /// Used from <see cref="PiffSampleOffsetItem"/>.
+        /// </summary>
         internal int GetSampleNumberSize() => (Lengths & 0b000011) + 1;
 
         #endregion

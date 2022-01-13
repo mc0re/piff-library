@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using PiffLibrary.Boxes;
 
+
 namespace PiffLibrary
 {
     /// <summary>
@@ -14,7 +15,7 @@ namespace PiffLibrary
     /// This class knows about objects and arrays, but not the box format.
     /// This knowledge is delegated to <see cref="PiffReader"/> and <see cref="PiffWriter"/>.
     /// </summary>
-    internal class PiffPropertyInfo
+    internal sealed class PiffPropertyInfo
     {
         #region Properties
 
@@ -62,22 +63,7 @@ namespace PiffLibrary
             Property = prop;
             IsArray = prop.PropertyType.IsArray;
             ElementType = IsArray ? prop.PropertyType.GetElementType() : prop.PropertyType;
-
-            var formatAttr = prop.GetCustomAttribute<PiffDataFormatAttribute>();
-
-            if (formatAttr is null)
-            {
-                Format = GetDefaultFormat(ElementType);
-            }
-            else if (formatAttr.FormatFn != null)
-            {
-                var fn = target.GetType().GetMethod(formatAttr.FormatFn);
-                Format = (PiffDataFormats) fn.Invoke(target, null);
-            }
-            else
-            {
-                Format = formatAttr.Format;
-            }
+            Format = GetPropertyFormat(prop, ElementType, target);
 
             var lengthAttr = Property.GetCustomAttribute<PiffStringLengthAttribute>();
             if (Format == PiffDataFormats.Ascii)
@@ -92,32 +78,7 @@ namespace PiffLibrary
                 throw new ArgumentException($"Property '{prop.DeclaringType.Name}.{prop.Name}' is not a string and thus cannot have {nameof(PiffStringLengthAttribute)}.");
             }
 
-            var sizeAttr = Property.GetCustomAttribute<PiffArraySizeAttribute>();
-            if (IsArray && sizeAttr != null)
-            {
-                if (sizeAttr.SizeProp != null)
-                {
-                    var sizeProp = target.GetType().GetProperty(sizeAttr.SizeProp);
-                    object size = sizeProp.GetValue(target, null);
-
-                    try
-                    {
-                        ArraySize = (int) Convert.ChangeType(size, typeof(int));
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new ArgumentException($"Cannot convert property {sizeProp.DeclaringType.Name}.{sizeProp.Name} value {size} to an integer array size.", ex);
-                    }
-                }
-                else
-                {
-                    ArraySize = sizeAttr.Size;
-                }
-            }
-            else if (sizeAttr != null)
-            {
-                throw new ArgumentException($"Property '{prop.DeclaringType.Name}.{prop.Name}' is not an array and thus cannot have {nameof(PiffArraySizeAttribute)}.");
-            }
+            ArraySize = GetArraySize(prop, IsArray, target);
         }
 
 
@@ -143,7 +104,8 @@ namespace PiffLibrary
         #region API
 
         /// <summary>
-        /// Read out properties of <paramref name="target"/> object from <paramref name="input"/>.
+        /// Read out properties of <paramref name="target"/> object (can be a box)
+        /// from <paramref name="input"/>.
         /// </summary>
         /// <returns>The number of bytes read</returns>
         public static ulong ReadObject(object target, Stream input, ulong bytesLeft, PiffReadContext ctx)
@@ -225,6 +187,35 @@ namespace PiffLibrary
         #region Format utility
 
         /// <summary>
+        /// Check <see cref="PiffDataFormatAttribute"/> and retrieve info from it,
+        /// or use the default format.
+        /// </summary>
+        private static PiffDataFormats GetPropertyFormat(PropertyInfo prop, Type propType, object target)
+        {
+            var formatAttr = prop.GetCustomAttribute<PiffDataFormatAttribute>();
+
+            if (formatAttr is null)
+            {
+                return GetDefaultFormat(propType);
+            }
+            else if (formatAttr.FormatFn != null)
+            {
+                const BindingFlags formatFnFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic;
+                var fn = target.GetType().GetMethod(formatAttr.FormatFn, formatFnFlags);
+
+                if (fn is null)
+                    throw new ArgumentException($"Method {formatAttr.FormatFn} not found on object {prop.DeclaringType.Name}.");
+
+                return (PiffDataFormats) fn.Invoke(target, null);
+            }
+            else
+            {
+                return formatAttr.Format;
+            }
+        }
+
+
+        /// <summary>
         /// Unless the format is explicitly specified, use the default one.
         /// </summary>
         private static PiffDataFormats GetDefaultFormat(Type valueType)
@@ -264,6 +255,46 @@ namespace PiffLibrary
 
             else
                 throw new ArgumentException($"Unsupported data type '{valueType.Name}'.");
+        }
+
+
+        /// <summary>
+        /// Retrieve array size information from <see cref="PiffArraySizeAttribute"/>.
+        /// </summary>
+        private static int? GetArraySize(PropertyInfo prop, bool isArray, object target)
+        {
+            var sizeAttr = prop.GetCustomAttribute<PiffArraySizeAttribute>();
+
+            if (!isArray)
+            {
+                if (sizeAttr != null)
+                    throw new ArgumentException($"Property '{prop.DeclaringType.Name}.{prop.Name}' is not an array and thus cannot have {nameof(PiffArraySizeAttribute)}.");
+
+                return null;
+            }
+
+            if (sizeAttr is null)
+                return null;
+
+            if (sizeAttr.SizeProp == null)
+                return sizeAttr.Size;
+
+            const BindingFlags sizePropFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+            var sizeProp = target.GetType().GetProperty(sizeAttr.SizeProp, sizePropFlags);
+
+            if (sizeProp is null)
+                throw new ArgumentException($"Property {sizeAttr.SizeProp} not found on object {prop.DeclaringType.Name}.");
+
+            object size = sizeProp.GetValue(target, null);
+
+            try
+            {
+                return (int) Convert.ChangeType(size, typeof(int));
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException($"Cannot convert property {sizeProp.DeclaringType.Name}.{sizeProp.Name} value {size} to an integer array size.", ex);
+            }
         }
 
         #endregion

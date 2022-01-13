@@ -1,6 +1,4 @@
-﻿using PiffLibrary.Boxes;
-
-namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     public sealed class PiffSampleToGroupItem
     {

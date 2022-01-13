@@ -11,7 +11,7 @@
 
 
         /// <summary>
-        /// Left-most bit, when set, means the <see cref="PiffMediaData"/>
+        /// Left-most bit, when set, means the <see cref="PiffMediaDataBox"/>
         /// shall be padded with 0.
         /// 
         /// Next 7 bits are used for the type.

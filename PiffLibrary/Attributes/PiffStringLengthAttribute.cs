@@ -8,7 +8,7 @@ namespace PiffLibrary
     /// or the size of string elements for a string array value.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    internal class PiffStringLengthAttribute : Attribute
+    internal sealed class PiffStringLengthAttribute : Attribute
     {
         /// <summary>
         /// The number of bytes in the string.

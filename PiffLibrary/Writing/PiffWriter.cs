@@ -22,7 +22,7 @@ namespace PiffLibrary
                 CompatibleBrands = new[] { "piff", "iso2" }
             };
             WriteBox(output, ftyp, ctx);
-            var movie = new PiffMovieMetadata(manifest);
+            var movie = new PiffMovieMetadataBox(manifest);
             WriteBox(output, movie, ctx);
         }
 
@@ -37,7 +37,7 @@ namespace PiffLibrary
             IEnumerable<PiffSampleOffsetDto> videoOffsets,
             PiffWriteContext ctx)
         {
-            var access = new PiffMovieFragmentRandomAccess(
+            var access = new PiffMovieFragmentRandomAccessBox(
                 manifest.AudioTrackId, audioOffsets,
                 manifest.VideoTrackId, videoOffsets);
             WriteBox(output, access, ctx);

@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffShadowSyncItem
+    public sealed class PiffShadowSyncItem
     {
         /// <summary>
         /// Which sample number is been shadowed.

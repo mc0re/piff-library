@@ -22,6 +22,7 @@ namespace PiffLibrary.Boxes
 
         /// <summary>
         /// Property format depends on the given (by name) function of the target box.
+        /// Only private functions are accepted (see <see cref="PiffPropertyInfo.GetPropertyFormat"/>).
         /// </summary>
         public PiffDataFormatAttribute(string formatFn)
         {

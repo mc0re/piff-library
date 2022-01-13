@@ -1,6 +1,4 @@
-﻿using PiffLibrary.Boxes;
-
-namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
     /// Find the group a sample belongs to.
@@ -34,7 +32,7 @@ namespace PiffLibrary
 
         #region Format API
 
-        internal PiffDataFormats UseParameter() =>
+        private PiffDataFormats UseParameter() =>
             Version == 1 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
         #endregion

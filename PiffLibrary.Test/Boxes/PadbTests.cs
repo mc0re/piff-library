@@ -1,0 +1,125 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PiffLibrary.Boxes;
+using System.IO;
+using System.Linq;
+
+
+namespace PiffLibrary.Test.Boxes
+{
+    [TestClass]
+    public class PadbTests
+    {
+        [TestMethod]
+        public void Padb_ReadNoSamples()
+        {
+            var bytes = new byte[] { 0, 0, 0, 16, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 0 };
+            using var ms = new MemoryStream(bytes, false);
+            var ctx = new PiffReadContext();
+
+            var length = PiffReader.ReadBox(ms, ctx, out var box);
+
+            Assert.IsNotNull(box);
+            Assert.AreEqual(16uL, length);
+            var padb = box as PiffPaddingBitsBox;
+            Assert.IsNotNull(padb);
+            Assert.AreEqual(0u, padb.SampleCount);
+            Assert.IsNull(padb.Padding);
+        }
+
+
+        [TestMethod]
+        public void Padb_ReadTwoSamples()
+        {
+            var bytes = new byte[] { 0, 0, 0, 17, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77 };
+            using var ms = new MemoryStream(bytes, false);
+            var ctx = new PiffReadContext();
+
+            var length = PiffReader.ReadBox(ms, ctx, out var box);
+
+            Assert.IsNotNull(box);
+            Assert.AreEqual(17uL, length);
+            var padb = box as PiffPaddingBitsBox;
+            Assert.IsNotNull(padb);
+            Assert.AreEqual(2u, padb.SampleCount);
+            Assert.AreEqual(1, padb.Padding.Length);
+            Assert.AreEqual(0x77, padb.Padding[0]);
+        }
+
+
+        [TestMethod]
+        public void Padb_ReadThreeSamples()
+        {
+            var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 3, 0x77, 0x50 };
+            using var ms = new MemoryStream(bytes, false);
+            var ctx = new PiffReadContext();
+
+            var length = PiffReader.ReadBox(ms, ctx, out var box);
+
+            Assert.IsNotNull(box);
+            Assert.AreEqual(18uL, length);
+            var padb = box as PiffPaddingBitsBox;
+            Assert.IsNotNull(padb);
+            Assert.AreEqual(3u, padb.SampleCount);
+            Assert.AreEqual(2, padb.Padding.Length);
+            Assert.AreEqual(0x77, padb.Padding[0]);
+            Assert.AreEqual(0x50, padb.Padding[1]);
+        }
+
+
+        [TestMethod]
+        public void Padb_ReadBoxTooLong()
+        {
+            var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77, 0 };
+            using var ms = new MemoryStream(bytes, false);
+            var ctx = new PiffReadContext();
+
+            var length = PiffReader.ReadBox(ms, ctx, out var box);
+
+            Assert.IsNotNull(box);
+            Assert.AreEqual(17uL, length);
+            var padb = box as PiffPaddingBitsBox;
+            Assert.IsNotNull(padb);
+            Assert.AreEqual(2u, padb.SampleCount);
+            Assert.AreEqual(1, padb.Padding.Length);
+            Assert.AreEqual(0x77, padb.Padding[0]);
+        }
+
+
+        [TestMethod]
+        public void Padb_LengthThreeSamples()
+        {
+            var box = new PiffPaddingBitsBox
+            {
+                SampleCount = 3,
+                Padding = new byte[] { 0x77, 0x50 }
+            };
+
+            var written = PiffWriter.GetBoxLength(box);
+
+            Assert.IsNotNull(written);
+            Assert.AreEqual(18uL, written);
+        }
+
+
+        [TestMethod]
+        public void Padb_WriteThreeSamples()
+        {
+            using var ms = new MemoryStream();
+            var ctx = new PiffWriteContext();
+
+            var box = new PiffPaddingBitsBox
+            {
+                SampleCount = 3,
+                Padding = new byte[] { 0x77, 0x50 }
+            };
+            var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 3, 0x77, 0x50 };
+
+            PiffWriter.WriteBox(ms, box, ctx);
+
+            var written = ms.GetBuffer().Take((int)ms.Length).ToArray();
+            Assert.IsNotNull(written);
+            Assert.AreEqual(18, written.Length);
+            CollectionAssert.AreEqual(bytes, written);
+        }
+    }
+}

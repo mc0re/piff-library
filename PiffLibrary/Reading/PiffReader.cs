@@ -41,18 +41,18 @@ namespace PiffLibrary
         public static uint GetFragmentSequenceNumber(byte[] data)
         {
             var ms = new MemoryStream(data);
-            var moof = ReadBox<PiffMovieFragment>(ms, new PiffReadContext());
+            var moof = ReadBox<PiffMovieFragmentBox>(ms, new PiffReadContext());
 
-            return moof.First<PiffMovieFragmentHeader>().Sequence;
+            return moof.First<PiffMovieFragmentHeaderBox>().Sequence;
         }
 
 
         public static uint GetTrackId(byte[] data)
         {
             var ms = new MemoryStream(data);
-            var moof = ReadBox<PiffMovieFragment>(ms, new PiffReadContext());
+            var moof = ReadBox<PiffMovieFragmentBox>(ms, new PiffReadContext());
 
-            return moof.First<PiffTrackFragment>().First<PiffTrackFragmentHeader>().TrackId;
+            return moof.First<PiffTrackFragmentBox>().First<PiffTrackFragmentHeaderBox>().TrackId;
         }
 
         #endregion

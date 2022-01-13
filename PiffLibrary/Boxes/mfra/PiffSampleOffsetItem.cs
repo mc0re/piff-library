@@ -12,7 +12,7 @@
         #region Properties
 
         /// <summary>
-        /// Start time of a <see cref="PiffMovieFragment"/> box,
+        /// Start time of a <see cref="PiffMovieFragmentBox"/> box,
         /// in time scale units.
         /// </summary>
         [PiffDataFormat(nameof(GetDateFormat))]
@@ -20,7 +20,7 @@
 
 
         /// <summary>
-        /// Offset of the that <see cref="PiffMovieFragment"/> from the beginning of the file.
+        /// Offset of the that <see cref="PiffMovieFragmentBox"/> from the beginning of the file.
         /// </summary>
         [PiffDataFormat(nameof(GetOffsetFormat))]
         public ulong Offset { get; set; }
@@ -28,8 +28,8 @@
 
         /// <summary>
         /// Length is "length of TrafNumber field" + 1 bytes.
-        /// The index of <see cref="PiffTrackFragment"/> box containing the sync sample.
-        /// Starts with 1 in each <see cref="PiffMovieFragment"/>.
+        /// The index of <see cref="PiffTrackFragmentBox"/> box containing the sync sample.
+        /// Starts with 1 in each <see cref="PiffMovieFragmentBox"/>.
         /// </summary>
         [PiffArraySize(nameof(TrafNumberLength))]
         public byte[] TrafNumber { get; set; }
@@ -38,7 +38,7 @@
         /// <summary>
         /// Length is "length of TrunNumber field" + 1 bytes.
         /// The index of "trun" box containing the sync sample.
-        /// Starts with 1 in each <see cref="PiffTrackFragment"/>.
+        /// Starts with 1 in each <see cref="PiffTrackFragmentBox"/>.
         /// </summary>
         [PiffArraySize(nameof(TrunNumberLength))]
         public byte[] TrunNumber { get; set; }

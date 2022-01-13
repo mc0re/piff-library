@@ -1,6 +1,6 @@
-﻿namespace PiffLibrary
+﻿namespace PiffLibrary.Boxes
 {
-    internal class PiffProgressiveDownloadItem
+    public sealed class PiffProgressiveDownloadItem
     {
         /// <summary>
         /// Download rate [bytes/second].

@@ -39,7 +39,7 @@ namespace PiffLibrary.Boxes
         /// or as the last fields.
         /// </summary>
         [AfterDescendants]
-        public PiffBoxBase[] Childen { get; set; } = new PiffBoxBase[0];
+        public PiffBoxBase[] Childen { get; set; }
 
         #endregion
 

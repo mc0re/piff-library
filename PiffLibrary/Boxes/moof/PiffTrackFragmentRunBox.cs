@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Multiple boxes per track.
-    /// If <see cref="PiffTrackFragmentHeader"/> flags indicate the duration is empty,
+    /// If <see cref="PiffTrackFragmentHeaderBox"/> flags indicate the duration is empty,
     /// no run boxes mey be present.
     /// </summary>
     [BoxName("trun")]
@@ -17,7 +17,7 @@
 
 
         /// <summary>
-        /// Added to <see cref="PiffTrackFragmentHeader.BaseDataOffset"/>.
+        /// Added to <see cref="PiffTrackFragmentHeaderBox.BaseDataOffset"/>.
         /// </summary>
         [PiffDataFormat(nameof(FlagsHaveDataOffset))]
         public int DataOffset { get; set; }
