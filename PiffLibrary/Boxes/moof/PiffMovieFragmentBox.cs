@@ -6,6 +6,8 @@
     [BoxName("moof")]
     [ChildType(typeof(PiffMovieFragmentHeaderBox))]
     [ChildType(typeof(PiffTrackFragmentBox))]
+    [ChildType(typeof(PiffUserDataBox))]
+    [ChildType(typeof(PiffMetadataBox))]
     public sealed class PiffMovieFragmentBox : PiffBoxBase
     {
     }

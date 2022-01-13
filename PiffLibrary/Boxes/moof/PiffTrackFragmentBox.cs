@@ -9,6 +9,8 @@
     [ChildType(typeof(PiffTrackFragmentDecodeTimeBox))]
     [ChildType(typeof(PiffSampleToGroupBox))]
     [ChildType(typeof(PiffSampleGroupDescriptionBox))]
+    [ChildType(typeof(PiffUserDataBox))]
+    [ChildType(typeof(PiffMetadataBox))]
     public sealed class PiffTrackFragmentBox : PiffBoxBase
     {
     }

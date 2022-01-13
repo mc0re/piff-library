@@ -8,6 +8,8 @@ namespace PiffLibrary.Boxes
     [ChildType(typeof(PiffExtensionBox))]
     [ChildType(typeof(PiffTrackBox))]
     [ChildType(typeof(PiffMovieExtendedBox))]
+    [ChildType(typeof(PiffUserDataBox))]
+    [ChildType(typeof(PiffMetadataBox))]
     public sealed class PiffMovieMetadataBox : PiffBoxBase
     {
         #region Init and clean-up

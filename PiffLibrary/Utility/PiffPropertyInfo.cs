@@ -475,6 +475,10 @@ namespace PiffLibrary
                     value = bytes.ReadUtf8String();
                     break;
 
+                case PiffDataFormats.Utf8Or16Zero:
+                    value = bytes.ReadUtf8Or16String();
+                    break;
+
                 default:
                     throw new ArgumentException($"Format '{format}' is not yet supported for reading.");
             }
@@ -554,6 +558,9 @@ namespace PiffLibrary
 
                 case PiffDataFormats.Utf8Zero:
                     return (ulong)Encoding.UTF8.GetBytes((string)value).Count() + 1;
+
+                case PiffDataFormats.Utf8Or16Zero:
+                    return (ulong) new UnicodeEncoding(true, true).GetByteCount((string) value) + 1;
 
                 case PiffDataFormats.Ucs2:
                     return (ulong)Encoding.Unicode.GetBytes((string)value).Count();
@@ -635,6 +642,10 @@ namespace PiffLibrary
 
                 case PiffDataFormats.Utf8Zero:
                     output.WriteBytes(Encoding.UTF8.GetBytes((string)value).Append((byte)0));
+                    break;
+
+                case PiffDataFormats.Utf8Or16Zero:
+                    output.WriteBytes(new UnicodeEncoding(true, true).GetBytes((string)value).Append((byte)0));
                     break;
 
                 case PiffDataFormats.Ucs2:

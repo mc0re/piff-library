@@ -9,6 +9,8 @@ namespace PiffLibrary.Boxes
     [ChildType(typeof(PiffTrackGroupBox))]
     [ChildType(typeof(PIffTrackMediaInfoBox))]
     [ChildType(typeof(PiffEditListBox))]
+    [ChildType(typeof(PiffUserDataBox))]
+    [ChildType(typeof(PiffMetadataBox))]
     public sealed class PiffTrackBox : PiffBoxBase
     {
         #region Init and clean-up

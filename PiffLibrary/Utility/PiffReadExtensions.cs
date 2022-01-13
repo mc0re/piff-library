@@ -217,6 +217,26 @@ namespace PiffLibrary
             return Encoding.UTF8.GetString(str.ToArray());
         }
 
+
+        /// <summary>
+        /// Read a 0-terminated UTF-8 or UTF-16 string.
+        /// UTF-16 must start with byte order mark 0xFEFF.
+        /// </summary>
+        public static string ReadUtf8Or16String(this Stream bytes)
+        {
+            var str = new List<byte>();
+            int b;
+
+            // EOF = -1, end-of-string = 0
+            while ((b = bytes.ReadByte()) > 0)
+                str.Add((byte) b);
+
+            if (str.Count > 2 && str[0] == 0xFE && str[1] == 0xFF)
+                return new UnicodeEncoding(true, true).GetString(str.ToArray());
+
+            return Encoding.UTF8.GetString(str.ToArray());
+        }
+
         #endregion
     }
 }

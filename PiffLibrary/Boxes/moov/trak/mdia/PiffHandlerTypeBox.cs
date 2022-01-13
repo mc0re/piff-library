@@ -26,7 +26,7 @@
 
 
         /// <summary>
-        /// 0-terminated UTF-8 human-readable name.
+        /// Human-readable name.
         /// </summary>
         [PiffDataFormat(PiffDataFormats.Utf8Zero)]
         public string DisplayName { get; set; }

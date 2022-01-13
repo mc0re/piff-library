@@ -84,6 +84,12 @@
         Utf8Zero,
 
         /// <summary>
+        /// 0-terminated UTF-8 or UTF-16 string.
+        /// UTF-16 string must start with byte order mark 0xFEFF.
+        /// </summary>
+        Utf8Or16Zero,
+
+        /// <summary>
         /// 2 bytes per character, no 0-termination.
         /// Length must be given by <see cref="PiffStringLengthAttribute"/>.
         /// </summary>
