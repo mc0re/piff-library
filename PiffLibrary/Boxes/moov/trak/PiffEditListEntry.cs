@@ -1,13 +1,13 @@
 ﻿namespace PiffLibrary.Boxes
 {
-    public sealed class PiffEditListItemEntry
+    public sealed class PiffEditListEntry
     {
         #region Fields
 
         /// <summary>
         /// Explicit parent.
         /// </summary>
-        private readonly PiffEditListItemBox mParent;
+        private readonly PiffEditListBox mParent;
 
         #endregion
 
@@ -41,7 +41,7 @@
 
         #region Init and clean-up
 
-        public PiffEditListItemEntry(PiffEditListItemBox parent)
+        public PiffEditListEntry(PiffEditListBox parent)
         {
             mParent = parent;
         }

@@ -12,6 +12,7 @@ namespace PiffLibrary
     [ChildType(typeof(PiffMovieFragmentRandomAccessBox))]
     [ChildType(typeof(PiffMetadataBox))]
     [ChildType(typeof(PiffMetadataContainerBox))]
+    [ChildType(typeof(PiffMediaDataBox))]
     [ChildType(typeof(PiffSkipBox))]
     public sealed class PiffFile
     {

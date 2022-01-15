@@ -10,7 +10,7 @@
 
         /// <summary>
         /// Delta of these samples from the previous entry
-        /// (for the first entry - from the first item in <see cref="PiffEditListBox"/>)
+        /// (for the first entry - from the first item in <see cref="PiffEditBox"/>)
         /// in time scale of the media.
         /// </summary>
         public uint Delta { get; set; }

@@ -8,7 +8,7 @@ namespace PiffLibrary.Boxes
     [ChildType(typeof(PiffTrackReferenceBox))]
     [ChildType(typeof(PiffTrackGroupBox))]
     [ChildType(typeof(PIffTrackMediaInfoBox))]
-    [ChildType(typeof(PiffEditListBox))]
+    [ChildType(typeof(PiffEditBox))]
     [ChildType(typeof(PiffUserDataBox))]
     [ChildType(typeof(PiffMetadataBox))]
     [ChildType(typeof(PiffMetadataContainerBox))]

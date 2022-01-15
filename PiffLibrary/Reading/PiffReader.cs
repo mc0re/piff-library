@@ -46,8 +46,12 @@ namespace PiffLibrary
                 var boxNameAttrs = type.GetCustomAttributes<BoxNameAttribute>();
                 if (!boxNameAttrs.Any()) continue;
 
+                if (!typeof(PiffBoxBase).IsAssignableFrom(type))
+                    throw new ArgumentException($"A box must inherit from {nameof(PiffBoxBase)}. {type.Name} does not.");
+
                 foreach (var name in boxNameAttrs)
                 {
+                    // Fails when adding the same name twice
                     sBoxNames.Add(name.Name, type);
                 }
 

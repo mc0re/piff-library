@@ -4,7 +4,7 @@
     /// Relation between non-sync and sync samples, used for seeking.
     /// </summary>
     [BoxName("stsh")]
-    public sealed class PiffShadowSyncSampleBox
+    public sealed class PiffShadowSyncSampleBox : PiffFullBoxBase
     {
         public uint Count { get; set; }
 

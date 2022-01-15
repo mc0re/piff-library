@@ -318,11 +318,12 @@ namespace PiffLibrary
                 while (count > 0 && bytesLeft > 0)
                 {
                     var readSize = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object item);
-                    if (readSize == 0)
-                    {
-                        ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
-                        break;
-                    }
+                    // Can be 0 if we're reading a few bits
+                    //if (readSize == 0)
+                    //{
+                    //    ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
+                    //    break;
+                    //}
 
                     list.Add(item);
                     readBytes += readSize;
@@ -342,10 +343,11 @@ namespace PiffLibrary
             else
             {
                 readBytes = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object value);
-                if (readBytes == 0)
-                {
-                    ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
-                }
+                // Can be 0 if we're reading a few bits
+                //if (readBytes == 0)
+                //{
+                //    ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
+                //}
 
                 if (Property.CanWrite)
                 {
