@@ -108,7 +108,7 @@ namespace PiffLibrary
         /// from <paramref name="input"/>.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        public static ulong ReadObject(object target, BitStream input, ulong bytesLeft, PiffReadContext ctx)
+        public static ulong ReadObject(object target, BitReadStream input, ulong bytesLeft, PiffReadContext ctx)
         {
             var readBytes = 0uL;
 
@@ -150,7 +150,7 @@ namespace PiffLibrary
         /// <summary>
         /// Write all properties of the given object.
         /// </summary>
-        public static void WriteObject(Stream output, object source, PiffWriteContext ctx)
+        public static void WriteObject(BitWriteStream output, object source, PiffWriteContext ctx)
         {
             foreach (var p in GetProperties(source))
                 p.WriteValue(output, source, ctx);
@@ -161,7 +161,7 @@ namespace PiffLibrary
         /// Write a single value or array with the given format.
         /// Skip the writing alltogether if the valus is <see langword="null"/>.
         /// </summary>
-        public void WriteValue(Stream output, object target, PiffWriteContext ctx)
+        public void WriteValue(BitWriteStream output, object target, PiffWriteContext ctx)
         {
             var value = Property.GetValue(target);
 
@@ -306,7 +306,7 @@ namespace PiffLibrary
         /// Read this value into the given <paramref name="targetObject"/>.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private ulong ReadValue(object targetObject, BitStream input, ulong bytesLeft, PiffReadContext ctx)
+        private ulong ReadValue(object targetObject, BitReadStream input, ulong bytesLeft, PiffReadContext ctx)
         {
             var readBytes = 0uL;
 
@@ -362,7 +362,7 @@ namespace PiffLibrary
         /// </summary>
         /// <returns>The number of bytes read</returns>
         private ulong ReadSingleValue(
-            object targetObject, BitStream input, ulong bytesLeft,
+            object targetObject, BitReadStream input, ulong bytesLeft,
             PiffReadContext ctx, out object value)
         {
             ulong readBytes;
@@ -397,7 +397,7 @@ namespace PiffLibrary
         /// </summary>
         /// <returns>The number of bytes read</returns>
         private static ulong ReadPoco(
-            object parentObject, BitStream input, ulong bytesLeft, Type propertyType,
+            object parentObject, BitReadStream input, ulong bytesLeft, Type propertyType,
             PiffReadContext ctx, out object obj)
         {
             if (propertyType.GetConstructor(Type.EmptyTypes) != null)
@@ -413,7 +413,7 @@ namespace PiffLibrary
         /// Read an integer (of many formats), a GUID or a zero-terminated string.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private static ulong ReadPrimitiveValue(BitStream bytes, PiffDataFormats format, out object value)
+        private static ulong ReadPrimitiveValue(BitReadStream bytes, PiffDataFormats format, out object value)
         {
             var pos = bytes.Position;
 
@@ -501,7 +501,7 @@ namespace PiffLibrary
         #endregion
 
 
-        #region Writing utility
+        #region Length utility
 
         /// <summary>
         /// Return the length (in bits) of a single value or array with the given format.
@@ -604,15 +604,39 @@ namespace PiffLibrary
             }
         }
 
+        #endregion
+
+
+        #region Writing utility
 
         /// <summary>
         /// Write a single value with the given format.
         /// </summary>
         private static void WriteSingleValue(
-            Stream output, object value, PiffDataFormats format, PiffWriteContext ctx)
+            BitWriteStream output, object value, PiffDataFormats format, PiffWriteContext ctx)
         {
             switch (format)
             {
+                case PiffDataFormats.UInt2Minus1:
+                    output.WriteBits((byte) ((byte) value - 1), 2);
+                    break;
+
+                case PiffDataFormats.UInt3:
+                    output.WriteBits((byte) value, 3);
+                    break;
+
+                case PiffDataFormats.UInt4:
+                    output.WriteBits((byte) value, 4);
+                    break;
+
+                case PiffDataFormats.UInt5:
+                    output.WriteBits((byte) value, 5);
+                    break;
+
+                case PiffDataFormats.UInt6:
+                    output.WriteBits((byte) value, 6);
+                    break;
+
                 case PiffDataFormats.UInt8:
                     output.WriteByte((byte)value);
                     break;
@@ -647,14 +671,6 @@ namespace PiffLibrary
 
                 case PiffDataFormats.DynamicInt:
                     output.WriteBytes(((int)value).ToDynamic());
-                    break;
-
-                case PiffDataFormats.UInt2Minus1:
-                    output.WriteByte((byte)(((byte)value - 1) | 0xFC));
-                    break;
-
-                case PiffDataFormats.UInt5:
-                    output.WriteByte((byte)((byte)value | 0xE0));
                     break;
 
                 case PiffDataFormats.Ascii:

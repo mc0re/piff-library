@@ -29,7 +29,7 @@ namespace PiffLibrary
         {
             var file = new PiffFile();
             var ctx = new PiffReadContext();
-            using (var bits = new BitStream(input, false))
+            using (var bits = new BitReadStream(input, false))
             {
                 while (PiffReader.ReadBox(bits, ctx, out var box) > 0 && box != null)
                 {

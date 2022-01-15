@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PiffLibrary
 {
-    public static class PiffWriteExtensions
+    internal static class PiffWriteExtensions
     {
         public static int[] GuidByteOrder = new[] { 3, 2, 1, 0, 5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 };
 
@@ -138,7 +138,7 @@ namespace PiffLibrary
 
         #region Stream writes
 
-        public static void WriteBytes(this Stream output, IEnumerable<byte> bytes)
+        public static void WriteBytes(this BitWriteStream output, IEnumerable<byte> bytes)
         {
             var arr = bytes.ToArray();
             output.Write(arr, 0, arr.Length);

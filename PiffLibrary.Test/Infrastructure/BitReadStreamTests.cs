@@ -6,12 +6,12 @@ using System.IO;
 namespace PiffLibrary.Test.Infrastructure
 {
     [TestClass]
-    public class BitStreamTests
+    public class BitReadStreamTests
     {
         [TestMethod]
         public void BitStream_ReadByte()
         {
-            using var sut = new BitStream(new MemoryStream(new byte[] { 2, 3 }), true);
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 2, 3 }), true);
 
             Assert.AreEqual(2, sut.ReadByte());
             Assert.AreEqual(3, sut.ReadByte());
@@ -22,7 +22,7 @@ namespace PiffLibrary.Test.Infrastructure
         [TestMethod]
         public void BitStream_ReadBlock()
         {
-            using var sut = new BitStream(new MemoryStream(new byte[] { 12, 13, 14, 15 }), true);
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 12, 13, 14, 15 }), true);
 
             var buf = new byte[3];
             Assert.AreEqual(3, sut.Read(buf, 0, 3));
@@ -37,7 +37,7 @@ namespace PiffLibrary.Test.Infrastructure
         [TestMethod]
         public void BitStream_ReadBitsAligned()
         {
-            using var sut = new BitStream(new MemoryStream(new byte[] { 0b11011011, 0b11000101 }), true);
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 0b11011011, 0b11000101 }), true);
 
             Assert.AreEqual(1, sut.ReadBits(1));
             Assert.AreEqual(2, sut.ReadBits(2));
@@ -52,7 +52,7 @@ namespace PiffLibrary.Test.Infrastructure
         [TestMethod]
         public void BitStream_ReadBitsAcrossBoundary()
         {
-            using var sut = new BitStream(new MemoryStream(new byte[] { 0b11011011 }), true);
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 0b11011011 }), true);
 
             Assert.AreEqual(0x1B, sut.ReadBits(5));
             Assert.ThrowsException<ArgumentException>(() => sut.ReadBits(5));

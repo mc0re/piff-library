@@ -27,7 +27,7 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Avcc_Read()
         {
-            using var input = new BitStream(new MemoryStream(AvccSample, false), true);
+            using var input = new BitReadStream(new MemoryStream(AvccSample, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -95,10 +95,11 @@ namespace PiffLibrary.Test.Boxes
                 PictureSlotData = new byte[] { 0x68, 0xE9, 0x09, 0x35, 0x25 }
             };
 
-            using var ms = new MemoryStream();
+            var ms = new MemoryStream();
+            using var output = new BitWriteStream(ms, true);
             var ctx = new PiffWriteContext();
 
-            PiffWriter.WriteBox(ms, box, ctx);
+            PiffWriter.WriteBox(output, box, ctx);
 
             var written = ms.GetBuffer().Take((int) ms.Length).ToArray();
             Assert.IsNotNull(written);

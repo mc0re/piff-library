@@ -15,15 +15,16 @@ namespace PiffLibrary
 
         public static void WriteHeader(Stream output, PiffManifest manifest, PiffWriteContext ctx)
         {
+            var bits = new BitWriteStream(output, false);
             var ftyp = new PiffFileTypeBox
             {
                 MajorBrand = "isml",
                 MinorVersion = 1,
                 CompatibleBrands = new[] { "piff", "iso2" }
             };
-            WriteBox(output, ftyp, ctx);
+            WriteBox(bits, ftyp, ctx);
             var movie = new PiffMovieBox(manifest);
-            WriteBox(output, movie, ctx);
+            WriteBox(bits, movie, ctx);
         }
 
 
@@ -37,10 +38,11 @@ namespace PiffLibrary
             IEnumerable<PiffSampleOffsetDto> videoOffsets,
             PiffWriteContext ctx)
         {
+            var bits = new BitWriteStream(output, false);
             var access = new PiffMovieFragmentRandomAccessBox(
                 manifest.AudioTrackId, audioOffsets,
                 manifest.VideoTrackId, videoOffsets);
-            WriteBox(output, access, ctx);
+            WriteBox(bits, access, ctx);
         }
 
 
@@ -84,7 +86,7 @@ namespace PiffLibrary
         /// <summary>
         /// Create a byte stream representation of the given object.
         /// </summary>
-        internal static void WriteBox(Stream output, PiffBoxBase box, PiffWriteContext ctx)
+        internal static void WriteBox(BitWriteStream output, PiffBoxBase box, PiffWriteContext ctx)
         {
             if (box is null)
                 return;

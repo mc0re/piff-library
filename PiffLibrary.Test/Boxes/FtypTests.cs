@@ -13,7 +13,7 @@ namespace PiffLibrary.Test.Boxes
         public void Ftype_ReadNoCompat()
         {
             var bytes = new byte[] { 0, 0, 0, 16, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -34,7 +34,7 @@ namespace PiffLibrary.Test.Boxes
             var bytes = new byte[] {
                 0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
                 0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -56,7 +56,7 @@ namespace PiffLibrary.Test.Boxes
         {
             var bytes = new byte[] {
                 0, 0, 0, 1, 0x66, 0x74, 0x79, 0x70, 0, 0, 0, 0, 0, 0, 0, 24, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -78,7 +78,7 @@ namespace PiffLibrary.Test.Boxes
             var bytes = new byte[] {
                 0, 0, 0, 20, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
                 0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -115,6 +115,7 @@ namespace PiffLibrary.Test.Boxes
         public void Ftype_WriteTwoCompat()
         {
             using var ms = new MemoryStream();
+            using var output = new BitWriteStream(ms, true);
             var ctx = new PiffWriteContext();
 
             var box = new PiffFileTypeBox()
@@ -127,7 +128,7 @@ namespace PiffLibrary.Test.Boxes
                 0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
                 0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
 
-            PiffWriter.WriteBox(ms, box, ctx);
+            PiffWriter.WriteBox(output, box, ctx);
 
             var written = ms.GetBuffer().Take((int)ms.Length).ToArray();
             Assert.IsNotNull(written);

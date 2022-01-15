@@ -5,9 +5,9 @@ using System.IO;
 namespace PiffLibrary
 {
     /// <summary>
-    /// Stream allowing reading and writing of numbers taking up less than one byte.
+    /// Stream allowing reading of numbers taking up less than one byte.
     /// </summary>
-    internal sealed class BitStream : IDisposable
+    internal sealed class BitReadStream : IDisposable
     {
         #region Fields
 
@@ -35,12 +35,16 @@ namespace PiffLibrary
         #endregion
 
 
+        #region Properties
+
         public long Position => mUnderlying.Position;
+
+        #endregion
 
 
         #region Init and clean-up
 
-        public BitStream(Stream underlying, bool disposeUnderlying)
+        public BitReadStream(Stream underlying, bool disposeUnderlying)
         {
             mUnderlying = underlying;
             mDisposeUnderlying = disposeUnderlying;
@@ -86,16 +90,17 @@ namespace PiffLibrary
         public int ReadBits(int nofBits)
         {
             if (nofBits <= 0 || nofBits > 7)
-                throw new ArgumentException($"Can only read 1..7 bitsm requested {nofBits}.");
+                throw new ArgumentException($"Can only read 1..7 bits, requested {nofBits}.");
 
             if (mBitsLeft == 0)
             {
+                // Fill up the store
                 mBitsStore = mUnderlying.ReadByte();
                 mBitsLeft = mBitsStore < 0 ? 0 : 8;
             }
 
             if (mBitsLeft < nofBits)
-                throw new ArgumentException($"Cannot read {nofBits} bits, only {mBitsLeft} is left.");
+                throw new ArgumentException($"Cannot read {nofBits} bits, only {mBitsLeft} bits left.");
 
             var res = mBitsStore >> (mBitsLeft - nofBits);
             mBitsLeft -= nofBits;

@@ -13,7 +13,7 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadNoSamples()
         {
             var bytes = new byte[] { 0, 0, 0, 16, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 0 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -31,7 +31,7 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadTwoSamples()
         {
             var bytes = new byte[] { 0, 0, 0, 17, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -50,7 +50,7 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadThreeSamples()
         {
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 3, 0x77, 0x50 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -70,7 +70,7 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadBoxTooLong()
         {
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77, 0 };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -105,6 +105,7 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_WriteThreeSamples()
         {
             using var ms = new MemoryStream();
+            using var output = new BitWriteStream(ms, true);
             var ctx = new PiffWriteContext();
 
             var box = new PiffPaddingBitsBox
@@ -114,7 +115,7 @@ namespace PiffLibrary.Test.Boxes
             };
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 3, 0x77, 0x50 };
 
-            PiffWriter.WriteBox(ms, box, ctx);
+            PiffWriter.WriteBox(output, box, ctx);
 
             var written = ms.GetBuffer().Take((int)ms.Length).ToArray();
             Assert.IsNotNull(written);

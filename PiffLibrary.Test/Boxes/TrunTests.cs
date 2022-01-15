@@ -113,7 +113,7 @@ namespace PiffLibrary.Test.Boxes
                 0, 0, 0, 16, 0x74, 0x72, 0x75, 0x6E, 0, 0, 0, 0,
                 0, 0, 0, 0
             };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -134,7 +134,7 @@ namespace PiffLibrary.Test.Boxes
                 0, 0, 0, 24, 0x74, 0x72, 0x75, 0x6E, 0xFF, 0xFF, 0xFF, 0xFF,
                 0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0
             };
-            using var input = new BitStream(new MemoryStream(bytes, false), true);
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -151,7 +151,7 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Trun_ReadWithSamples()
         {
-            using var input = new BitStream(new MemoryStream(TrunSample, false), true);
+            using var input = new BitReadStream(new MemoryStream(TrunSample, false), true);
             var ctx = new PiffReadContext();
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
@@ -167,17 +167,18 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Trun_RoundTrip()
         {
-            using var input = new BitStream(new MemoryStream(TrunSample, false), true);
+            using var input = new BitReadStream(new MemoryStream(TrunSample, false), true);
             var rctx = new PiffReadContext();
 
             PiffReader.ReadBox(input, rctx, out var box);
 
-            using var output = new MemoryStream();
+            using var ms = new MemoryStream();
+            using var output = new BitWriteStream(ms, true);
             var wctx = new PiffWriteContext();
 
             PiffWriter.WriteBox(output, box, wctx);
 
-            var written = output.GetBuffer().Take((int) output.Position).ToArray();
+            var written = ms.GetBuffer().Take((int) ms.Position).ToArray();
             TestUtil.Compare(TrunSample, written);
         }
     }

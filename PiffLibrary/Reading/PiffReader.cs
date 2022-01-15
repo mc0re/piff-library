@@ -71,7 +71,7 @@ namespace PiffLibrary
 
         public static uint GetFragmentSequenceNumber(byte[] data)
         {
-            using (var input = new BitStream(new MemoryStream(data), true))
+            using (var input = new BitReadStream(new MemoryStream(data), true))
             {
                 var moof = ReadBox<PiffMovieFragmentBox>(input, new PiffReadContext());
 
@@ -82,7 +82,7 @@ namespace PiffLibrary
 
         public static uint GetTrackId(byte[] data)
         {
-            using (var input = new BitStream(new MemoryStream(data), true))
+            using (var input = new BitReadStream(new MemoryStream(data), true))
             {
                 var moof = ReadBox<PiffMovieFragmentBox>(input, new PiffReadContext());
 
@@ -99,7 +99,7 @@ namespace PiffLibrary
         /// Read a box if it is of expected type. Back off if it's not.
         /// </summary>
         /// <param name="input">Input stream</param>
-        internal static TBox ReadBox<TBox>(BitStream input, PiffReadContext ctx) where TBox : PiffBoxBase
+        internal static TBox ReadBox<TBox>(BitReadStream input, PiffReadContext ctx) where TBox : PiffBoxBase
         {
             ReadBox(input, ctx, out var box);
             return box as TBox;
@@ -111,7 +111,7 @@ namespace PiffLibrary
         /// </summary>
         /// <param name="input">Input stream</param>
         /// <returns>The number of bytes read or 0 if reached EOF</returns>
-        internal static ulong ReadBox(BitStream input, PiffReadContext ctx, out PiffBoxBase box)
+        internal static ulong ReadBox(BitReadStream input, PiffReadContext ctx, out PiffBoxBase box)
         {
             var startPosition = input.Position;
             var header = PiffBoxBase.HeaderLength;
