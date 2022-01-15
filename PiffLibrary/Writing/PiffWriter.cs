@@ -62,9 +62,12 @@ namespace PiffLibrary
             => (long)(duration.TotalSeconds * timeScale);
 
 
+        /// <summary>
+        /// Calculate the box length (in bytes), if it was written to output.
+        /// </summary>
         internal static ulong GetBoxLength(PiffBoxBase box)
         {
-            var body = PiffPropertyInfo.GetObjectLength(box);
+            var body = PiffPropertyInfo.GetObjectLength(box) / 8;
 
             if (body + PiffBoxBase.HeaderLength <= uint.MaxValue)
             {

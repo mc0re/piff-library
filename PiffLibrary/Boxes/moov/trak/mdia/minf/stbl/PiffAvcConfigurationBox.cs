@@ -44,13 +44,21 @@ namespace PiffLibrary.Boxes
         public byte AvcLevel { get; set; }
 
 
-        [PiffDataFormat(PiffDataFormats.Int2Minus1)]
+        [PiffDataFormat(PiffDataFormats.UInt6)]
+        public byte Reserved1 { get; } = 0b111111;
+
+
+        [PiffDataFormat(PiffDataFormats.UInt2Minus1)]
         public byte UnitSize { get; set; }
 
 
         #region Sequence properties
 
-        [PiffDataFormat(PiffDataFormats.Int5)]
+        [PiffDataFormat(PiffDataFormats.UInt3)]
+        public byte Reserved2 { get; } = 0b111;
+
+
+        [PiffDataFormat(PiffDataFormats.UInt5)]
         public byte SequenceSlotCount { get; set; }
 
 

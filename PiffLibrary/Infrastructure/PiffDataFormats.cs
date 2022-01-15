@@ -11,10 +11,14 @@
         Skip,
 
         /// <summary>
-        /// The number is subtracted 1, put into 2 bits,
-        /// the other bits are set to 1.
+        /// 2 bits unsigned integer. The actual value is +1 (so 0b11 corresponds to 4).
         /// </summary>
-        Int2Minus1,
+        UInt2Minus1,
+
+        /// <summary>
+        /// 3 bits unsigned integer.
+        /// </summary>
+        UInt3,
 
         /// <summary>
         /// 4 bits unsigned integer.
@@ -22,9 +26,14 @@
         UInt4,
 
         /// <summary>
-        /// The left-most 3 bits are ignored (set to 1 when writing).
+        /// 5 bits unsigned integer.
         /// </summary>
-        Int5,
+        UInt5,
+
+        /// <summary>
+        /// 6 bits unsigned integer.
+        /// </summary>
+        UInt6,
 
         /// <summary>
         /// 1-byte unsigned nteger. Default for <see langword="byte"/>.
