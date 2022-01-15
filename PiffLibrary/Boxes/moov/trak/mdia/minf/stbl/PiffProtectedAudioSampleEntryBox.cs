@@ -79,7 +79,7 @@ namespace PiffLibrary.Boxes
             var scheme = PiffProtectionSchemeInformationBox.CreateAudio(audio.CodecId, keyId);
             var desc = PiffElementaryStreamDescriptionMp4aBox.Create(
                 audio.CodecId, 0, audio.BitRate, BufferSize, audio.CodecData);
-            Childen = new PiffBoxBase[] { scheme, desc };
+            Childen = new PiffBoxBase[] { desc, scheme };
         }
 
         #endregion

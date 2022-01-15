@@ -64,17 +64,9 @@ namespace PiffLibrary.Test
             using var ms = new MemoryStream();
             PiffWriter.WriteHeader(ms, SpeedwayManifest, ctx);
 
-            //Assert.AreEqual(2383, ms.Length);
-
             var actual = ms.GetBuffer().Take((int)ms.Length).ToArray();
             var expected = File.ReadAllBytes("Data/SuperSpeedway_720_230.ismv");
-
-            for (var i = 0; i < actual.Length; i++)
-            {
-                // During debugging - skip some addresses to get to the data
-                if ((new[] { 0x7FFFFFFF }).Contains(i)) continue;
-                Assert.AreEqual(expected[i], actual[i], $"Index 0x{i:X}: expected 0x{expected[i]:X2}, actual 0x{actual[i]:X2}");
-            }
+            TestUtil.Compare(expected, actual);
         }
 
 

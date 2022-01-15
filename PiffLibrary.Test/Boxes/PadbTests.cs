@@ -13,10 +13,10 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadNoSamples()
         {
             var bytes = new byte[] { 0, 0, 0, 16, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 0 };
-            using var ms = new MemoryStream(bytes, false);
+            using var input = new BitStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(ms, ctx, out var box);
+            var length = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.IsNotNull(box);
             Assert.AreEqual(16uL, length);
@@ -31,10 +31,10 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadTwoSamples()
         {
             var bytes = new byte[] { 0, 0, 0, 17, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77 };
-            using var ms = new MemoryStream(bytes, false);
+            using var input = new BitStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(ms, ctx, out var box);
+            var length = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.IsNotNull(box);
             Assert.AreEqual(17uL, length);
@@ -50,10 +50,10 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadThreeSamples()
         {
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 3, 0x77, 0x50 };
-            using var ms = new MemoryStream(bytes, false);
+            using var input = new BitStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(ms, ctx, out var box);
+            var length = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.IsNotNull(box);
             Assert.AreEqual(18uL, length);
@@ -70,10 +70,10 @@ namespace PiffLibrary.Test.Boxes
         public void Padb_ReadBoxTooLong()
         {
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77, 0 };
-            using var ms = new MemoryStream(bytes, false);
+            using var input = new BitStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(ms, ctx, out var box);
+            var length = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.IsNotNull(box);
             Assert.AreEqual(17uL, length);
@@ -119,7 +119,7 @@ namespace PiffLibrary.Test.Boxes
             var written = ms.GetBuffer().Take((int)ms.Length).ToArray();
             Assert.IsNotNull(written);
             Assert.AreEqual(18, written.Length);
-            CollectionAssert.AreEqual(bytes, written);
+            TestUtil.Compare(bytes, written);
         }
     }
 }

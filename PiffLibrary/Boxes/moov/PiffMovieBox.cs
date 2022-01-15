@@ -10,14 +10,15 @@ namespace PiffLibrary.Boxes
     [ChildType(typeof(PiffMovieExtendedBox))]
     [ChildType(typeof(PiffUserDataBox))]
     [ChildType(typeof(PiffMetadataBox))]
-    public sealed class PiffMovieMetadataBox : PiffBoxBase
+    [ChildType(typeof(PiffMetadataContainerBox))]
+    public sealed class PiffMovieBox : PiffBoxBase
     {
         #region Init and clean-up
 
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffMovieMetadataBox()
+        public PiffMovieBox()
         {
         }
 
@@ -27,7 +28,7 @@ namespace PiffLibrary.Boxes
         /// Creates a lot of default information.
         /// </summary>
         /// <param name="manifest">Movie data</param>
-        public PiffMovieMetadataBox(PiffManifest manifest)
+        public PiffMovieBox(PiffManifest manifest)
         {
             var maxDuration = Math.Max(manifest.Audio.Duration, manifest.Video.Duration);
 

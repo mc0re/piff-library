@@ -86,7 +86,7 @@ namespace PiffLibrary.Boxes
             Height = video.Height;
             var scheme = PiffProtectionSchemeInformationBox.CreateVideo(video.CodecId, keyId);
             var config = new PiffAvcConfigurationBox(video.CodecId, video.CodecData);
-            Childen = new PiffBoxBase[] { scheme, config };
+            Childen = new PiffBoxBase[] { config, scheme };
         }
 
         #endregion

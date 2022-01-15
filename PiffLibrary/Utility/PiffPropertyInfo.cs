@@ -108,7 +108,7 @@ namespace PiffLibrary
         /// from <paramref name="input"/>.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        public static ulong ReadObject(object target, Stream input, ulong bytesLeft, PiffReadContext ctx)
+        public static ulong ReadObject(object target, BitStream input, ulong bytesLeft, PiffReadContext ctx)
         {
             var readBytes = 0uL;
 
@@ -221,7 +221,7 @@ namespace PiffLibrary
         private static PiffDataFormats GetDefaultFormat(Type valueType)
         {
             if (valueType == typeof(byte) || valueType == typeof(char))
-                return PiffDataFormats.Int8;
+                return PiffDataFormats.UInt8;
 
             else if (valueType == typeof(short))
                 return PiffDataFormats.Int16;
@@ -306,7 +306,7 @@ namespace PiffLibrary
         /// Read this value into the given <paramref name="targetObject"/>.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private ulong ReadValue(object targetObject, Stream input, ulong bytesLeft, PiffReadContext ctx)
+        private ulong ReadValue(object targetObject, BitStream input, ulong bytesLeft, PiffReadContext ctx)
         {
             var readBytes = 0uL;
 
@@ -362,7 +362,7 @@ namespace PiffLibrary
         /// </summary>
         /// <returns>The number of bytes read</returns>
         private ulong ReadSingleValue(
-            object targetObject, Stream input, ulong bytesLeft,
+            object targetObject, BitStream input, ulong bytesLeft,
             PiffReadContext ctx, out object value)
         {
             ulong readBytes;
@@ -397,7 +397,7 @@ namespace PiffLibrary
         /// </summary>
         /// <returns>The number of bytes read</returns>
         private static ulong ReadPoco(
-            object parentObject, Stream input, ulong bytesLeft, Type propertyType,
+            object parentObject, BitStream input, ulong bytesLeft, Type propertyType,
             PiffReadContext ctx, out object obj)
         {
             if (propertyType.GetConstructor(Type.EmptyTypes) != null)
@@ -413,7 +413,7 @@ namespace PiffLibrary
         /// Read an integer (of many formats), a GUID or a zero-terminated string.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private static ulong ReadPrimitiveValue(Stream bytes, PiffDataFormats format, out object value)
+        private static ulong ReadPrimitiveValue(BitStream bytes, PiffDataFormats format, out object value)
         {
             var pos = bytes.Position;
 
@@ -427,7 +427,7 @@ namespace PiffLibrary
                     value = (byte)(bytes.ReadByte() & 0x1F);
                     break;
 
-                case PiffDataFormats.Int8:
+                case PiffDataFormats.UInt8:
                     value = (byte)bytes.ReadByte();
                     break;
 
@@ -529,7 +529,7 @@ namespace PiffLibrary
             {
                 case PiffDataFormats.Int2Minus1:
                 case PiffDataFormats.Int5:
-                case PiffDataFormats.Int8:
+                case PiffDataFormats.UInt8:
                     return 1;
 
                 case PiffDataFormats.Int16:
@@ -588,7 +588,7 @@ namespace PiffLibrary
         {
             switch (format)
             {
-                case PiffDataFormats.Int8:
+                case PiffDataFormats.UInt8:
                     output.WriteByte((byte)value);
                     break;
 

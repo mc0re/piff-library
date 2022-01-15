@@ -5,7 +5,15 @@ using System.IO;
 
 namespace PiffLibrary
 {
-    public class PiffFile
+    [ChildType(typeof(PiffFileTypeBox))]
+    [ChildType(typeof(PiffProgressiveDownloadBox))]
+    [ChildType(typeof(PiffMovieBox))]
+    [ChildType(typeof(PiffMovieFragmentBox))]
+    [ChildType(typeof(PiffMovieFragmentRandomAccessBox))]
+    [ChildType(typeof(PiffMetadataBox))]
+    [ChildType(typeof(PiffMetadataContainerBox))]
+    [ChildType(typeof(PiffSkipBox))]
+    public sealed class PiffFile
     {
         private readonly List<PiffBoxBase> mBoxes = new List<PiffBoxBase>();
 
@@ -21,16 +29,18 @@ namespace PiffLibrary
         {
             var file = new PiffFile();
             var ctx = new PiffReadContext();
-
-            while (PiffReader.ReadBox(input, ctx, out var box) > 0 && box != null)
+            using (var bits = new BitStream(input, false))
             {
-                file.mBoxes.Add(box);
-
-                switch (box)
+                while (PiffReader.ReadBox(bits, ctx, out var box) > 0 && box != null)
                 {
-                    case PiffFileTypeBox ftyp:
-                        file.mFileTypeBox = ftyp;
-                        break;
+                    file.mBoxes.Add(box);
+
+                    switch (box)
+                    {
+                        case PiffFileTypeBox ftyp:
+                            file.mFileTypeBox = ftyp;
+                            break;
+                    }
                 }
             }
 

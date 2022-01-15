@@ -61,7 +61,8 @@ namespace PiffLibrary.Boxes
         /// </summary>
         public TBox First<TBox>() where TBox : PiffBoxBase
         {
-            if (Childen is null) return default;
+            if (Childen is null)
+                return default;
 
             foreach (var child in Childen)
             {

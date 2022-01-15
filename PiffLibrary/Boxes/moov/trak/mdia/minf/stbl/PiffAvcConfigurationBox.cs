@@ -23,7 +23,7 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Must be 1.
         /// </summary>
-        public byte ConfigurationVersion { get; set; } = 1;
+        public byte ConfigurationVersion { get; set; }
 
         /// <summary>
         /// Profiles:
@@ -45,13 +45,13 @@ namespace PiffLibrary.Boxes
 
 
         [PiffDataFormat(PiffDataFormats.Int2Minus1)]
-        public byte UnitSize { get; set; } = NalUnitSize;
+        public byte UnitSize { get; set; }
 
 
         #region Sequence properties
 
         [PiffDataFormat(PiffDataFormats.Int5)]
-        public byte SequenceSlotCount { get; set; } = 1;
+        public byte SequenceSlotCount { get; set; }
 
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace PiffLibrary.Boxes
 
         #region Picture properties
 
-        public byte PictureSlotCount { get; set; } = 1;
+        public byte PictureSlotCount { get; set; }
 
         public short PictureSlotLength { get; set; }
 
@@ -218,9 +218,12 @@ namespace PiffLibrary.Boxes
             if (seqId != NalSequenceHeader)
                 throw new ArgumentException($"I don't know how to interpret header 0x{seqId:X} at offset 4.");
 
+            ConfigurationVersion = 1;
             AvcProfile = codecData[5];
             ProfileCompatibility = codecData[6];
             AvcLevel = codecData[7];
+            UnitSize = NalUnitSize;
+            SequenceSlotCount = 1;
 
             var seqEnd = 8;
             while (codecData.GetInt32(seqEnd) != 1)
@@ -233,6 +236,7 @@ namespace PiffLibrary.Boxes
             if (picId != NalPictureHeader)
                 throw new ArgumentException($"I don't know how to interpret header 0x{picId:X} at offset {seqEnd + 4}.");
 
+            PictureSlotCount = 1;
             PictureSlotData = codecData.Skip(seqEnd + 4).ToArray();
             PictureSlotLength = (short) PictureSlotData.Length;
         }

@@ -11,10 +11,28 @@ namespace PiffLibrary
     /// <summary>
     /// Reading data from the binary stream.
     /// </summary>
-    public class PiffReader
+    public sealed class PiffReader
     {
         #region Fields
-        private static readonly Dictionary<string, Type> sBoxes;
+
+        /// <summary>
+        /// Mapping between box name and type.
+        /// The same type can have multiple names (see e.g. <see cref="PiffSkipBox"/>).
+        /// </summary>
+        private static readonly Dictionary<string, Type> sBoxNames = new Dictionary<string, Type>();
+
+
+        /// <summary>
+        /// Expected root-level box types.
+        /// </summary>
+        private static readonly Type[] sRootBoxes;
+
+
+        /// <summary>
+        /// Mapping between box type and expected children types.
+        /// Unexpected types are reported as warnings.
+        /// </summary>
+        private static readonly Dictionary<Type, Type[]> sChildBoxes = new Dictionary<Type, Type[]>();
 
         #endregion
 
@@ -23,14 +41,27 @@ namespace PiffLibrary
 
         static PiffReader()
         {
-            var boxTypes =
-                from t in Assembly.GetExecutingAssembly().GetTypes()
-                let boxNameAttr = t.GetCustomAttribute<BoxNameAttribute>()
-                where boxNameAttr != null
-                group t by boxNameAttr.Name into g
-                select new { Id = g.Key, Type = g.First() };
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                var boxNameAttrs = type.GetCustomAttributes<BoxNameAttribute>();
+                if (!boxNameAttrs.Any()) continue;
 
-            sBoxes = boxTypes.ToDictionary(t => t.Id, t => t.Type);
+                foreach (var name in boxNameAttrs)
+                {
+                    sBoxNames.Add(name.Name, type);
+                }
+
+                var children = type.GetCustomAttributes<ChildTypeAttribute>();
+                if (children.Any())
+                {
+                    sChildBoxes.Add(type, children.Select(t => t.Child).ToArray());
+                }
+            }
+
+            sRootBoxes = typeof(PiffFile)
+                .GetCustomAttributes<ChildTypeAttribute>()
+                .Select(t => t.Child)
+                .ToArray();
         }
 
         #endregion
@@ -40,19 +71,23 @@ namespace PiffLibrary
 
         public static uint GetFragmentSequenceNumber(byte[] data)
         {
-            var ms = new MemoryStream(data);
-            var moof = ReadBox<PiffMovieFragmentBox>(ms, new PiffReadContext());
+            using (var input = new BitStream(new MemoryStream(data), true))
+            {
+                var moof = ReadBox<PiffMovieFragmentBox>(input, new PiffReadContext());
 
-            return moof.First<PiffMovieFragmentHeaderBox>().Sequence;
+                return moof.First<PiffMovieFragmentHeaderBox>().Sequence;
+            }
         }
 
 
         public static uint GetTrackId(byte[] data)
         {
-            var ms = new MemoryStream(data);
-            var moof = ReadBox<PiffMovieFragmentBox>(ms, new PiffReadContext());
+            using (var input = new BitStream(new MemoryStream(data), true))
+            {
+                var moof = ReadBox<PiffMovieFragmentBox>(input, new PiffReadContext());
 
-            return moof.First<PiffTrackFragmentBox>().First<PiffTrackFragmentHeaderBox>().TrackId;
+                return moof.First<PiffTrackFragmentBox>().First<PiffTrackFragmentHeaderBox>().TrackId;
+            }
         }
 
         #endregion
@@ -64,7 +99,7 @@ namespace PiffLibrary
         /// Read a box if it is of expected type. Back off if it's not.
         /// </summary>
         /// <param name="input">Input stream</param>
-        internal static TBox ReadBox<TBox>(Stream input, PiffReadContext ctx) where TBox : PiffBoxBase
+        internal static TBox ReadBox<TBox>(BitStream input, PiffReadContext ctx) where TBox : PiffBoxBase
         {
             ReadBox(input, ctx, out var box);
             return box as TBox;
@@ -76,7 +111,7 @@ namespace PiffLibrary
         /// </summary>
         /// <param name="input">Input stream</param>
         /// <returns>The number of bytes read or 0 if reached EOF</returns>
-        internal static ulong ReadBox(Stream input, PiffReadContext ctx, out PiffBoxBase box)
+        internal static ulong ReadBox(BitStream input, PiffReadContext ctx, out PiffBoxBase box)
         {
             var startPosition = input.Position;
             var header = PiffBoxBase.HeaderLength;
@@ -121,12 +156,12 @@ namespace PiffLibrary
                 header += sizeof(ulong);
             }
 
-            if (!sBoxes.TryGetValue(id, out var type))
+            if (!sBoxNames.TryGetValue(id, out var type))
             {
                 ctx.AddWarning($"Unrecognized box '{id}' at position {startPosition}.");
                 type = typeof(PiffCatchAllBox);
             }
-            else if (! ctx.IsExpectedBoxType(type))
+            else if (! IsExpectedBoxType(ctx.CurrentBox?.GetType(), type))
             {
                 ctx.AddWarning($"Unexpected child box '{id}' inside '{ctx.CurrentBoxName}' at position {startPosition}.");
             }
@@ -142,6 +177,19 @@ namespace PiffLibrary
             ctx.Pop();
 
             return readBytes + header;
+        }
+
+        #endregion
+
+
+        #region Utility
+
+        private static bool IsExpectedBoxType(Type parentType, Type childType)
+        {
+            if (parentType is null)
+                return sRootBoxes.Contains(childType);
+            else
+                return sChildBoxes[parentType].Contains(childType);
         }
 
         #endregion

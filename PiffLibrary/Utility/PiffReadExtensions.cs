@@ -62,7 +62,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 16-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static short ReadInt16(this Stream bytes)
+        internal static short ReadInt16(this BitStream bytes)
         {
             var res = (bytes.ReadByte() << 8) |
                        bytes.ReadByte();
@@ -74,7 +74,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 16-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static ushort ReadUInt16(this Stream bytes)
+        internal static ushort ReadUInt16(this BitStream bytes)
         {
             var res = (bytes.ReadByte() << 8) |
                        bytes.ReadByte();
@@ -86,7 +86,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 24-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static int ReadInt24(this Stream bytes)
+        internal static int ReadInt24(this BitStream bytes)
         {
             var res = (bytes.ReadByte() << 16) |
                       (bytes.ReadByte() << 8) |
@@ -99,7 +99,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 32-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static int ReadInt32(this Stream bytes)
+        internal static int ReadInt32(this BitStream bytes)
         {
             var res = (bytes.ReadByte() << 24) |
                       (bytes.ReadByte() << 16) |
@@ -113,7 +113,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 32-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static uint ReadUInt32(this Stream bytes)
+        internal static uint ReadUInt32(this BitStream bytes)
         {
             var res = ((uint) bytes.ReadByte() << 24) |
                       ((uint) bytes.ReadByte() << 16) |
@@ -127,7 +127,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 64-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static long ReadInt64(this Stream bytes)
+        internal static long ReadInt64(this BitStream bytes)
         {
             var res = ((long)bytes.ReadInt32() << 32) | bytes.ReadUInt32();
 
@@ -138,7 +138,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 64-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static ulong ReadUInt64(this Stream bytes)
+        internal static ulong ReadUInt64(this BitStream bytes)
         {
             var res = ((ulong)bytes.ReadUInt32() << 32) | bytes.ReadUInt32();
 
@@ -149,7 +149,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read 8..32-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static int ReadDynamicInt(this Stream bytes)
+        internal static int ReadDynamicInt(this BitStream bytes)
         {
             var res = 0;
             int b;
@@ -168,7 +168,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 16-byte GUID in big-endian format from a stream.
         /// </summary>
-        internal static Guid ReadGuid(this Stream bytes)
+        internal static Guid ReadGuid(this BitStream bytes)
         {
             var arr = new byte[16];
             bytes.Read(arr, 0, arr.Length);
@@ -180,7 +180,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 0-terminated ASCII string.
         /// </summary>
-        public static string ReadAsciiString(this Stream bytes)
+        public static string ReadAsciiString(this BitStream bytes)
         {
             var str = new List<byte>();
             byte b;
@@ -195,7 +195,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read the given number of ASCII characters from a string.
         /// </summary>
-        public static string ReadAsciiString(this Stream bytes, int length)
+        public static string ReadAsciiString(this BitStream bytes, int length)
         {
             var chars = Enumerable.Range(0, length).Select(_ => (byte)bytes.ReadByte()).ToArray();
 
@@ -206,7 +206,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 0-terminated UTF8 string.
         /// </summary>
-        public static string ReadUtf8String(this Stream bytes)
+        public static string ReadUtf8String(this BitStream bytes)
         {
             var str = new List<byte>();
             byte b;
@@ -222,7 +222,7 @@ namespace PiffLibrary
         /// Read a 0-terminated UTF-8 or UTF-16 string.
         /// UTF-16 must start with byte order mark 0xFEFF.
         /// </summary>
-        public static string ReadUtf8Or16String(this Stream bytes)
+        public static string ReadUtf8Or16String(this BitStream bytes)
         {
             var str = new List<byte>();
             int b;

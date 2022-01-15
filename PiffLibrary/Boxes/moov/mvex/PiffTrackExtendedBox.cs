@@ -9,7 +9,7 @@
         #region Properties
 
         /// <summary>
-        /// Matches track ID in <see cref="PiffMovieMetadataBox"/>.
+        /// Matches track ID in <see cref="PiffMovieBox"/>.
         /// </summary>
         public uint TrackId { get; set; }
 

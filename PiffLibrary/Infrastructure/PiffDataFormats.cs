@@ -11,9 +11,25 @@
         Skip,
 
         /// <summary>
+        /// The number is subtracted 1, put into 2 bits,
+        /// the other bits are set to 1.
+        /// </summary>
+        Int2Minus1,
+
+        /// <summary>
+        /// 4 bits unsigned integer.
+        /// </summary>
+        UInt4,
+
+        /// <summary>
+        /// The left-most 3 bits are ignored (set to 1 when writing).
+        /// </summary>
+        Int5,
+
+        /// <summary>
         /// 1-byte unsigned nteger. Default for <see langword="byte"/>.
         /// </summary>
-        Int8,
+        UInt8,
 
         /// <summary>
         /// 2-byte integer. Default for <see langword="short"/>.
@@ -55,17 +71,6 @@
         /// highest bit set to 1 means "continues to the next byte".
         /// </summary>
         DynamicInt,
-
-        /// <summary>
-        /// The number is subtracted 1, put into 2 bits,
-        /// the other bits are set to 1.
-        /// </summary>
-        Int2Minus1,
-
-        /// <summary>
-        /// The left-most 3 bits are ignored (set to 1 when writing).
-        /// </summary>
-        Int5,
 
         /// <summary>
         /// 1 byte per character, no 0-termination. Default for <see langword="string"/>.

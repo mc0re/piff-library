@@ -1,10 +1,10 @@
 ﻿namespace PiffLibrary.Boxes
 {
     /// <summary>
-    /// Ignore this.
+    /// Direct storage of binary XML.
     /// </summary>
-    [BoxName("free")]
-    public sealed class PiffFreeBox : PiffBoxBase
+    [BoxName("bxml")]
+    public sealed class PiffBinaryXmlBox : PiffFullBoxBase
     {
         public byte[] Data { get; set; }
     }

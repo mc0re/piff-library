@@ -28,6 +28,12 @@ namespace PiffLibrary
 
 
         /// <summary>
+        /// Used for checking children.
+        /// </summary>
+        public PiffBoxBase CurrentBox => Hierarchy.Any() ? Hierarchy.Peek() : null;
+
+
+        /// <summary>
         /// Used for debugging.
         /// </summary>
         public string CurrentBoxName => Hierarchy.Any() ? Hierarchy.Peek().ToString() : "- None -";

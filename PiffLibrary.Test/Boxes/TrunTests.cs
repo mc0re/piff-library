@@ -8,7 +8,7 @@ namespace PiffLibrary.Test.Boxes
     [TestClass]
     public class TrunTests
     {
-        private static readonly byte[] TRun = new byte[]
+        private static readonly byte[] TrunSample = new byte[]
         {
             0, 0, 0x02, 0xCC,
             0x74, 0x72, 0x75, 0x6E,
@@ -113,10 +113,10 @@ namespace PiffLibrary.Test.Boxes
                 0, 0, 0, 16, 0x74, 0x72, 0x75, 0x6E, 0, 0, 0, 0,
                 0, 0, 0, 0
             };
-            using var ms = new MemoryStream(bytes, false);
+            using var input = new BitStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(ms, ctx, out var box);
+            var length = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.IsNotNull(box);
             Assert.AreEqual(16uL, length);
@@ -134,10 +134,10 @@ namespace PiffLibrary.Test.Boxes
                 0, 0, 0, 24, 0x74, 0x72, 0x75, 0x6E, 0xFF, 0xFF, 0xFF, 0xFF,
                 0, 0, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF, 0, 0, 0, 0
             };
-            using var ms = new MemoryStream(bytes, false);
+            using var input = new BitStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(ms, ctx, out var box);
+            var length = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.IsNotNull(box);
             Assert.AreEqual(24uL, length);
@@ -151,10 +151,10 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Trun_ReadWithSamples()
         {
-            using var ms = new MemoryStream(TRun, false);
+            using var input = new BitStream(new MemoryStream(TrunSample, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(ms, ctx, out var box);
+            var length = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.IsNotNull(box);
             Assert.AreEqual(0x2CCuL, length);
@@ -167,7 +167,7 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Trun_RoundTrip()
         {
-            using var input = new MemoryStream(TRun, false);
+            using var input = new BitStream(new MemoryStream(TrunSample, false), true);
             var rctx = new PiffReadContext();
 
             PiffReader.ReadBox(input, rctx, out var box);
@@ -177,8 +177,8 @@ namespace PiffLibrary.Test.Boxes
 
             PiffWriter.WriteBox(output, box, wctx);
 
-            var res = output.GetBuffer().Take((int) output.Position).ToArray();
-            CollectionAssert.AreEqual(TRun, res);
+            var written = output.GetBuffer().Take((int) output.Position).ToArray();
+            TestUtil.Compare(TrunSample, written);
         }
     }
 }

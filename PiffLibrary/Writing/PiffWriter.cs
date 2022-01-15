@@ -22,7 +22,7 @@ namespace PiffLibrary
                 CompatibleBrands = new[] { "piff", "iso2" }
             };
             WriteBox(output, ftyp, ctx);
-            var movie = new PiffMovieMetadataBox(manifest);
+            var movie = new PiffMovieBox(manifest);
             WriteBox(output, movie, ctx);
         }
 
