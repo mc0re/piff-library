@@ -5,14 +5,14 @@ namespace PiffLibrary.Boxes
 {
     [BoxName("schi")]
     [ChildType(typeof(PiffExtensionBox))] // Expects PiffProtectionTrackEncryption
-    public sealed class PiffProtectionSchemeInfoBox : PiffBoxBase
+    public sealed class PiffSchemeInformationBox : PiffBoxBase
     {
         #region Init and clean-up
 
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffProtectionSchemeInfoBox()
+        public PiffSchemeInformationBox()
         {
         }
 
@@ -20,7 +20,7 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public PiffProtectionSchemeInfoBox(Guid keyId)
+        public PiffSchemeInformationBox(Guid keyId)
         {
             Childen = new[] { PiffExtensionBox.ProtectionTrackEncryption(keyId) };
         }

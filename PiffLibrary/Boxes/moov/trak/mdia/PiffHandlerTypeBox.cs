@@ -16,6 +16,9 @@
         /// - "soun" - audio
         /// - "vide" - video
         /// - "null" - resources
+        /// 
+        /// - "mp7t" - textual metadata in Unicode
+        /// - "mp7b" - binary [XML] metadata in BIM format
         /// </summary>
         [PiffStringLength(4)]
         public string HandlerType { get; set; }

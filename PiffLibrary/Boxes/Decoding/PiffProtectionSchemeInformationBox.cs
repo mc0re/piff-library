@@ -3,10 +3,13 @@
 
 namespace PiffLibrary.Boxes
 {
+    /// <summary>
+    /// How to decrypt the data.
+    /// </summary>
     [BoxName("sinf")]
-    [ChildType(typeof(PiffProtectionOriginalFormatBox))]
-    [ChildType(typeof(PiffProtectionSchemaTypeBox))]
-    [ChildType(typeof(PiffProtectionSchemeInfoBox))]
+    [ChildType(typeof(PiffOriginalFormatBox))]
+    [ChildType(typeof(PiffSchemeTypeBox))]
+    [ChildType(typeof(PiffSchemeInformationBox))]
     public sealed class PiffProtectionSchemeInformationBox : PiffBoxBase
     {
         #region Init and clean-up
@@ -23,11 +26,11 @@ namespace PiffLibrary.Boxes
         /// Constructor for writing.
         /// </summary>
         private PiffProtectionSchemeInformationBox(
-            PiffProtectionOriginalFormatBox format,
-            PiffProtectionSchemaTypeBox schema,
+            PiffOriginalFormatBox format,
+            PiffSchemeTypeBox schema,
             Guid keyId)
         {
-            Childen = new PiffBoxBase[] { format, schema, new PiffProtectionSchemeInfoBox(keyId) };
+            Childen = new PiffBoxBase[] { format, schema, new PiffSchemeInformationBox(keyId) };
         }
 
 
@@ -36,8 +39,8 @@ namespace PiffLibrary.Boxes
         /// </summary>
         public static PiffProtectionSchemeInformationBox CreateAudio(string codecId, Guid keyId)
         {
-            return new PiffProtectionSchemeInformationBox(PiffProtectionOriginalFormatBox.CreateAudio(codecId),
-                                                       PiffProtectionSchemaTypeBox.CreateAudio(),
+            return new PiffProtectionSchemeInformationBox(PiffOriginalFormatBox.CreateAudio(codecId),
+                                                       PiffSchemeTypeBox.CreateAudio(),
                                                        keyId);
         }
 
@@ -47,8 +50,8 @@ namespace PiffLibrary.Boxes
         /// </summary>
         public static PiffProtectionSchemeInformationBox CreateVideo(string codecId, Guid keyId)
         {
-            return new PiffProtectionSchemeInformationBox(PiffProtectionOriginalFormatBox.CreateVideo(codecId),
-                                                       PiffProtectionSchemaTypeBox.CreateVideo(),
+            return new PiffProtectionSchemeInformationBox(PiffOriginalFormatBox.CreateVideo(codecId),
+                                                       PiffSchemeTypeBox.CreateVideo(),
                                                        keyId);
         }
 

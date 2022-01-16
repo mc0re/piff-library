@@ -12,6 +12,8 @@ namespace PiffLibrary.Boxes
 
         public static readonly Guid BoxId = Guid.Parse("d08a4f18-10f3-4a82-b6c8-32d8aba183d3");
 
+        public static readonly Guid PlayReadySystemId = Guid.Parse("9a04f079-9840-4286-ab92-e65be0885f95");
+
         #endregion
 
 
@@ -19,7 +21,7 @@ namespace PiffLibrary.Boxes
 
         /// <summary>
         /// PSSH system ID.
-        /// PlayReady: 9a04f079-9840-4286-ab92-e65be0885f95.
+        /// Recognized only <see cref="PlayReadySystemId"/>.
         /// </summary>
         public Guid SystemId { get; set; }
 
@@ -27,7 +29,7 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Total size of the following properties, except for <see cref="DataSize"/> itself.
         /// </summary>
-        public int DataSize { get; set; }
+        public uint DataSize { get; set; }
 
 
         /// <summary>

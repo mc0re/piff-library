@@ -39,6 +39,9 @@ namespace PiffLibrary
 
         #region Init and clean-up
 
+        /// <summary>
+        /// Look for classes with <see cref="BoxNameAttribute"/> and process them.
+        /// </summary>
         static PiffReader()
         {
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
@@ -58,14 +61,30 @@ namespace PiffLibrary
                 var children = type.GetCustomAttributes<ChildTypeAttribute>();
                 if (children.Any())
                 {
-                    sChildBoxes.Add(type, children.Select(t => t.Child).ToArray());
+                    var childTypes = children.Select(t => t.Child).ToArray();
+
+                    foreach (var child in childTypes)
+                    {
+                        if (!typeof(PiffBoxBase).IsAssignableFrom(child))
+                            throw new ArgumentException($"A child box must inherit from {nameof(PiffBoxBase)}. {child.Name} does not.");
+                    }
+
+                    sChildBoxes.Add(type, childTypes);
                 }
             }
 
-            sRootBoxes = typeof(PiffFile)
+            var rootTypes = typeof(PiffFile)
                 .GetCustomAttributes<ChildTypeAttribute>()
                 .Select(t => t.Child)
                 .ToArray();
+
+            foreach (var child in rootTypes)
+            {
+                if (!typeof(PiffBoxBase).IsAssignableFrom(child))
+                    throw new ArgumentException($"A root box must inherit from {nameof(PiffBoxBase)}. {child.Name} does not.");
+            }
+
+            sRootBoxes = rootTypes;
         }
 
         #endregion

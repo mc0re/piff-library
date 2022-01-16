@@ -1,19 +1,25 @@
 ﻿namespace PiffLibrary.Boxes
 {
     [BoxName("schm")]
-    public sealed class PiffProtectionSchemaTypeBox : PiffFullBoxBase
+    public sealed class PiffSchemeTypeBox : PiffFullBoxBase
     {
         #region Properties
 
+        /// <summary>
+        /// Code defining the protection or restriction scheme.
+        /// </summary>
         [PiffStringLength(4)]
-        public string SchemaType { get; set; } = "piff";
+        public string SchemeType { get; set; }
 
 
-        public int SchemaVersion { get; set; }
+        public uint SchemeVersion { get; set; }
 
 
+        /// <summary>
+        /// Web page for installing the <see cref="SchemeType"/> handler.
+        /// </summary>
         [PiffDataFormat(nameof(GetUrlFormat))]
-        public string SchemaUrl { get; set; }
+        public string SchemeUrl { get; set; }
 
         #endregion
 
@@ -23,7 +29,7 @@
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffProtectionSchemaTypeBox()
+        public PiffSchemeTypeBox()
         {
         }
 
@@ -31,27 +37,28 @@
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        private PiffProtectionSchemaTypeBox(int version)
+        private PiffSchemeTypeBox(uint version)
         {
-            SchemaVersion = version;
+            SchemeType = "piff";
+            SchemeVersion = version;
         }
 
 
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public static PiffProtectionSchemaTypeBox CreateAudio()
+        public static PiffSchemeTypeBox CreateAudio()
         {
-            return new PiffProtectionSchemaTypeBox(0x10000);
+            return new PiffSchemeTypeBox(0x10000);
         }
 
 
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public static PiffProtectionSchemaTypeBox CreateVideo()
+        public static PiffSchemeTypeBox CreateVideo()
         {
-            return new PiffProtectionSchemaTypeBox(0x10001);
+            return new PiffSchemeTypeBox(0x10001);
         }
 
         #endregion

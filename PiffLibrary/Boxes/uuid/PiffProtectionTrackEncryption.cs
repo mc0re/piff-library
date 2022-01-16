@@ -34,6 +34,9 @@ namespace PiffLibrary.Boxes
         public byte DefaultIvSize { get; set; } = 8;
 
 
+        /// <summary>
+        /// Default encryption key ID.
+        /// </summary>
         public Guid ContentKeyId { get; set; }
 
         #endregion

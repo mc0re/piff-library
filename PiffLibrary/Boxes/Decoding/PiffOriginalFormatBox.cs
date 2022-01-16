@@ -3,10 +3,13 @@
 namespace PiffLibrary.Boxes
 {
     [BoxName("frma")]
-    public sealed class PiffProtectionOriginalFormatBox : PiffBoxBase
+    public sealed class PiffOriginalFormatBox : PiffBoxBase
     {
         #region Properties
 
+        /// <summary>
+        /// Format of the decrypted or un-transformed data.
+        /// </summary>
         [PiffStringLength(4)]
         public string Format { get; set; }
 
@@ -18,7 +21,7 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Constructor for reading.
         /// </summary>
-        public PiffProtectionOriginalFormatBox()
+        public PiffOriginalFormatBox()
         {
         }
 
@@ -26,7 +29,7 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        private PiffProtectionOriginalFormatBox(string format)
+        private PiffOriginalFormatBox(string format)
         {
             Format = format;
         }
@@ -35,24 +38,24 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public static PiffProtectionOriginalFormatBox CreateAudio(string codecId)
+        public static PiffOriginalFormatBox CreateAudio(string codecId)
         {
             if (codecId != "AACL")
                 throw new ArgumentException($"Cannot convert codec type '{codecId}'.");
 
-            return new PiffProtectionOriginalFormatBox("mp4a");
+            return new PiffOriginalFormatBox("mp4a");
         }
 
 
         /// <summary>
         /// Constructor for writing.
         /// </summary>
-        public static PiffProtectionOriginalFormatBox CreateVideo(string codecId)
+        public static PiffOriginalFormatBox CreateVideo(string codecId)
         {
             if (codecId != "H264")
                 throw new ArgumentException($"Cannot convert codec type '{codecId}'.");
 
-            return new PiffProtectionOriginalFormatBox("avc1");
+            return new PiffOriginalFormatBox("avc1");
         }
 
         #endregion

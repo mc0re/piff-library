@@ -24,14 +24,26 @@ namespace PiffLibrary.Boxes
         public int Flags { get; set; }
 
 
+        /// <summary>
+        /// Protection System Specific Header Box
+        /// Container: <see cref="PiffMovieBox"/>.
+        /// </summary>
         [PiffDataFormat(nameof(UseProtectionInfo))]
         public PiffProtectionInfo Pssh { get; set; }
 
 
+        /// <summary>
+        /// Track encryption box.
+        /// Container: <see cref="PiffSchemeInformationBox"/>.
+        /// </summary>
         [PiffDataFormat(nameof(UseTrackEncryption))]
         public PiffProtectionTrackEncryption Track { get; set; }
 
 
+        /// <summary>
+        /// Sample Encryption Box
+        /// Container: <see cref="PiffTrackFragmentBox"/>.
+        /// </summary>
         [PiffDataFormat(nameof(UseSampleEncryption))]
         public PiffSampleEncryption Sample { get; set; }
 
@@ -67,7 +79,7 @@ namespace PiffLibrary.Boxes
                 {
                     SystemId = systemId,
                     BinData = data,
-                    DataSize = data.Length
+                    DataSize = (uint) data.Length
                 }
             };
         }

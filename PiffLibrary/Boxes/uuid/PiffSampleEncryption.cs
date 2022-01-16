@@ -32,7 +32,7 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Corresponds to the number of samples in this track fragment.
         /// </summary>
-        public int SampleCount { get; set; }
+        public uint SampleCount { get; set; }
 
 
         [PiffArraySize(nameof(SampleCount))]
@@ -53,6 +53,9 @@ namespace PiffLibrary.Boxes
 
         #region Format API
 
+        /// <summary>
+        /// If bit 0 is not set, use parameters from <see cref="PiffProtectionTrackEncryption"/>.
+        /// </summary>
         private PiffDataFormats UseAlgorithmInfo() =>
             (Parent.Flags & 1) != 0 ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 

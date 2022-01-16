@@ -9,10 +9,10 @@
     [ChildType(typeof(PiffPrimaryItemBox))]
     [ChildType(typeof(PiffItemProtectionBox))]
     [ChildType(typeof(PiffItemInfoBox))]
+    [ChildType(typeof(PiffItemDataBox))]
+    [ChildType(typeof(PiffItemReferenceBox))]
+    [ChildType(typeof(PiffFdItemInformationBox))]
     public sealed class PiffMetadataBox : PiffFullBoxBase
     {
     }
-    public sealed class PiffIPMPControlBox{}
-    public sealed class PiffItemReferenceBox{}
-    public sealed class PiffItemDataBox{}
 }
