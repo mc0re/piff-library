@@ -7,6 +7,7 @@
     [ChildType(typeof(PiffCopyrightBox))]
     [ChildType(typeof(PiffTrackSelectionBox))]
     [ChildType(typeof(PiffTrackKindBox))]
+    [ChildType(typeof(PiffSubTrackBox))]
     public sealed class PiffUserDataBox : PiffBoxBase
     {
     }

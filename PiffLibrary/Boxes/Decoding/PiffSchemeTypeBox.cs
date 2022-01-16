@@ -7,6 +7,7 @@
 
         /// <summary>
         /// Code defining the protection or restriction scheme.
+        /// - "stvi" - <see cref="PiffStereoVideoBox"/>
         /// </summary>
         [PiffStringLength(4)]
         public string SchemeType { get; set; }

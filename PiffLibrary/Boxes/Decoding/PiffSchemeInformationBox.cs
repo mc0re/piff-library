@@ -5,6 +5,7 @@ namespace PiffLibrary.Boxes
 {
     [BoxName("schi")]
     [ChildType(typeof(PiffExtensionBox))] // Expects PiffProtectionTrackEncryption
+    [ChildType(typeof(PiffStereoVideoBox))]
     public sealed class PiffSchemeInformationBox : PiffBoxBase
     {
         #region Init and clean-up

@@ -6,6 +6,9 @@ using System.IO;
 namespace PiffLibrary
 {
     [ChildType(typeof(PiffFileTypeBox))]
+    [ChildType(typeof(PiffSegmentTypeBox))]
+    [ChildType(typeof(PiffSegmentIndexBox))]
+    [ChildType(typeof(PiffSubsegmentIndexBox))]
     [ChildType(typeof(PiffProgressiveDownloadBox))]
     [ChildType(typeof(PiffMovieBox))]
     [ChildType(typeof(PiffMovieFragmentBox))]
@@ -13,6 +16,7 @@ namespace PiffLibrary
     [ChildType(typeof(PiffMetadataBox))]
     [ChildType(typeof(PiffMetadataContainerBox))]
     [ChildType(typeof(PiffMediaDataBox))]
+    [ChildType(typeof(PiffProducerReferenceTimeBox))]
     [ChildType(typeof(PiffSkipBox))]
     public sealed class PiffFile
     {
