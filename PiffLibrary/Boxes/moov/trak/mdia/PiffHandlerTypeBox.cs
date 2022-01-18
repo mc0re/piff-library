@@ -12,9 +12,11 @@
 
 
         /// <summary>
-        /// What does the parent box contain:
+        /// Determines, what does the parent box contain,
+        /// and which sample types to expect in <see cref="PiffSampleDescriptionBox"/>.
         /// - "soun" - audio
         /// - "vide" - video
+        /// - "auxv" - auxiliary video
         /// - "null" - resources
         /// 
         /// - "mp7t" - textual metadata in Unicode

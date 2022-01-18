@@ -87,10 +87,11 @@ namespace PiffLibrary
         /// </summary>
         public static IEnumerable<PiffPropertyInfo> GetProperties(object target)
         {
+            const BindingFlags basePropFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy;
             var targetType = target.GetType();
-            var baseProps = targetType.BaseType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+            var baseProps = targetType.BaseType.GetProperties(basePropFlags);
             var ownProps = targetType.GetProperties().Where(p => !baseProps.Any(bp => bp.Name == p.Name));
-            var before = baseProps.Where(p => p.GetCustomAttribute<BeforeDescendantsAttribute>() != null);
+            var before = baseProps.Where(p => p.GetCustomAttribute<AfterDescendantsAttribute>() is null);
             var after = baseProps.Where(p => p.GetCustomAttribute<AfterDescendantsAttribute>() != null);
 
             var props = before.Concat(ownProps).Concat(after);
@@ -108,14 +109,18 @@ namespace PiffLibrary
         /// from <paramref name="input"/>.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        public static ulong ReadObject(object target, BitReadStream input, ulong bytesLeft, PiffReadContext ctx)
+        public static long ReadObject(object target, BitReadStream input, long bytesLeft, PiffReadContext ctx)
         {
-            var readBytes = 0uL;
+            var readBytes = 0L;
 
             foreach (var prop in GetProperties(target))
             {
                 if (prop.Format == PiffDataFormats.Skip) continue;
+
                 var readSize = prop.ReadValue(target, input, bytesLeft, ctx);
+                if (readSize < 0)
+                    return readSize;
+
                 readBytes += readSize;
 
                 if (bytesLeft < readSize)
@@ -126,7 +131,7 @@ namespace PiffLibrary
                 }
 
                 bytesLeft -= readSize;
-                if (bytesLeft == 0)
+                if (bytesLeft <= 0)
                     break;
             }
 
@@ -306,9 +311,9 @@ namespace PiffLibrary
         /// Read this value into the given <paramref name="targetObject"/>.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private ulong ReadValue(object targetObject, BitReadStream input, ulong bytesLeft, PiffReadContext ctx)
+        private long ReadValue(object targetObject, BitReadStream input, long bytesLeft, PiffReadContext ctx)
         {
-            var readBytes = 0uL;
+            var readBytes = 0L;
 
             if (IsArray)
             {
@@ -318,14 +323,11 @@ namespace PiffLibrary
                 while (count > 0 && bytesLeft > 0)
                 {
                     var readSize = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object item);
-                    // Can be 0 if we're reading a few bits
-                    //if (readSize == 0)
-                    //{
-                    //    ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
-                    //    break;
-                    //}
+                    if (readSize < 0) return readSize;
 
-                    list.Add(item);
+                    if (item != null)
+                        list.Add(item);
+    
                     readBytes += readSize;
                     bytesLeft -= readSize;
                     count--;
@@ -343,11 +345,7 @@ namespace PiffLibrary
             else
             {
                 readBytes = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object value);
-                // Can be 0 if we're reading a few bits
-                //if (readBytes == 0)
-                //{
-                //    ctx.AddWarning($"Failed to read {Property.DeclaringType.Name}.{Property.Name} at position {input.Position}. Proceeding.");
-                //}
+                if (readBytes < 0) return readBytes;
 
                 if (Property.CanWrite)
                 {
@@ -362,18 +360,21 @@ namespace PiffLibrary
         /// <summary>
         /// Read a box, a POCO, a fixed-length string, or a primitive value.
         /// </summary>
-        /// <returns>The number of bytes read</returns>
-        private ulong ReadSingleValue(
-            object targetObject, BitReadStream input, ulong bytesLeft,
+        /// <returns>
+        /// The number of bytes read. Can be 0 if we only read a few bits.
+        /// -1 of there was an error. Skip to the end of the box.
+        /// </returns>
+        private long ReadSingleValue(
+            object targetObject, BitReadStream input, long bytesLeft,
             PiffReadContext ctx, out object value)
         {
-            ulong readBytes;
+            long readBytes;
 
             switch (Format)
             {
                 case PiffDataFormats.Ascii:
                     value = input.ReadAsciiString(ItemSize);
-                    readBytes = (ulong)ItemSize;
+                    readBytes = ItemSize;
                     break;
 
                 case PiffDataFormats.InlineObject:
@@ -398,8 +399,8 @@ namespace PiffLibrary
         /// Read a plain object. If it has a constructor with a parent, use it.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private static ulong ReadPoco(
-            object parentObject, BitReadStream input, ulong bytesLeft, Type propertyType,
+        private static long ReadPoco(
+            object parentObject, BitReadStream input, long bytesLeft, Type propertyType,
             PiffReadContext ctx, out object obj)
         {
             if (propertyType.GetConstructor(Type.EmptyTypes) != null)
@@ -415,7 +416,7 @@ namespace PiffLibrary
         /// Read an integer (of many formats), a GUID or a zero-terminated string.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private static ulong ReadPrimitiveValue(BitReadStream bytes, PiffDataFormats format, out object value)
+        private static long ReadPrimitiveValue(BitReadStream bytes, PiffDataFormats format, out object value)
         {
             var pos = bytes.Position;
 
@@ -426,19 +427,19 @@ namespace PiffLibrary
                     break;
 
                 case PiffDataFormats.UInt3:
-                    value = (byte)(bytes.ReadBits(3));
+                    value = (byte)bytes.ReadBits(3);
                     break;
 
                 case PiffDataFormats.UInt4:
-                    value = (byte)(bytes.ReadBits(4));
+                    value = (byte)bytes.ReadBits(4);
                     break;
 
                 case PiffDataFormats.UInt5:
-                    value = (byte)(bytes.ReadBits(5));
+                    value = (byte)bytes.ReadBits(5);
                     break;
 
                 case PiffDataFormats.UInt6:
-                    value = (byte)(bytes.ReadBits(6));
+                    value = (byte)bytes.ReadBits(6);
                     break;
 
                 case PiffDataFormats.UInt8:
@@ -497,7 +498,7 @@ namespace PiffLibrary
                     throw new ArgumentException($"Format '{format}' is not yet supported for reading.");
             }
 
-            return (ulong)(bytes.Position - pos);
+            return bytes.Position - pos;
         }
 
         #endregion

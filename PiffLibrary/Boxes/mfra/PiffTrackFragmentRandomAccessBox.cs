@@ -64,7 +64,7 @@ namespace PiffLibrary.Boxes
                            TrunNumber = new byte[] { off.TrunNumber },
                            SampleNumber = new byte[] { off.SampleNumber }
                        }).ToArray();
-            Count = Childen is null ? 0 : (uint) Childen.Length;
+            Count = (uint) Offsets.Length;
         }
 
         #endregion

@@ -43,14 +43,22 @@ namespace PiffLibrary
 
 
         /// <summary>
+        /// Read a 64-bit signed integer in big-endian format from a byte array.
+        /// </summary>
+        public static long GetInt64(this byte[] bytes, int offset)
+        {
+            return ((long) bytes.GetInt32(offset) << 32) |
+                           bytes.GetUInt32(offset + 4);
+        }
+
+
+        /// <summary>
         /// Read a 64-bit unsigned integer in big-endian format from a byte array.
         /// </summary>
         public static ulong GetUInt64(this byte[] bytes, int offset)
         {
-            var res = (ulong)(bytes.GetUInt32(offset) << 32) |
-                              bytes.GetUInt32(offset + 4);
-
-            return (uint) res;
+            return ((ulong) bytes.GetUInt32(offset) << 32) |
+                            bytes.GetUInt32(offset + 4);
         }
 
         #endregion
@@ -182,10 +190,10 @@ namespace PiffLibrary
         public static string ReadAsciiString(this BitReadStream bytes)
         {
             var str = new List<byte>();
-            byte b;
+            int b;
 
-            while ((b = (byte)bytes.ReadByte()) != 0)
-                str.Add(b);
+            while ((b = bytes.ReadByte()) > 0)
+                str.Add((byte) b);
 
             return Encoding.ASCII.GetString(str.ToArray());
         }
@@ -196,7 +204,11 @@ namespace PiffLibrary
         /// </summary>
         public static string ReadAsciiString(this BitReadStream bytes, int length)
         {
-            var chars = Enumerable.Range(0, length).Select(_ => (byte)bytes.ReadByte()).ToArray();
+            var chars = Enumerable.Range(0, length)
+                                  .Select(_ => bytes.ReadByte())
+                                  .TakeWhile(c => c != BitReadStream.Eof)
+                                  .Select(c => (byte)c)
+                                  .ToArray();
 
             return Encoding.ASCII.GetString(chars);
         }
@@ -208,10 +220,10 @@ namespace PiffLibrary
         public static string ReadUtf8String(this BitReadStream bytes)
         {
             var str = new List<byte>();
-            byte b;
+            int b;
 
-            while ((b = (byte)bytes.ReadByte()) != 0)
-                str.Add(b);
+            while ((b = bytes.ReadByte()) > 0)
+                str.Add((byte) b);
 
             return Encoding.UTF8.GetString(str.ToArray());
         }

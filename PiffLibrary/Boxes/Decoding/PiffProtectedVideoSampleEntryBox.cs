@@ -6,19 +6,9 @@ namespace PiffLibrary.Boxes
     [BoxName("encv")]
     [ChildType(typeof(PiffProtectionSchemeInformationBox))]
     [ChildType(typeof(PiffAvcConfigurationBox))]
-    public sealed class PiffProtectedVideoSampleEntryBox : PiffBoxBase
+    public sealed class PiffProtectedVideoSampleEntryBox : PiffSampleEntryBoxBase
     {
         #region Properties
-
-        [PiffArraySize(6)]
-        public byte[] Reserved1 { get; } = { 0, 0, 0, 0, 0, 0 };
-
-
-        /// <summary>
-        /// Index to the data reference.
-        /// </summary>
-        public short DataReferenceIndex { get; set; } = 1;
-
 
         [PiffArraySize(2)]
         public short[] Reserved2 { get; } = { 0, 0 };
@@ -82,6 +72,7 @@ namespace PiffLibrary.Boxes
         /// </summary>
         public PiffProtectedVideoSampleEntryBox(PiffVideoManifest video, Guid keyId)
         {
+            DataReferenceIndex = 1;
             Width = video.Width;
             Height = video.Height;
             var scheme = PiffProtectionSchemeInformationBox.CreateVideo(video.CodecId, keyId);

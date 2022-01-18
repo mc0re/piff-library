@@ -14,12 +14,13 @@ namespace PiffLibrary.Test.Boxes
         {
             var bytes = new byte[] { 0, 0, 0, 16, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 0 };
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
-            var ctx = new PiffReadContext();
+            var ctx = new PiffReadContext{ AnyRoot = true };
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(16uL, length);
+            Assert.AreEqual(16L, length);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(0u, padb.SampleCount);
@@ -32,12 +33,13 @@ namespace PiffLibrary.Test.Boxes
         {
             var bytes = new byte[] { 0, 0, 0, 17, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77 };
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
-            var ctx = new PiffReadContext();
+            var ctx = new PiffReadContext{ AnyRoot = true };
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(17uL, length);
+            Assert.AreEqual(17L, length);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(2u, padb.SampleCount);
@@ -51,12 +53,13 @@ namespace PiffLibrary.Test.Boxes
         {
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 3, 0x77, 0x50 };
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
-            var ctx = new PiffReadContext();
+            var ctx = new PiffReadContext{ AnyRoot = true };
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(18uL, length);
+            Assert.AreEqual(18L, length);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(3u, padb.SampleCount);
@@ -71,12 +74,13 @@ namespace PiffLibrary.Test.Boxes
         {
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77, 0 };
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
-            var ctx = new PiffReadContext();
+            var ctx = new PiffReadContext{ AnyRoot = true };
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(1, ctx.Messages.Count);
             Assert.IsNotNull(box);
-            Assert.AreEqual(17uL, length);
+            Assert.AreEqual(18L, length);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(2u, padb.SampleCount);

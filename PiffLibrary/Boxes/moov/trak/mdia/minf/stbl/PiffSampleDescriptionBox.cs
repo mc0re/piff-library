@@ -11,7 +11,7 @@ namespace PiffLibrary.Boxes
         #region Properties
 
         /// <summary>
-        /// The number of sample tracks.
+        /// The number of <see cref="PiffSampleEntryBoxBase"/> children.
         /// </summary>
         public uint Count { get; set; }
 

@@ -26,7 +26,7 @@ namespace PiffLibrary.Boxes
         /// If the length needs to be 64 bits, it follows the standard header.
         /// Then the standard header length is set to this value.
         /// </summary>
-        public const uint Length64 = 1;
+        public const int Length64 = 1;
 
         #endregion
 

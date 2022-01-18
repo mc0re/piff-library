@@ -9,6 +9,13 @@ namespace PiffLibrary
     /// </summary>
     internal sealed class BitReadStream : IDisposable
     {
+        #region Constants
+
+        public const int Eof = -1;
+
+        #endregion
+
+
         #region Fields
 
         private readonly Stream mUnderlying;
@@ -74,7 +81,7 @@ namespace PiffLibrary
 
 
         /// <summary>
-        /// Get the next byte or -1 if EOF.
+        /// Get the next byte or <see cref="Eof"/> if EOF.
         /// </summary>
         public int ReadByte()
         {

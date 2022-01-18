@@ -9,7 +9,7 @@ namespace PiffLibrary.Boxes
     [BoxName("enca")]
     [ChildType(typeof(PiffProtectionSchemeInformationBox))]
     [ChildType(typeof(PiffElementaryStreamDescriptionMp4aBox))] // For WMA streams a "wfex" block comes instead
-    public sealed class PiffProtectedAudioSampleEntryBox : PiffBoxBase
+    public sealed class PiffProtectedAudioSampleEntryBox : PiffSampleEntryBoxBase
     {
         #region Constants
 
@@ -19,16 +19,6 @@ namespace PiffLibrary.Boxes
 
 
         #region Properties
-
-        [PiffArraySize(6)]
-        public byte[] Reserved1 { get; set; } = new byte[] { 0, 0, 0, 0, 0, 0 };
-
-
-        /// <summary>
-        /// Index to the data reference.
-        /// </summary>
-        public ushort DataReferenceIndex { get; set; } = 1;
-
 
         public short Version { get; set; }
 
@@ -73,6 +63,7 @@ namespace PiffLibrary.Boxes
             if (audio.CodecId != "AACL")
                 throw new ArgumentException($"Cannot process codec '{audio.CodecId}', only 'AACL' is supported.");
 
+            DataReferenceIndex = 1;
             ChannelCount = audio.Channels;
             SampleSize = audio.BitsPerSample;
             SampleRate = (uint) audio.SamplingRate << 16;

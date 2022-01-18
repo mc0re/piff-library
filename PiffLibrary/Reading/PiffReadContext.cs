@@ -10,6 +10,12 @@ namespace PiffLibrary
         #region Properties
 
         /// <summary>
+        /// Ignore box type check on the root level.
+        /// </summary>
+        public bool AnyRoot { get; set; }
+
+
+        /// <summary>
         /// Reading hierarchy. Must be empty when the file is read out.
         /// </summary>
         public Stack<PiffBoxBase> Hierarchy { get; } = new Stack<PiffBoxBase>();

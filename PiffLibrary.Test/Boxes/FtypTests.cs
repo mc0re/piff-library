@@ -18,8 +18,9 @@ namespace PiffLibrary.Test.Boxes
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(16uL, length);
+            Assert.AreEqual(16L, length);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
@@ -39,8 +40,9 @@ namespace PiffLibrary.Test.Boxes
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(24uL, length);
+            Assert.AreEqual(24L, length);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
@@ -61,8 +63,9 @@ namespace PiffLibrary.Test.Boxes
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(24uL, length);
+            Assert.AreEqual(24L, length);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
@@ -83,8 +86,9 @@ namespace PiffLibrary.Test.Boxes
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(20uL, length);
+            Assert.AreEqual(20L, length);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);

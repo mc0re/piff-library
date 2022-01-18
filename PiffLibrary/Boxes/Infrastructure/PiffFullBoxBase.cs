@@ -2,12 +2,17 @@
 {
     public abstract class PiffFullBoxBase : PiffBoxBase
     {
-        [BeforeDescendants]
+        /// <summary>
+        /// Box version. Determines the presence or
+        /// the number of bits of some properties.
+        /// </summary>
         public byte Version { get; set; }
 
 
+        /// <summary>
+        /// Bit-flags. Usually determine the presence of some properties.
+        /// </summary>
         [PiffDataFormat(PiffDataFormats.Int24)]
-        [BeforeDescendants]
         public int Flags { get; set; }
     }
 }

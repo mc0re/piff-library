@@ -28,12 +28,13 @@ namespace PiffLibrary.Test.Boxes
         public void Avcc_Read()
         {
             using var input = new BitReadStream(new MemoryStream(AvccSample, false), true);
-            var ctx = new PiffReadContext();
+            var ctx = new PiffReadContext{ AnyRoot = true };
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
+            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(77uL, length);
+            Assert.AreEqual(77L, length);
             var ftyp = box as PiffAvcConfigurationBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual<byte>(1, ftyp.ConfigurationVersion);
