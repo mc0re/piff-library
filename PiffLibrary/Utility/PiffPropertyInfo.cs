@@ -71,7 +71,10 @@ namespace PiffLibrary
                 if (lengthAttr is null)
                     throw new ArgumentException($"Property '{prop.DeclaringType.Name}.{prop.Name}' must have length specified using {nameof(PiffStringLengthAttribute)}.");
 
-                ItemSize = lengthAttr.Length;
+                if (lengthAttr.LengthProperty is null)
+                    ItemSize = lengthAttr.Length;
+                else
+                    ItemSize = GetIntFromProperty(target, lengthAttr.LengthProperty);
             }
             else if (lengthAttr != null)
             {
@@ -266,14 +269,14 @@ namespace PiffLibrary
         /// <summary>
         /// Retrieve array size information from <see cref="PiffArraySizeAttribute"/>.
         /// </summary>
-        private static int? GetArraySize(PropertyInfo prop, bool isArray, object target)
+        private static int? GetArraySize(PropertyInfo targetProperty, bool isArray, object target)
         {
-            var sizeAttr = prop.GetCustomAttribute<PiffArraySizeAttribute>();
+            var sizeAttr = targetProperty.GetCustomAttribute<PiffArraySizeAttribute>();
 
             if (!isArray)
             {
                 if (sizeAttr != null)
-                    throw new ArgumentException($"Property '{prop.DeclaringType.Name}.{prop.Name}' is not an array and thus cannot have {nameof(PiffArraySizeAttribute)}.");
+                    throw new ArgumentException($"Property '{targetProperty.DeclaringType.Name}.{targetProperty.Name}' is not an array and thus cannot have {nameof(PiffArraySizeAttribute)}.");
 
                 return null;
             }
@@ -284,11 +287,17 @@ namespace PiffLibrary
             if (sizeAttr.SizeProp == null)
                 return sizeAttr.Size;
 
-            const BindingFlags sizePropFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-            var sizeProp = target.GetType().GetProperty(sizeAttr.SizeProp, sizePropFlags);
+            return GetIntFromProperty(target, sizeAttr.SizeProp);
+        }
+
+
+        private static int GetIntFromProperty(object target, string propName)
+        {
+            const BindingFlags propFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+            var sizeProp = target.GetType().GetProperty(propName, propFlags);
 
             if (sizeProp is null)
-                throw new ArgumentException($"Property {sizeAttr.SizeProp} not found on object {prop.DeclaringType.Name}.");
+                throw new ArgumentException($"Property {propName} not found on object {target.GetType().Name}.");
 
             object size = sizeProp.GetValue(target, null);
 

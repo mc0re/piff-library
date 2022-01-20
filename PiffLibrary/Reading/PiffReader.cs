@@ -1,4 +1,5 @@
 ﻿using PiffLibrary.Boxes;
+using PiffLibrary.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,20 +50,7 @@ namespace PiffLibrary
         /// Mapping between box name and type.
         /// The same type can have multiple names (see e.g. <see cref="PiffSkipBox"/>).
         /// </summary>
-        private static readonly Dictionary<string, Type> sBoxNames = new Dictionary<string, Type>();
-
-
-        /// <summary>
-        /// Expected root-level box types.
-        /// </summary>
-        private static readonly Type[] sRootBoxes;
-
-
-        /// <summary>
-        /// Mapping between box type and expected children types.
-        /// Unexpected types are reported as warnings.
-        /// </summary>
-        private static readonly Dictionary<Type, Type[]> sChildBoxes = new Dictionary<Type, Type[]>();
+        private static readonly BoxStorage sBoxes = new BoxStorage();
 
         #endregion
 
@@ -74,47 +62,7 @@ namespace PiffLibrary
         /// </summary>
         static PiffReader()
         {
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
-            {
-                var boxNameAttrs = type.GetCustomAttributes<BoxNameAttribute>();
-                if (!boxNameAttrs.Any()) continue;
-
-                if (!typeof(PiffBoxBase).IsAssignableFrom(type))
-                    throw new ArgumentException($"A box must inherit from {nameof(PiffBoxBase)}. {type.Name} does not.");
-
-                foreach (var name in boxNameAttrs)
-                {
-                    // Fails when adding the same name twice
-                    sBoxNames.Add(name.Name, type);
-                }
-
-                var children = type.GetCustomAttributes<ChildTypeAttribute>();
-                if (children.Any())
-                {
-                    var childTypes = children.Select(t => t.ChildType).ToArray();
-
-                    foreach (var child in childTypes)
-                    {
-                        if (!typeof(PiffBoxBase).IsAssignableFrom(child))
-                            throw new ArgumentException($"A child box must inherit from {nameof(PiffBoxBase)}. {child.Name} does not.");
-                    }
-
-                    sChildBoxes.Add(type, childTypes);
-                }
-            }
-
-            var rootTypes = typeof(PiffFile)
-                .GetCustomAttributes<ChildTypeAttribute>()
-                .Select(t => t.ChildType)
-                .ToArray();
-
-            foreach (var child in rootTypes)
-            {
-                if (!typeof(PiffBoxBase).IsAssignableFrom(child))
-                    throw new ArgumentException($"A root box must inherit from {nameof(PiffBoxBase)}. {child.Name} does not.");
-            }
-
-            sRootBoxes = rootTypes;
+            sBoxes.Collect();
         }
 
         #endregion
@@ -169,7 +117,7 @@ namespace PiffLibrary
             if (length < 0) return length;
 
             var errorCode = ReadBoxName(input, startPosition, ctx, out var id);
-            if (errorCode < 0) return length;
+            if (errorCode < 0) return errorCode;
 
             if (length == PiffBoxBase.Length64)
             {
@@ -179,14 +127,19 @@ namespace PiffLibrary
                 if (length < 0) return length;
             }
 
-            if (!sBoxNames.TryGetValue(id, out var type))
+            switch (sBoxes.FindBox(ctx.CurrentBox?.GetType(), id, out var type))
             {
-                ctx.AddWarning($"Unrecognized box '{id}' at position {startPosition}.");
-                type = typeof(PiffCatchAllBox);
-            }
-            else if (!ctx.AnyRoot && ! IsExpectedBoxType(ctx.CurrentBox?.GetType(), type))
-            {
-                ctx.AddWarning($"Unexpected child box '{id}' inside '{ctx.CurrentBoxName}' at position {startPosition}.");
+                case FindBoxResults.Unrecognized:
+                    ctx.AddWarning($"Unrecognized box '{id}' at position {startPosition}.");
+                    break;
+
+                case FindBoxResults.Ambiguous:
+                    ctx.AddError($"More than one child of {ctx.CurrentBox?.GetType().Name} has name '{id}' at position {startPosition}.");
+                    break;
+
+                case FindBoxResults.Unexpected when !ctx.AnyRoot:
+                    ctx.AddWarning($"Unexpected child box '{id}' inside '{ctx.CurrentBoxName}' at position {startPosition}.");
+                    break;
             }
 
             box = (PiffBoxBase) Activator.CreateInstance(type);
@@ -293,15 +246,6 @@ namespace PiffLibrary
 
             // We can't really support unsigned long, as length is reused for error reporting
             return buf.GetInt64(0);
-        }
-
-
-        private static bool IsExpectedBoxType(Type parentType, Type childType)
-        {
-            if (parentType is null)
-                return sRootBoxes.Contains(childType);
-            else
-                return sChildBoxes[parentType].Contains(childType);
         }
 
         #endregion

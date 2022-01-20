@@ -80,7 +80,8 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.AreEqual(1, ctx.Messages.Count);
             Assert.IsNotNull(box);
-            Assert.AreEqual(18L, length);
+            // It tries to read "PiffBoxBase.Children" and cannot read the length
+            Assert.AreEqual(PiffReader.EofPremature, length);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(2u, padb.SampleCount);

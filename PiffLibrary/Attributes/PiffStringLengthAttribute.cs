@@ -11,6 +11,12 @@ namespace PiffLibrary
     internal sealed class PiffStringLengthAttribute : Attribute
     {
         /// <summary>
+        /// Property name to get the length.
+        /// </summary>
+        public string LengthProperty { get; }
+
+
+        /// <summary>
         /// The number of bytes in the string.
         /// </summary>
         public int Length { get; }
@@ -19,6 +25,19 @@ namespace PiffLibrary
         public PiffStringLengthAttribute(int length)
         {
             Length = length;
+        }
+
+
+        /// <summary>
+        /// The number of bytes is defined by a property with the given name.
+        /// The type of property must be convertible to integer.
+        /// </summary>
+        /// <param name="sizeProperty">
+        /// Property name (use nameof). Can be a public or a private property.
+        /// </param>
+        public PiffStringLengthAttribute(string lengthProperty)
+        {
+            LengthProperty = lengthProperty;
         }
     }
 }

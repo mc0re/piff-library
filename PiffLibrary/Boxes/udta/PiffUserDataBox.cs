@@ -8,6 +8,9 @@
     [ChildType(typeof(PiffTrackSelectionBox))]
     [ChildType(typeof(PiffTrackKindBox))]
     [ChildType(typeof(PiffSubTrackBox))]
+    [ChildType(typeof(PiffRtpMovieHintInformationBox))]
+    [ChildType(typeof(PiffRtpTrackSdpHintInformationBox))]
+    [ChildType(typeof(PiffHintStatisticsBox))]
     public sealed class PiffUserDataBox : PiffBoxBase
     {
     }

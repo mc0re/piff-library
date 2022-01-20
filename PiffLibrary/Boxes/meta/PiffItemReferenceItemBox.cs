@@ -2,16 +2,14 @@
 {
     /// <summary>
     /// A single reference block (one-to-many).
-    /// The have the same box names as <see cref="PiffTrackReferenceBox"/> children,
-    /// thus for now (as they are not really used), the names are commented out.
     /// </summary>
-    //[BoxName("hint")]
-    //[BoxName("cdsc")]
-    //[BoxName("font")]
-    //[BoxName("hind")]
-    //[BoxName("vdep")]
-    //[BoxName("vplx")]
-    //[BoxName("subt")]
+    [BoxName("hint")]
+    [BoxName("cdsc")]
+    [BoxName("font")]
+    [BoxName("hind")]
+    [BoxName("vdep")]
+    [BoxName("vplx")]
+    [BoxName("subt")]
     public class PiffItemReferenceItemBox : PiffBoxBase
     {
         #region Fields
