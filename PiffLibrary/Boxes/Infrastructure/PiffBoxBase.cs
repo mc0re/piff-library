@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 
-
 namespace PiffLibrary.Boxes
 {
     /// <summary>
@@ -33,6 +32,14 @@ namespace PiffLibrary.Boxes
 
         #region Inherited properties
 
+
+        /// <summary>
+        /// The actual box name - useful for boxes with multiple names.
+        /// </summary>
+        [PiffDataFormat(PiffDataFormats.Skip)]
+        public string BoxType { get; set; }
+
+
         /// <summary>
         /// Children boxes.
         /// All boxes have their children as the only fields,
@@ -44,12 +51,23 @@ namespace PiffLibrary.Boxes
         #endregion
 
 
+        #region Init and clean-up
+
+        public PiffBoxBase()
+        {
+            // When creating boxes in code, use the first name by default
+            BoxType = GetType().GetCustomAttribute<BoxNameAttribute>().Name;
+        }
+
+        #endregion
+
+
         #region Virtual API
 
         /// <summary>
         /// Used for logging / debugging.
         /// </summary>
-        public override string ToString() => GetType().GetCustomAttribute<BoxNameAttribute>().Name;
+        public override string ToString() => BoxType;
 
         #endregion
 

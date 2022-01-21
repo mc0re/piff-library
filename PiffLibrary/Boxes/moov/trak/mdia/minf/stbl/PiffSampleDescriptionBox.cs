@@ -6,6 +6,7 @@ namespace PiffLibrary.Boxes
     [BoxName("stsd")]
     [ChildType(typeof(PiffProtectedAudioSampleEntryBox))]
     [ChildType(typeof(PiffProtectedVideoSampleEntryBox))]
+    [ChildType(typeof(PiffFdHintSampleEntryBox))]
     public sealed class PiffSampleDescriptionBox : PiffFullBoxBase
     {
         #region Properties

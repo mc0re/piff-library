@@ -9,10 +9,6 @@
         public byte[] Data { get; set; }
 
 
-        [PiffDataFormat(PiffDataFormats.Skip)]
-        public string BoxType { get; set; }
-
-
-        public override string ToString() => $"{BoxType} (unknown)";
+        public override string ToString() => $"{base.ToString()} (unknown)";
     }
 }

@@ -6,9 +6,14 @@
     internal enum PiffDataFormats
     {
         /// <summary>
-        /// Do not write this value.
+        /// Do not read or write this value.
         /// </summary>
         Skip,
+
+        /// <summary>
+        /// 1 bit unsigned integer.
+        /// </summary>
+        UInt1,
 
         /// <summary>
         /// 2 bits unsigned integer. The actual value is +1 (so 0b11 corresponds to 4).
@@ -34,6 +39,11 @@
         /// 6 bits unsigned integer.
         /// </summary>
         UInt6,
+
+        /// <summary>
+        /// 7 bits unsigned integer.
+        /// </summary>
+        UInt7,
 
         /// <summary>
         /// 1-byte unsigned nteger. Default for <see langword="byte"/>.

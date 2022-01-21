@@ -431,6 +431,10 @@ namespace PiffLibrary
 
             switch (format)
             {
+                case PiffDataFormats.UInt1:
+                    value = (byte)bytes.ReadBits(1);
+                    break;
+
                 case PiffDataFormats.UInt2Minus1:
                     value = (byte)(bytes.ReadBits(2) + 1);
                     break;
@@ -449,6 +453,10 @@ namespace PiffLibrary
 
                 case PiffDataFormats.UInt6:
                     value = (byte)bytes.ReadBits(6);
+                    break;
+
+                case PiffDataFormats.UInt7:
+                    value = (byte)bytes.ReadBits(7);
                     break;
 
                 case PiffDataFormats.UInt8:
@@ -551,6 +559,9 @@ namespace PiffLibrary
         {
             switch (format)
             {
+                case PiffDataFormats.UInt1:
+                    return 1;
+
                 case PiffDataFormats.UInt2Minus1:
                     return 2;
 
@@ -565,6 +576,9 @@ namespace PiffLibrary
 
                 case PiffDataFormats.UInt6:
                     return 6;
+
+                case PiffDataFormats.UInt7:
+                    return 7;
 
                 case PiffDataFormats.UInt8:
                     return 8;
@@ -629,6 +643,10 @@ namespace PiffLibrary
         {
             switch (format)
             {
+                case PiffDataFormats.UInt1:
+                    output.WriteBits((byte) value, 1);
+                    break;
+
                 case PiffDataFormats.UInt2Minus1:
                     output.WriteBits((byte) ((byte) value - 1), 2);
                     break;
@@ -647,6 +665,10 @@ namespace PiffLibrary
 
                 case PiffDataFormats.UInt6:
                     output.WriteBits((byte) value, 6);
+                    break;
+
+                case PiffDataFormats.UInt7:
+                    output.WriteBits((byte) value, 7);
                     break;
 
                 case PiffDataFormats.UInt8:

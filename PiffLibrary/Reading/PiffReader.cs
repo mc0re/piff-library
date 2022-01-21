@@ -1,10 +1,8 @@
 ﻿using PiffLibrary.Boxes;
 using PiffLibrary.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 
 namespace PiffLibrary
@@ -143,10 +141,7 @@ namespace PiffLibrary
             }
 
             box = (PiffBoxBase) Activator.CreateInstance(type);
-            if (box is PiffCatchAllBox ca)
-            {
-                ca.BoxType = id;
-            }
+            box.BoxType = id;
 
             ctx.Push(box, startPosition);
             var readBytes = PiffPropertyInfo.ReadObject(box, input, length - header, ctx);
