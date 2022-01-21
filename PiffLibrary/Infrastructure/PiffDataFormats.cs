@@ -46,6 +46,11 @@
         UInt7,
 
         /// <summary>
+        /// 1-byte signed nteger. Default for <see langword="sbyte"/>.
+        /// </summary>
+        Int8,
+
+        /// <summary>
         /// 1-byte unsigned nteger. Default for <see langword="byte"/>.
         /// </summary>
         UInt8,

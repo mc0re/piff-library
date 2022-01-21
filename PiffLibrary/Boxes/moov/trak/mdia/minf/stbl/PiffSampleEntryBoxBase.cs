@@ -4,7 +4,7 @@
     public abstract class PiffSampleEntryBoxBase : PiffBoxBase
     {
         [PiffArraySize(6)]
-        public byte[] Reserved1 { get; } = { 0, 0, 0, 0, 0, 0 };
+        public byte[] Reserved { get; } = { 0, 0, 0, 0, 0, 0 };
 
 
         /// <summary>

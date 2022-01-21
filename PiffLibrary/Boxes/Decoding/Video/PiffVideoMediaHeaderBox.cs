@@ -9,14 +9,14 @@
         /// Only mode 0 is currently defined.
         /// 0 = copy
         /// </summary>
-        public short GraphicsMode { get; set; }
+        public ushort GraphicsMode { get; set; }
 
 
         /// <summary>
         /// RGB colour available for other future graphics modes.
         /// </summary>
         [PiffArraySize(3)]
-        public short[] Color { get; set; } = { 0, 0, 0 };
+        public ushort[] Color { get; set; } = { 0, 0, 0 };
 
         #endregion
 

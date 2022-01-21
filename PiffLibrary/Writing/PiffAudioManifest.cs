@@ -9,9 +9,9 @@
 
         public int BitRate { get; set; }
 
-        public short Channels { get; set; }
+        public ushort Channels { get; set; }
 
-        public short BitsPerSample { get; set; }
+        public ushort BitsPerSample { get; set; }
 
         public ushort SamplingRate { get; set; }
 

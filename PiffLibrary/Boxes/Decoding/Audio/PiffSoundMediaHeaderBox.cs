@@ -12,8 +12,7 @@
         public short Balance { get; set; }
 
 
-        public short Reserved1 { get; set; }
-
+        public short Reserved { get; }
 
         #endregion
     }

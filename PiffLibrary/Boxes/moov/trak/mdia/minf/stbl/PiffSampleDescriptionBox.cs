@@ -4,8 +4,8 @@
 namespace PiffLibrary.Boxes
 {
     [BoxName("stsd")]
-    [ChildType(typeof(PiffProtectedAudioSampleEntryBox))]
-    [ChildType(typeof(PiffProtectedVideoSampleEntryBox))]
+    [ChildType(typeof(PiffAudioSampleEntryBox))]
+    [ChildType(typeof(PiffVideoSampleEntryBox))]
     [ChildType(typeof(PiffFdHintSampleEntryBox))]
     public sealed class PiffSampleDescriptionBox : PiffFullBoxBase
     {
@@ -33,7 +33,7 @@ namespace PiffLibrary.Boxes
         /// Constructor for writing.
         /// Only one of the properties must be present.
         /// </summary>
-        private PiffSampleDescriptionBox(PiffProtectedAudioSampleEntryBox audio, PiffProtectedVideoSampleEntryBox video)
+        private PiffSampleDescriptionBox(PiffAudioSampleEntryBox audio, PiffVideoSampleEntryBox video)
         {
             Count = 1;
             Childen = new PiffBoxBase[]
@@ -49,7 +49,7 @@ namespace PiffLibrary.Boxes
         public static PiffSampleDescriptionBox CreateAudio(PiffAudioManifest audio, Guid keyId)
         {
             return new PiffSampleDescriptionBox(
-                new PiffProtectedAudioSampleEntryBox(audio, keyId),
+                new PiffAudioSampleEntryBox(audio, keyId),
                 null);
         }
 
@@ -61,7 +61,7 @@ namespace PiffLibrary.Boxes
         {
             return new PiffSampleDescriptionBox(
                 null,
-                new PiffProtectedVideoSampleEntryBox(video, keyId));
+                new PiffVideoSampleEntryBox(video, keyId));
         }
 
         #endregion

@@ -231,6 +231,9 @@ namespace PiffLibrary
             if (valueType == typeof(byte) || valueType == typeof(char))
                 return PiffDataFormats.UInt8;
 
+            else if (valueType == typeof(sbyte))
+                return PiffDataFormats.Int8;
+
             else if (valueType == typeof(short))
                 return PiffDataFormats.Int16;
 
@@ -459,6 +462,10 @@ namespace PiffLibrary
                     value = (byte)bytes.ReadBits(7);
                     break;
 
+                case PiffDataFormats.Int8:
+                    value = (sbyte)bytes.ReadByte();
+                    break;
+
                 case PiffDataFormats.UInt8:
                     value = (byte)bytes.ReadByte();
                     break;
@@ -580,6 +587,7 @@ namespace PiffLibrary
                 case PiffDataFormats.UInt7:
                     return 7;
 
+                case PiffDataFormats.Int8:
                 case PiffDataFormats.UInt8:
                     return 8;
 
@@ -669,6 +677,10 @@ namespace PiffLibrary
 
                 case PiffDataFormats.UInt7:
                     output.WriteBits((byte) value, 7);
+                    break;
+
+                case PiffDataFormats.Int8:
+                    output.WriteByte((byte)(sbyte)value);
                     break;
 
                 case PiffDataFormats.UInt8:

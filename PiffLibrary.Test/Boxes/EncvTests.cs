@@ -59,7 +59,7 @@ namespace PiffLibrary.Test.Boxes
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
             Assert.AreEqual(234uL, length);
-            var encv = box as PiffProtectedVideoSampleEntryBox;
+            var encv = box as PiffVideoSampleEntryBox;
             Assert.IsNotNull(encv);
         }
     }

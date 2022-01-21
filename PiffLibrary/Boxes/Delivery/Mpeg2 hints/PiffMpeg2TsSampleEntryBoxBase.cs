@@ -34,6 +34,6 @@
 
 
         [PiffDataFormat(PiffDataFormats.UInt7)]
-        public byte Reserved { get; }
+        public byte Reserved1 { get; }
     }
 }
