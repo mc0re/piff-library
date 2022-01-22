@@ -56,6 +56,11 @@
         UInt8,
 
         /// <summary>
+        /// 12-bits integer.
+        /// </summary>
+        Int12,
+
+        /// <summary>
         /// 2-byte integer. Default for <see langword="short"/>.
         /// </summary>
         Int16,
@@ -131,11 +136,13 @@
 
         /// <summary>
         /// Treat the value as a box with length, ID, and collection of properties.
+        /// Set by default for properties with the Box-inherited type.
         /// </summary>
         Box,
 
         /// <summary>
         /// Treat the value as just a collection of properties.
+        /// Set by default for properties with the class but not box type.
         /// </summary>
         InlineObject,
     }

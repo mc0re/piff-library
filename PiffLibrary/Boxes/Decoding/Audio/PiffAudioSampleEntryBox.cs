@@ -3,11 +3,19 @@
 
 namespace PiffLibrary.Boxes
 {
+    /// <summary>
+    /// DRC boxes can also be present, but are not defined by ISO 14496-12:
+    /// - DRCCoefficientsBasic
+    /// - DRCCoefficientsUniDRC
+    /// - DRCInstructionsBasic
+    /// - DRCInstructionsUniDRC
+    /// </summary>
     [BoxName("enca")]
     [ChildType(typeof(PiffProtectionSchemeInformationBox))]
     [ChildType(typeof(PiffElementaryStreamDescriptionMp4aBox))] // For WMA streams a "wfex" block comes instead
     [ChildType(typeof(PiffChannelLayoutBox))]
     [ChildType(typeof(PiffSamplingRateBox))] // For V1 only
+    [ChildType(typeof(PiffDownmixInstructionsBox))] 
     public sealed class PiffAudioSampleEntryBox : PiffSampleEntryBoxBase
     {
         #region Constants

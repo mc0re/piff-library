@@ -11,6 +11,7 @@
     [ChildType(typeof(PiffRtpMovieHintInformationBox))]
     [ChildType(typeof(PiffRtpTrackSdpHintInformationBox))]
     [ChildType(typeof(PiffHintStatisticsBox))]
+    [ChildType(typeof(PiffLoudnessBox))]
     public sealed class PiffUserDataBox : PiffBoxBase
     {
     }

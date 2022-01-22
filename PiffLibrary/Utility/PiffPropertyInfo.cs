@@ -435,31 +435,31 @@ namespace PiffLibrary
             switch (format)
             {
                 case PiffDataFormats.UInt1:
-                    value = (byte)bytes.ReadBits(1);
+                    value = (byte)bytes.ReadBits(1, false);
                     break;
 
                 case PiffDataFormats.UInt2Minus1:
-                    value = (byte)(bytes.ReadBits(2) + 1);
+                    value = (byte)(bytes.ReadBits(2, false) + 1);
                     break;
 
                 case PiffDataFormats.UInt3:
-                    value = (byte)bytes.ReadBits(3);
+                    value = (byte)bytes.ReadBits(3, false);
                     break;
 
                 case PiffDataFormats.UInt4:
-                    value = (byte)bytes.ReadBits(4);
+                    value = (byte)bytes.ReadBits(4, false);
                     break;
 
                 case PiffDataFormats.UInt5:
-                    value = (byte)bytes.ReadBits(5);
+                    value = (byte)bytes.ReadBits(5, false);
                     break;
 
                 case PiffDataFormats.UInt6:
-                    value = (byte)bytes.ReadBits(6);
+                    value = (byte)bytes.ReadBits(6, false);
                     break;
 
                 case PiffDataFormats.UInt7:
-                    value = (byte)bytes.ReadBits(7);
+                    value = (byte)bytes.ReadBits(7, false);
                     break;
 
                 case PiffDataFormats.Int8:
@@ -468,6 +468,10 @@ namespace PiffLibrary
 
                 case PiffDataFormats.UInt8:
                     value = (byte)bytes.ReadByte();
+                    break;
+
+                case PiffDataFormats.Int12:
+                    value = (short)bytes.ReadBits(12, true);
                     break;
 
                 case PiffDataFormats.Int16:
@@ -591,6 +595,9 @@ namespace PiffLibrary
                 case PiffDataFormats.UInt8:
                     return 8;
 
+                case PiffDataFormats.Int12:
+                    return 12;
+
                 case PiffDataFormats.Int16:
                 case PiffDataFormats.UInt16:
                     return 16;
@@ -685,6 +692,10 @@ namespace PiffLibrary
 
                 case PiffDataFormats.UInt8:
                     output.WriteByte((byte)value);
+                    break;
+
+                case PiffDataFormats.Int12:
+                    output.WriteBits((short)value, 12);
                     break;
 
                 case PiffDataFormats.Int16:

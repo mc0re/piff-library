@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 
@@ -13,6 +14,16 @@ namespace PiffLibrary
 
         public const int Eof = -1;
 
+        /// <summary>
+        /// The number of bits in a byte.
+        /// </summary>
+        private const int ByteSize = 8;
+        
+        /// <summary>
+        /// The maximum number of bits we can read or write in one go.
+        /// </summary>
+        private const int MaxBits = sizeof(uint) * ByteSize - 1;
+
         #endregion
 
 
@@ -25,7 +36,17 @@ namespace PiffLibrary
         private bool mIsDisposed;
 
 
-        private static readonly int[] BitMask = { 0, 1, 0b11, 0b111, 0b1111, 0b11111, 0b111111, 0b1111111, 0b11111111 }; 
+        /// <summary>
+        /// To extract the needed bits from a byte.
+        /// Array index is the number of needed bits.
+        /// </summary>
+        private static readonly int[] BitsMask = { 0, 0b1, 0b11, 0b111, 0b1111, 0b11111, 0b111111, 0b1111111, 0b11111111 }; 
+
+
+        /// <summary>
+        /// To propagate negative sign.
+        /// </summary>
+        private static readonly uint[] SignMask; 
 
 
         /// <summary>
@@ -50,6 +71,21 @@ namespace PiffLibrary
 
 
         #region Init and clean-up
+
+        static BitReadStream()
+        {
+            var list = new List<uint>();
+            var mask = 0xFFFFFFFFu;
+
+            for (var i = 0; i <= MaxBits; i++)
+            {
+                list.Add(mask);
+                mask <<= 1;
+            }
+
+            SignMask = list.ToArray();
+        }
+
 
         public BitReadStream(Stream underlying, bool disposeUnderlying)
         {
@@ -85,6 +121,9 @@ namespace PiffLibrary
         /// </summary>
         public int ReadByte()
         {
+            if (mBitsLeft != 0)
+                throw new ArgumentException("Reading unaligned byte. Please check your layout.");
+
             return mUnderlying.ReadByte();
         }
 
@@ -92,34 +131,47 @@ namespace PiffLibrary
         /// <summary>
         /// Read the specified number of bits.
         /// Reading is happening from left to right (high to low bits).
-        /// The reading may not cross byte boundary.
+        /// If <paramref name="isSigned"/> is set, the sign bit gets duplicated to the left.
         /// </summary>
-        public int ReadBits(int nofBits)
+        public int ReadBits(int nofBits, bool isSigned)
         {
-            if (nofBits <= 0 || nofBits > 7)
-                throw new ArgumentException($"Can only read 1..7 bits, requested {nofBits}.");
+            if (nofBits <= 0 || nofBits > MaxBits)
+                throw new ArgumentException($"Can only read 1..{MaxBits} bits, requested {nofBits}.");
 
-            if (mBitsLeft == 0)
+            var res = 0;
+            var bitsToReadLeft = nofBits;
+
+            while (bitsToReadLeft > 0)
             {
-                // Fill up the store
-                mBitsStore = mUnderlying.ReadByte();
-                mBitsLeft = mBitsStore < 0 ? 0 : 8;
+                if (mBitsLeft == 0)
+                {
+                    // Read next full byte
+                    mBitsStore = mUnderlying.ReadByte();
+                    if (mBitsStore < 0) throw new EndOfStreamException($"Cannot read next byte.");
+
+                    mBitsLeft = ByteSize;
+                }
+
+                var bitsToReadNow = bitsToReadLeft > mBitsLeft ? mBitsLeft : bitsToReadLeft;
+                
+                res = (res << bitsToReadNow) | (mBitsStore >> (mBitsLeft - bitsToReadNow)) & BitsMask[bitsToReadNow];
+                mBitsLeft -= bitsToReadNow;
+                bitsToReadLeft -= bitsToReadNow;
             }
 
-            if (mBitsLeft < nofBits)
-                throw new ArgumentException($"Cannot read {nofBits} bits, only {mBitsLeft} bits left.");
+            if (isSigned && (res & (1 << (nofBits - 1))) != 0)
+            {
+                res = (int) ((uint)res | SignMask[nofBits]);
+            }
 
-            var res = mBitsStore >> (mBitsLeft - nofBits);
-            mBitsLeft -= nofBits;
-
-            return res & BitMask[nofBits];
+            return res;
         }
 
 
         /// <summary>
         /// Read a number of bytes into the provided array.
         /// </summary>
-        public int Read(byte[] buffer, int offset, int count)
+            public int Read(byte[] buffer, int offset, int count)
         {
             return mUnderlying.Read(buffer, offset, count);
         }
