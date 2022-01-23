@@ -12,6 +12,7 @@
     [ChildType(typeof(PiffUserDataBox))]
     [ChildType(typeof(PiffMetadataBox))]
     [ChildType(typeof(PiffSampleDependencyBox))] // PlayReady addition?
+    [ChildType(typeof(PiffSampleEncryptionBox))]
     [ChildType(typeof(PiffExtensionBox))] // PIffSampleEncryption
     public sealed class PiffTrackFragmentBox : PiffBoxBase
     {

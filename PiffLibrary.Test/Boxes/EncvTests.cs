@@ -42,7 +42,8 @@ namespace PiffLibrary.Test.Boxes
             0, 1, 0, 0, // SchemeVersion
             0, 0, 0, 40, 0x73, 0x63, 0x68, 0x69, // 3: schi box
             0, 0, 0, 32, 0x74, 0x65, 0x6E, 0x63, // 4: tenc box
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x08,
+            0, 0, 0, 0,
+            0, 0, 1, 8,
             0xCD, 0x5D, 0xE0, 0x88, 0xBD, 0x2C, 0x42, 0xB8,
             0xA2, 0xED, 0x98, 0xB8, 0x65, 0x32, 0x48, 0xE8
         };
@@ -58,7 +59,7 @@ namespace PiffLibrary.Test.Boxes
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(234uL, length);
+            Assert.AreEqual(234L, length);
             var encv = box as PiffVideoSampleEntryBox;
             Assert.IsNotNull(encv);
         }

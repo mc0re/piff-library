@@ -18,7 +18,7 @@ namespace PiffLibrary.Boxes
         #region Fields
 
         [PiffDataFormat(PiffDataFormats.Skip)]
-        public PiffExtensionBox Parent { get; }
+        public int ParentFlags { get; }
 
         #endregion
 
@@ -45,7 +45,13 @@ namespace PiffLibrary.Boxes
 
         public PiffSampleEncryption(PiffExtensionBox parent)
         {
-            Parent = parent;
+            ParentFlags = parent.Flags;
+        }
+
+
+        public PiffSampleEncryption(PiffSampleEncryptionBox parent)
+        {
+            ParentFlags = parent.Flags;
         }
 
         #endregion
@@ -57,7 +63,7 @@ namespace PiffLibrary.Boxes
         /// If bit 0 is not set, use parameters from <see cref="PiffProtectionTrackEncryption"/>.
         /// </summary>
         private PiffDataFormats UseAlgorithmInfo() =>
-            (Parent.Flags & 1) != 0 ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
+            (ParentFlags & 1) != 0 ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 
         #endregion
     }

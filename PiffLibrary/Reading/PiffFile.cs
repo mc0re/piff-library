@@ -22,8 +22,6 @@ namespace PiffLibrary
     {
         private readonly List<PiffBoxBase> mBoxes = new List<PiffBoxBase>();
 
-        private PiffFileTypeBox mFileTypeBox;
-
 
         private PiffFile()
         {
@@ -38,12 +36,14 @@ namespace PiffLibrary
             {
                 while (PiffReader.ReadBox(bits, ctx, out var box) > 0 && box != null)
                 {
-                    file.mBoxes.Add(box);
-
                     switch (box)
                     {
-                        case PiffFileTypeBox ftyp:
-                            file.mFileTypeBox = ftyp;
+                        case PiffMediaDataBox _:
+                            // Skip
+                            break;
+
+                        default:
+                            file.mBoxes.Add(box);
                             break;
                     }
                 }

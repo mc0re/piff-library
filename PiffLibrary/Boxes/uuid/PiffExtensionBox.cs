@@ -25,7 +25,7 @@ namespace PiffLibrary.Boxes
 
 
         /// <summary>
-        /// Protection System Specific Header Box
+        /// Same as <see cref="PiffProtectionSystemSpecificHeaderBox"/>.
         /// Container: <see cref="PiffMovieBox"/>.
         /// </summary>
         [PiffDataFormat(nameof(UseProtectionInfo))]
@@ -41,7 +41,7 @@ namespace PiffLibrary.Boxes
 
 
         /// <summary>
-        /// Sample Encryption Box
+        /// Same as <see cref="PiffSampleEncryptionBox"/>.
         /// Container: <see cref="PiffTrackFragmentBox"/>.
         /// </summary>
         [PiffDataFormat(nameof(UseSampleEncryption))]
@@ -72,16 +72,19 @@ namespace PiffLibrary.Boxes
         /// </summary>
         public static PiffExtensionBox ProtectionInfo(Guid systemId, byte[] data)
         {
-            return new PiffExtensionBox
+            var box = new PiffExtensionBox
             {
-                BoxId = PiffProtectionInfo.BoxId,
-                Pssh = new PiffProtectionInfo
-                {
-                    SystemId = systemId,
-                    BinData = data,
-                    DataSize = (uint) data.Length
-                }
+                BoxId = PiffProtectionInfo.BoxId
             };
+
+            box.Pssh = new PiffProtectionInfo(box)
+            {
+                SystemId = systemId,
+                BinData = data,
+                DataSize = (uint) data.Length
+            };
+
+            return box;
         }
 
         /// <summary>

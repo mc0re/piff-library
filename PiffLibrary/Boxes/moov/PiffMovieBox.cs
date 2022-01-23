@@ -11,6 +11,7 @@ namespace PiffLibrary.Boxes
     [ChildType(typeof(PiffUserDataBox))]
     [ChildType(typeof(PiffMetadataBox))]
     [ChildType(typeof(PiffMetadataContainerBox))]
+    [ChildType(typeof(PiffProtectionSystemSpecificHeaderBox))] // PlayReady addition
     public sealed class PiffMovieBox : PiffBoxBase
     {
         #region Init and clean-up

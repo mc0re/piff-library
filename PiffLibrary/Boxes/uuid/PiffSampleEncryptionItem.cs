@@ -45,7 +45,7 @@
 
 
         private PiffDataFormats UseSubSample() =>
-            (mParent.Parent.Flags & 2) != 0 ? PiffDataFormats.UInt16 : PiffDataFormats.Skip;
+            (mParent.ParentFlags & 2) != 0 ? PiffDataFormats.UInt16 : PiffDataFormats.Skip;
 
         #endregion
     }

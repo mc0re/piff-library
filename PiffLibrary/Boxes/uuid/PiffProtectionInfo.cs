@@ -3,9 +3,6 @@
 
 namespace PiffLibrary.Boxes
 {
-    /// <summary>
-    /// PlayReady uses "pssh" extension box for protection information.
-    /// </summary>
     public sealed class PiffProtectionInfo
     {
         #region Constants
@@ -17,6 +14,13 @@ namespace PiffLibrary.Boxes
         #endregion
 
 
+        #region Fields
+
+        private byte mParentVersion;
+
+        #endregion
+
+
         #region Properties
 
         /// <summary>
@@ -24,6 +28,14 @@ namespace PiffLibrary.Boxes
         /// Recognized only <see cref="PlayReadySystemId"/>.
         /// </summary>
         public Guid SystemId { get; set; }
+
+
+        [PiffDataFormat(nameof(UseKids))]
+        public uint KidCount { get; set; }
+
+
+        [PiffArraySize(nameof(KidCount))]
+        public Guid[] Kids { get; set; }
 
 
         /// <summary>
@@ -45,6 +57,30 @@ namespace PiffLibrary.Boxes
         /// </summary>
         [PiffArraySize(nameof(DataSize))]
         public byte[] BinData { get; set; }
+
+        #endregion
+
+
+        #region Init and clean-up
+
+        public PiffProtectionInfo(PiffProtectionSystemSpecificHeaderBox parent)
+        {
+            mParentVersion = parent.Version;
+        }
+
+
+        public PiffProtectionInfo(PiffExtensionBox parent)
+        {
+            mParentVersion = parent.Version;
+        }
+
+        #endregion
+
+
+        #region Format
+
+        private PiffDataFormats UseKids() =>
+            mParentVersion > 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
         #endregion
     }
