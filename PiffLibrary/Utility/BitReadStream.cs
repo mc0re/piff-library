@@ -20,7 +20,7 @@ namespace PiffLibrary
         private const int ByteSize = 8;
         
         /// <summary>
-        /// The maximum number of bits we can read or write in one go.
+        /// The maximum number of bits we can read or write in one go using <see cref="ReadBits"/>.
         /// </summary>
         private const int MaxBits = sizeof(uint) * ByteSize - 1;
 
@@ -56,7 +56,7 @@ namespace PiffLibrary
         
 
         /// <summary>
-        /// Only used for less-than-a-byte reading.
+        /// Only used for unaligned bits reading.
         /// </summary>
         private int mBitsStore;
 
@@ -171,7 +171,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a number of bytes into the provided array.
         /// </summary>
-            public int Read(byte[] buffer, int offset, int count)
+        public int Read(byte[] buffer, int offset, int count)
         {
             return mUnderlying.Read(buffer, offset, count);
         }

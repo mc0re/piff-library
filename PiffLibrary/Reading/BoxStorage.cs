@@ -8,6 +8,9 @@ using System.Reflection;
 
 namespace PiffLibrary.Infrastructure
 {
+    /// <summary>
+    /// Manage static information about box types.
+    /// </summary>
     internal sealed class BoxStorage
     {
         #region Fields

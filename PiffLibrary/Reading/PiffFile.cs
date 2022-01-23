@@ -20,7 +20,7 @@ namespace PiffLibrary
     [ChildType(typeof(PiffSkipBox))]
     public sealed class PiffFile
     {
-        private readonly List<PiffBoxBase> mBoxes = new List<PiffBoxBase>();
+        public List<PiffBoxBase> Boxes { get; } = new List<PiffBoxBase>();
 
 
         private PiffFile()
@@ -43,7 +43,7 @@ namespace PiffLibrary
                             break;
 
                         default:
-                            file.mBoxes.Add(box);
+                            file.Boxes.Add(box);
                             break;
                     }
                 }

@@ -64,9 +64,12 @@ namespace PiffLibrary
 
         internal void Push(PiffBoxBase box, long position)
         {
+#if DEBUG
             Dump.Add(new UpdateableString(
                 box, (o, st) => $"{st[0]}{o} (:{st[1]})",
                 new string(' ', Hierarchy.Count * 2), position));
+#endif
+
             Hierarchy.Push(box);
         }
 
