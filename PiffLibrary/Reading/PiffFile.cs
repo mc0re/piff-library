@@ -1,7 +1,7 @@
 ﻿using PiffLibrary.Boxes;
 using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 
 namespace PiffLibrary
 {
@@ -28,28 +28,47 @@ namespace PiffLibrary
         }
 
 
-        public static PiffFile Parse(Stream input)
+        /// <summary>
+        /// Parse the given file. Keep all boxes but the "mdat" ones.
+        /// </summary>
+        /// <remarks>
+        /// Limitations: we do not handle fragments stream.
+        /// </remarks>
+        public static PiffFile ParseButSkipData(Stream input)
         {
             var file = new PiffFile();
             var ctx = new PiffReadContext();
+
             using (var bits = new BitReadStream(input, false))
             {
                 while (PiffReader.ReadBox(bits, ctx, out var box) > 0 && box != null)
                 {
+                    // Bento4 code also delets "sidx" (keeping the first one) and "ssix" boxes.
+                    var keep = true;
+
                     switch (box)
                     {
                         case PiffMediaDataBox _:
-                            // Skip
+                            keep = false;
                             break;
 
                         default:
-                            file.Boxes.Add(box);
                             break;
                     }
+
+                    if (keep)
+                        file.Boxes.Add(box);
                 }
             }
 
             return file;
         }
+
+
+        /// <summary>
+        /// Return the given box. Make sure it's the only one.
+        /// </summary>
+        public TBox GetSingleBox<TBox>() where TBox : PiffBoxBase =>
+            Boxes.OfType<TBox>().Single();
     }
 }

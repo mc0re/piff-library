@@ -63,7 +63,7 @@ namespace PiffLibrary.Test.Boxes
 
             var length = PiffReader.ReadBox(input, ctx, out var box);
 
-            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
+            Assert.AreEqual(1, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
             Assert.AreEqual(24L, length);
             var ftyp = box as PiffFileTypeBox;

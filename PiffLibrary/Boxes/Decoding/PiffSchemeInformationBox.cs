@@ -24,7 +24,7 @@ namespace PiffLibrary.Boxes
         /// </summary>
         public PiffSchemeInformationBox(Guid keyId)
         {
-            Childen = new[] { PiffExtensionBox.ProtectionTrackEncryption(keyId) };
+            Children = new[] { PiffExtensionBox.ProtectionTrackEncryption(keyId) };
         }
 
         #endregion

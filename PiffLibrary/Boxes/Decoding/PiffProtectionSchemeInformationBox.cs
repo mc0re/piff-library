@@ -30,7 +30,7 @@ namespace PiffLibrary.Boxes
             PiffSchemeTypeBox schema,
             Guid keyId)
         {
-            Childen = new PiffBoxBase[] { format, schema, new PiffSchemeInformationBox(keyId) };
+            Children = new PiffBoxBase[] { format, schema, new PiffSchemeInformationBox(keyId) };
         }
 
 

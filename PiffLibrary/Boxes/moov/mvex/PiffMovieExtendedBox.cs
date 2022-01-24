@@ -28,7 +28,7 @@ namespace PiffLibrary.Boxes
         /// </summary>
         public PiffMovieExtendedBox(ulong duration, uint nofTracks)
         {
-            Childen =
+            Children =
                 new PiffBoxBase[] { new PiffMovieExtendedHeaderBox(duration) }
                 .Concat(
                 Enumerable.Range(1, (int) nofTracks).Select(t => new PiffTrackExtendedBox((uint) t)))

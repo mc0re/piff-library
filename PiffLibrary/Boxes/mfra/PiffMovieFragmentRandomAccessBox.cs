@@ -32,7 +32,7 @@ namespace PiffLibrary.Boxes
             var videoBox = new PiffTrackFragmentRandomAccessBox(videoTrackId, video);
             var offsetBox = new PiffMovieFragmentRandomAccessOffsetBox();
 
-            Childen = new PiffBoxBase[]
+            Children = new PiffBoxBase[]
             {
                 audioBox, videoBox, offsetBox
             };

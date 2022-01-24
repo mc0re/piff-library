@@ -33,7 +33,7 @@ namespace PiffLibrary.Boxes
         {
             var maxDuration = Math.Max(manifest.Audio.Duration, manifest.Video.Duration);
 
-            Childen = new PiffBoxBase[]
+            Children = new PiffBoxBase[]
             {
                 new PiffMovieHeaderBox(manifest.Created, maxDuration, manifest.TimeScale),
                 PiffExtensionBox.ProtectionInfo(

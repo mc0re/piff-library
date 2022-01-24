@@ -96,7 +96,7 @@ namespace PiffLibrary.Boxes
             CompressorName = new byte[32];
             var scheme = PiffProtectionSchemeInformationBox.CreateVideo(video.CodecId, keyId);
             var config = new PiffAvcConfigurationBox(video.CodecId, video.CodecData);
-            Childen = new PiffBoxBase[] { config, scheme };
+            Children = new PiffBoxBase[] { config, scheme };
         }
 
         #endregion

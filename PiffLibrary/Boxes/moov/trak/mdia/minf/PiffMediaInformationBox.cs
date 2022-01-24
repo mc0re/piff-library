@@ -30,12 +30,12 @@ namespace PiffLibrary.Boxes
             // There must be a dinf box
             var dinf = new PiffDataInformationBox
             {
-                Childen = new PiffBoxBase[]
+                Children = new PiffBoxBase[]
                 {
                     new PiffDataReferenceBox
                     {
                         Count = 1,
-                        Childen = new PiffBoxBase[]
+                        Children = new PiffBoxBase[]
                         {
                             new PiffDataEntryUrlBox { Flags = 1 }
                         }
@@ -44,7 +44,7 @@ namespace PiffLibrary.Boxes
             };
 
             var track = (PiffBoxBase) sound ?? video;
-            Childen = new PiffBoxBase[] { track, dinf, index };
+            Children = new PiffBoxBase[] { track, dinf, index };
         }
 
 

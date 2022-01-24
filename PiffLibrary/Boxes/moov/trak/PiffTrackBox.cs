@@ -29,7 +29,7 @@ namespace PiffLibrary.Boxes
         /// </summary>
         private PiffTrackBox(PiffTrackHeaderBox header, PIffTrackMediaInfoBox info)
         {
-            Childen = new PiffBoxBase[] { header, info };
+            Children = new PiffBoxBase[] { header, info };
         }
 
 

@@ -40,7 +40,7 @@ namespace PiffLibrary.Boxes
         /// </summary>
         private PiffSampleTableBox(PiffSampleDescriptionBox description)
         {
-            Childen = new PiffBoxBase[]
+            Children = new PiffBoxBase[]
             {
                 new PiffDecodingTimeToSampleBox(),
                 new PiffCompositionTimeToSampleBox(),

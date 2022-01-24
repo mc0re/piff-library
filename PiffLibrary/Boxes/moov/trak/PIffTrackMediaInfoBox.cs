@@ -25,7 +25,7 @@ namespace PiffLibrary.Boxes
         /// </summary>
         private PIffTrackMediaInfoBox(PiffMediaHeaderBox header, PiffHandlerTypeBox handler, PiffMediaInformationBox info)
         {
-            Childen = new PiffBoxBase[] { header, handler, info };
+            Children = new PiffBoxBase[] { header, handler, info };
         }
 
 

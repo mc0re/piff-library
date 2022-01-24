@@ -36,7 +36,7 @@ namespace PiffLibrary.Boxes
         private PiffSampleDescriptionBox(PiffAudioSampleEntryBox audio, PiffVideoSampleEntryBox video)
         {
             Count = 1;
-            Childen = new PiffBoxBase[]
+            Children = new PiffBoxBase[]
             {
                 audio is null ? (PiffBoxBase)video : audio
             };

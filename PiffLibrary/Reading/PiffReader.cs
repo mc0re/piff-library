@@ -123,6 +123,7 @@ namespace PiffLibrary
                 length = ReadBoxLength64(input, startPosition, ctx, id);
                 header += sizeof(ulong);
                 if (length < 0) return length;
+                ctx.AddWarning($"Box '{id}' at position {startPosition} has 64-bit length {length}.");
             }
 
             switch (sBoxes.FindBox(ctx.CurrentBox?.GetType(), id, out var type))
