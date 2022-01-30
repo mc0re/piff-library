@@ -41,8 +41,12 @@ namespace PiffLibrary
 
             using (var bits = new BitReadStream(input, false))
             {
-                while (PiffReader.ReadBox(bits, ctx, out var box) > 0 && box != null)
+                while (true)
                 {
+                    var status = PiffReader.ReadBox(bits, ctx, out var box);
+                    if (status == PiffReadStatuses.SkipToEnd) continue;
+                    if (status != PiffReadStatuses.Continue) break;
+
                     // Bento4 code also delets "sidx" (keeping the first one) and "ssix" boxes.
                     var keep = true;
 

@@ -24,10 +24,16 @@ namespace PiffLibrary.Boxes
 
 
         /// <summary>
+        /// The box with this length value extends to the end of the input stream.
+        /// </summary>
+        public const ulong AutoExtend = 0;
+
+
+        /// <summary>
         /// If the length needs to be 64 bits, it follows the standard header.
         /// Then the standard header length is set to this value.
         /// </summary>
-        public const int Length64 = 1;
+        public const ulong Length64 = 1;
 
         #endregion
 

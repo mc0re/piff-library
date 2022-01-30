@@ -257,7 +257,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read the given number of ASCII characters from a string.
         /// </summary>
-        public static string ReadAsciiString(this BitReadStream bytes, int length)
+        public static PiffReadStatuses ReadAsciiString(this BitReadStream bytes, int length, out string ascii)
         {
             var chars = Enumerable.Range(0, length)
                                   .Select(_ => bytes.ReadByte())
@@ -265,7 +265,15 @@ namespace PiffLibrary
                                   .Select(c => (byte)c)
                                   .ToArray();
 
-            return Encoding.ASCII.GetString(chars);
+            if (chars.Length == 0)
+            {
+                ascii = string.Empty;
+                return PiffReadStatuses.Eof;
+            }
+
+            ascii = Encoding.ASCII.GetString(chars);
+
+            return chars.Length < length ? PiffReadStatuses.EofPremature : PiffReadStatuses.Continue;
         }
 
 

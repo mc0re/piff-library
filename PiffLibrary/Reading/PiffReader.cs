@@ -12,36 +12,6 @@ namespace PiffLibrary
     /// </summary>
     public sealed class PiffReader
     {
-        #region Constants
-
-        /// <summary>
-        /// For reading utility methods, this return code means "all ok for now".
-        /// </summary>
-        public const long Continue = 0;
-
-
-        /// <summary>
-        /// There was an unrecoverable error during reading.
-        /// Skip to the end of the container box.
-        /// </summary>
-        public const long SkipToEnd = -1;
-
-
-        /// <summary>
-        /// End of file reached when trying to read a new box.
-        /// File reading is finished successfully.
-        /// </summary>
-        public const long Eof = -2;
-
-
-        /// <summary>
-        /// End of file reached while expecting data.
-        /// </summary>
-        public const long EofPremature = -3;
-
-        #endregion
-
-
         #region Fields
 
         /// <summary>
@@ -49,6 +19,11 @@ namespace PiffLibrary
         /// The same type can have multiple names (see e.g. <see cref="PiffSkipBox"/>).
         /// </summary>
         private static readonly BoxStorage sBoxes = new BoxStorage();
+
+        private static readonly byte[] LengthArray = new byte[sizeof(uint)];
+
+        private static readonly byte[] Length64Array = new byte[sizeof(ulong)];
+
 
         #endregion
 
@@ -98,32 +73,26 @@ namespace PiffLibrary
         /// Read a box if it is of expected type. Back off if it's not.
         /// </summary>
         /// <param name="input">Input stream</param>
-        /// <returns>
-        /// The number of bytes read.
-        /// - <see cref="Eof"/> if reached EOF at the expected place.
-        /// - <see cref="EofPremature"/> if reached EOF at an unexpected place.
-        /// - <see cref="SkipToEnd"/> if there was an error and we need to ignore
-        ///   all data until the end of the container box.
-        /// </returns>
-        internal static long ReadBox(BitReadStream input, PiffReadContext ctx, out PiffBoxBase box)
+        internal static PiffReadStatuses ReadBox(BitReadStream input, PiffReadContext ctx, out PiffBoxBase box)
         {
-            var startPosition = input.Position;
-            var header = (int) PiffBoxBase.HeaderLength;
+            var startPosition = input.Position; // Used only for logs and messages
+            var header = PiffBoxBase.HeaderLength;
             box = null;
 
-            var length = ReadBoxLength(input, startPosition, ctx);
-            if (length < 0) return length;
+            var statusLen = ReadBoxLength(input, ctx, startPosition, out var length);
+            if (statusLen != PiffReadStatuses.Continue) return statusLen;
 
-            var errorCode = ReadBoxName(input, startPosition, ctx, out var id);
-            if (errorCode < 0) return errorCode;
+            var statusId = ReadBoxName(input, ctx, startPosition, out var id);
+            if (statusId != PiffReadStatuses.Continue) return statusId;
 
             if (length == PiffBoxBase.Length64)
             {
                 // 64-bit size follows the box type
-                length = ReadBoxLength64(input, startPosition, ctx, id);
+                var statusLen64 = ReadBoxLength64(input, ctx, startPosition, id, out length);
+                if (statusLen64 != PiffReadStatuses.Continue) return statusLen64;
+                
                 header += sizeof(ulong);
-                if (length < 0) return length;
-                ctx.AddWarning($"Box '{id}' at position {startPosition} has 64-bit length {length}.");
+                ctx.AddInfo($"Box '{id}' at position {startPosition} has 64-bit length {length}.");
             }
 
             switch (sBoxes.FindBox(ctx.CurrentBox?.GetType(), id, out var type))
@@ -144,19 +113,22 @@ namespace PiffLibrary
             box = (PiffBoxBase) Activator.CreateInstance(type);
             box.BoxType = id;
 
-            ctx.Push(box, startPosition);
-            var readBytes = PiffPropertyInfo.ReadObject(box, input, length - header, ctx);
-            ctx.Pop();
-
-            if (readBytes == SkipToEnd) return length;
-            if (readBytes < 0) return readBytes;
-
-            if (readBytes + header != length)
+            if (length - header > 0)
             {
-                ctx.AddWarning($"Surplus {length - (readBytes + header)} bytes at the end of box '{id}' at position {startPosition}. Skipping.");
+                using (var inputSlice = new BitReadStream(input, length - header))
+                {
+                    ctx.Push(box, startPosition);
+                    var statusProps = PiffPropertyInfo.ReadObject(box, inputSlice, ctx);
+                    ctx.Pop();
+
+                    if (inputSlice.BytesLeft > 0)
+                        ctx.AddWarning($"Extra {inputSlice.BytesLeft} bytes at the end of box '{id}' at position {startPosition}. Skipping.");
+
+                    return statusProps;
+                }
             }
 
-            return length;
+            return PiffReadStatuses.Continue;
         }
 
         #endregion
@@ -167,81 +139,96 @@ namespace PiffLibrary
         /// <summary>
         /// Read a box of the expected type.
         /// </summary>
+        /// <returns>Box or <see langword="null"/></returns>
         private static TBox ReadBox<TBox>(BitReadStream input, PiffReadContext ctx) where TBox : PiffBoxBase
         {
-            ReadBox(input, ctx, out var box);
+            if (ReadBox(input, ctx, out var box) != PiffReadStatuses.Continue)
+                return null;
+
             return box as TBox;
         }
 
 
-        private static long ReadBoxLength(BitReadStream input, long startPosition, PiffReadContext ctx)
+        /// <summary>
+        /// Read the 4-byte box length.
+        /// </summary>
+        private static PiffReadStatuses ReadBoxLength(BitReadStream input, PiffReadContext ctx, long startPosition, out ulong length)
         {
             // In case it's 64-bit length, prepare a larger buffer
-            var buf = new byte[sizeof(uint)];
-            var bytesInLen = input.Read(buf, 0, sizeof(uint));
+            var bytesInLen = input.Read(LengthArray, 0, sizeof(uint));
 
             // End of file
             if (bytesInLen == 0)
             {
-                return Eof;
+                length = 0;
+                return PiffReadStatuses.Eof;
             }
             else if (bytesInLen < sizeof(uint))
             {
                 ctx.AddError($"Malformed file: end of file when reading the next box length.");
-                return EofPremature;
+                length = 0;
+                return PiffReadStatuses.EofPremature;
             }
 
-            long length = buf.GetUInt32(0);
+            length = LengthArray.GetUInt32(0);
 
-            if (length == 0)
+            if (length == PiffBoxBase.AutoExtend)
             {
-                // Box extends to the end of the file
-                ctx.AddError($"Auto-extended boxes (at position {startPosition}) not implemented. Aborting.");
-                return SkipToEnd;
+                ctx.AddInfo($"Auto-extended box found at position {startPosition}.");
+                length = ulong.MaxValue;
             }
-            else if (length != PiffBoxBase.Length64 && length < PiffBoxBase.HeaderLength)
+            else if (length == PiffBoxBase.Length64)
             {
-                ctx.AddWarning($"Too small box length {length} at position {startPosition}. Ignore.");
-                return SkipToEnd;
+            }
+            else if (length < PiffBoxBase.HeaderLength)
+            {
+                ctx.AddWarning($"Incorrect box length {length} at position {startPosition}. Start reading anew.");
+                return PiffReadStatuses.SkipToEnd;
             }
 
-            return length;
+            return PiffReadStatuses.Continue;
         }
 
 
-        private static long ReadBoxName(BitReadStream input, long startPosition, PiffReadContext ctx, out string boxId)
+        /// <summary>
+        /// Read box name.
+        /// </summary>
+        private static PiffReadStatuses ReadBoxName(BitReadStream input, PiffReadContext ctx, long startPosition, out string boxId)
         {
-            boxId = input.ReadAsciiString(PiffBoxBase.BoxTypeLength);
+            var status = input.ReadAsciiString(PiffBoxBase.BoxTypeLength, out boxId);
 
-            if (boxId.Length != PiffBoxBase.BoxTypeLength)
+            if (status != PiffReadStatuses.Continue)
             {
                 ctx.AddError($"Malformed file: reached EOF when reading box name at position {startPosition}. Aborting.");
-                return EofPremature;
+                return PiffReadStatuses.EofPremature;
             }
 
             if (!boxId.All(c => char.IsLetterOrDigit(c) || c == ' '))
             {
                 ctx.AddError($"Malformed box name at position {startPosition}. Skipping.");
-                return SkipToEnd;
+                return PiffReadStatuses.SkipToEnd;
             }
 
-            return Continue;
+            return PiffReadStatuses.Continue;
         }
 
 
-        private static long ReadBoxLength64(BitReadStream input, long startPosition, PiffReadContext ctx, string boxId)
+        /// <summary>
+        /// Read the 8-byte box length.
+        /// </summary>
+        private static PiffReadStatuses ReadBoxLength64(BitReadStream input, PiffReadContext ctx, long startPosition, string boxId, out ulong length)
         {
-            var buf = new byte[sizeof(ulong)];
-            var bytesInLen64 = input.Read(buf, 0, sizeof(ulong));
+            var bytesInLen64 = input.Read(Length64Array, 0, sizeof(ulong));
 
             if (bytesInLen64 < sizeof(ulong))
             {
                 ctx.AddError($"Unexpected EOF inside box '{boxId}' header at position {startPosition}.");
-                return EofPremature;
+                length = 0;
+                return PiffReadStatuses.EofPremature;
             }
 
-            // We can't really support unsigned long, as length is reused for error reporting
-            return buf.GetInt64(0);
+            length = Length64Array.GetUInt64();
+            return PiffReadStatuses.Continue;
         }
 
         #endregion

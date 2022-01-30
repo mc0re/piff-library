@@ -76,12 +76,12 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext{ AnyRoot = true };
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(1, ctx.Messages.Count);
             Assert.IsNotNull(box);
             // It tries to read "PiffBoxBase.Children" and cannot read the length
-            Assert.AreEqual(PiffReader.EofPremature, length);
+            Assert.AreEqual(PiffReadStatuses.EofPremature, status);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(2u, padb.SampleCount);

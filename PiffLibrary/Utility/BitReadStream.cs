@@ -46,7 +46,7 @@ namespace PiffLibrary
         /// <summary>
         /// To propagate negative sign.
         /// </summary>
-        private static readonly uint[] SignMask; 
+        private static readonly uint[] SignMask;
 
 
         /// <summary>
@@ -66,6 +66,10 @@ namespace PiffLibrary
         #region Properties
 
         public long Position => mUnderlying.Position;
+
+        private ulong mBytesLeft;
+
+        public ulong BytesLeft => mBytesLeft;
 
         #endregion
 
@@ -90,7 +94,18 @@ namespace PiffLibrary
         public BitReadStream(Stream underlying, bool disposeUnderlying)
         {
             mUnderlying = underlying;
+            mBytesLeft = (ulong) underlying.Length;
             mDisposeUnderlying = disposeUnderlying;
+        }
+
+        /// <summary>
+        /// Create a slice of the <paramref name="underlying"/> stream
+        /// from its current position and <paramref name="length"/> bytes long.
+        /// </summary>
+        public BitReadStream(BitReadStream underlying, ulong length)
+        {
+            mUnderlying = underlying.mUnderlying;
+            mBytesLeft = length;
         }
 
         #endregion
@@ -124,7 +139,15 @@ namespace PiffLibrary
             if (mBitsLeft != 0)
                 throw new ArgumentException("Reading unaligned byte. Please check your layout.");
 
-            return mUnderlying.ReadByte();
+            if (mBytesLeft == 0) return Eof;
+
+            var read = mUnderlying.ReadByte();
+            if (read >= 0)
+                mBytesLeft--;
+            else
+                mBytesLeft = 0;
+
+            return read;
         }
 
 
@@ -146,7 +169,7 @@ namespace PiffLibrary
                 if (mBitsLeft == 0)
                 {
                     // Read next full byte
-                    mBitsStore = mUnderlying.ReadByte();
+                    mBitsStore = ReadByte();
                     if (mBitsStore < 0) throw new EndOfStreamException($"Cannot read next byte.");
 
                     mBitsLeft = ByteSize;
@@ -173,7 +196,15 @@ namespace PiffLibrary
         /// </summary>
         public int Read(byte[] buffer, int offset, int count)
         {
-            return mUnderlying.Read(buffer, offset, count);
+            var toRead = Math.Min((ulong)count, mBytesLeft);
+            var len = mUnderlying.Read(buffer, offset, (int) toRead);
+
+            if ((ulong) len == toRead)
+                mBytesLeft -= (uint) len;
+            else
+                mBytesLeft = 0;
+
+            return len;
         }
 
         #endregion
