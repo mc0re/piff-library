@@ -12,8 +12,6 @@ namespace PiffLibrary
     {
         #region Constants
 
-        public const int Eof = -1;
-
         /// <summary>
         /// The number of bits in a byte.
         /// </summary>
@@ -58,7 +56,7 @@ namespace PiffLibrary
         /// <summary>
         /// Only used for unaligned bits reading.
         /// </summary>
-        private int mBitsStore;
+        private byte mBitsStore;
 
         #endregion
 
@@ -132,22 +130,34 @@ namespace PiffLibrary
 
 
         /// <summary>
-        /// Get the next byte or <see cref="Eof"/> if EOF.
+        /// Get the next byte.
         /// </summary>
-        public int ReadByte()
+        public PiffReadStatuses ReadByte(out byte result)
         {
             if (mBitsLeft != 0)
                 throw new ArgumentException("Reading unaligned byte. Please check your layout.");
 
-            if (mBytesLeft == 0) return Eof;
+            if (mBytesLeft == 0)
+            {
+                // Slice boundary
+                result = 0;
+                return PiffReadStatuses.EofPremature;
+            }
 
             var read = mUnderlying.ReadByte();
-            if (read >= 0)
-                mBytesLeft--;
-            else
-                mBytesLeft = 0;
 
-            return read;
+            if (read >= 0)
+            {
+                result = (byte) read;
+                mBytesLeft--;
+                return PiffReadStatuses.Continue;
+            }
+            else
+            {
+                result = 0;
+                mBytesLeft = 0;
+                return PiffReadStatuses.EofPremature;
+            }
         }
 
 
@@ -156,12 +166,12 @@ namespace PiffLibrary
         /// Reading is happening from left to right (high to low bits).
         /// If <paramref name="isSigned"/> is set, the sign bit gets duplicated to the left.
         /// </summary>
-        public int ReadBits(int nofBits, bool isSigned)
+        public PiffReadStatuses ReadBits(int nofBits, bool isSigned, out int result)
         {
             if (nofBits <= 0 || nofBits > MaxBits)
                 throw new ArgumentException($"Can only read 1..{MaxBits} bits, requested {nofBits}.");
 
-            var res = 0;
+            result = 0;
             var bitsToReadLeft = nofBits;
 
             while (bitsToReadLeft > 0)
@@ -169,25 +179,25 @@ namespace PiffLibrary
                 if (mBitsLeft == 0)
                 {
                     // Read next full byte
-                    mBitsStore = ReadByte();
-                    if (mBitsStore < 0) throw new EndOfStreamException($"Cannot read next byte.");
+                    var status = ReadByte(out mBitsStore);
+                    if (status != PiffReadStatuses.Continue) return status;
 
                     mBitsLeft = ByteSize;
                 }
 
                 var bitsToReadNow = bitsToReadLeft > mBitsLeft ? mBitsLeft : bitsToReadLeft;
                 
-                res = (res << bitsToReadNow) | (mBitsStore >> (mBitsLeft - bitsToReadNow)) & BitsMask[bitsToReadNow];
+                result = (result << bitsToReadNow) | (mBitsStore >> (mBitsLeft - bitsToReadNow)) & BitsMask[bitsToReadNow];
                 mBitsLeft -= bitsToReadNow;
                 bitsToReadLeft -= bitsToReadNow;
             }
 
-            if (isSigned && (res & (1 << (nofBits - 1))) != 0)
+            if (isSigned && (result & (1 << (nofBits - 1))) != 0)
             {
-                res = (int) ((uint)res | SignMask[nofBits]);
+                result = (int) ((uint)result | SignMask[nofBits]);
             }
 
-            return res;
+            return PiffReadStatuses.Continue;
         }
 
 

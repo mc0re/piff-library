@@ -116,11 +116,11 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext { AnyRoot = true };
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(16L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var trun = box as PiffTrackFragmentRunBox;
             Assert.IsNotNull(trun);
             Assert.AreEqual(0u, trun.SampleCount);
@@ -138,11 +138,11 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext { AnyRoot = true };
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(24L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var trun = box as PiffTrackFragmentRunBox;
             Assert.IsNotNull(trun);
             Assert.AreEqual(0u, trun.SampleCount);
@@ -156,11 +156,11 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(TrunSample, false), true);
             var ctx = new PiffReadContext { AnyRoot = true };
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(0x2CCL, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var trun = box as PiffTrackFragmentRunBox;
             Assert.IsNotNull(trun);
             Assert.AreEqual(87u, trun.SampleCount);

@@ -16,15 +16,16 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext{ AnyRoot = true };
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(16L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(0u, padb.SampleCount);
-            Assert.IsNull(padb.Padding);
+            Assert.IsNotNull(padb.Padding);
+            Assert.AreEqual(0, padb.Padding.Length);
         }
 
 
@@ -35,11 +36,11 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext{ AnyRoot = true };
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(17L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(2u, padb.SampleCount);
@@ -55,11 +56,11 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext{ AnyRoot = true };
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(18L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var padb = box as PiffPaddingBitsBox;
             Assert.IsNotNull(padb);
             Assert.AreEqual(3u, padb.SampleCount);

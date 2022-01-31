@@ -16,8 +16,8 @@
 
 
         /// <summary>
-        /// End of file reached when trying to read a new box.
-        /// File reading is finished successfully.
+        /// End of file reached when trying to read a new value.
+        /// Slice reading is finished successfully.
         /// </summary>
         Eof,
 
