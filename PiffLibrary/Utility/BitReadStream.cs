@@ -22,17 +22,6 @@ namespace PiffLibrary
         /// </summary>
         private const int MaxBits = sizeof(uint) * ByteSize - 1;
 
-        #endregion
-
-
-        #region Fields
-
-        private readonly Stream mUnderlying;
-
-        private readonly bool mDisposeUnderlying;
-
-        private bool mIsDisposed;
-
 
         /// <summary>
         /// To extract the needed bits from a byte.
@@ -40,11 +29,40 @@ namespace PiffLibrary
         /// </summary>
         private static readonly int[] BitsMask = { 0, 0b1, 0b11, 0b111, 0b1111, 0b11111, 0b111111, 0b1111111, 0b11111111 }; 
 
+        #endregion
+
+
+        #region Fields
 
         /// <summary>
         /// To propagate negative sign.
         /// </summary>
         private static readonly uint[] SignMask;
+
+
+        /// <summary>
+        /// The existing stream providing the data.
+        /// </summary>
+        private readonly Stream mUnderlying;
+
+
+        /// <summary>
+        /// Whether we need to dispose the <see cref="mUnderlying"/> stream
+        /// when calling <see cref="Dispose"/>.
+        /// </summary>
+        private readonly bool mDisposeUnderlying;
+
+
+        /// <summary>
+        /// Whether this stream has been disposed (to allow multiple calls).
+        /// </summary>
+        private bool mIsDisposed;
+
+
+        /// <summary>
+        /// For debugging.
+        /// </summary>
+        private readonly string mName;
 
 
         /// <summary>
@@ -63,11 +81,16 @@ namespace PiffLibrary
 
         #region Properties
 
+        /// <summary>
+        /// Current byte position from the start of the original stream.
+        /// </summary>
         public long Position => mUnderlying.Position;
 
-        private ulong mBytesLeft;
 
-        public ulong BytesLeft => mBytesLeft;
+        /// <summary>
+        /// How many bytes are left in this stream or slice.
+        /// </summary>
+        public ulong BytesLeft { get; private set; }
 
         #endregion
 
@@ -89,10 +112,18 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Create a stream upon an existing stream (e.g. file or memory).
+        /// </summary>
+        /// <param name="underlying">The existing stream providing the data.</param>
+        /// <param name="disposeUnderlying">
+        /// Whether we need to dispose the <paramref name="underlying"/> stream
+        /// when calling <see cref="Dispose"/>.
+        /// </param>
         public BitReadStream(Stream underlying, bool disposeUnderlying)
         {
             mUnderlying = underlying;
-            mBytesLeft = (ulong) underlying.Length;
+            BytesLeft = (ulong) underlying.Length;
             mDisposeUnderlying = disposeUnderlying;
         }
 
@@ -100,16 +131,13 @@ namespace PiffLibrary
         /// Create a slice of the <paramref name="underlying"/> stream
         /// from its current position and <paramref name="length"/> bytes long.
         /// </summary>
-        public BitReadStream(BitReadStream underlying, ulong length)
+        public BitReadStream(BitReadStream underlying, ulong length, string name = "")
         {
             mUnderlying = underlying.mUnderlying;
-            mBytesLeft = length;
+            BytesLeft = length;
+            mName = name;
         }
 
-        #endregion
-
-
-        #region API
 
         public void Dispose()
         {
@@ -122,10 +150,28 @@ namespace PiffLibrary
             }
         }
 
+        #endregion
 
-        public void Seek(int offset, SeekOrigin origin)
+
+        #region API
+        
+        /// <summary>
+        /// Move the internal position by <paramref name="offset"/> bytes.
+        /// The underlying stream was already moved.
+        /// </summary>
+        public void Advance(ulong offset)
         {
-            mUnderlying.Seek(offset, origin);
+            BytesLeft -= offset;
+        }
+
+
+        /// <summary>
+        /// Move the read position forward.
+        /// </summary>
+        public void Seek(ulong offset)
+        {
+            mUnderlying.Seek((long) offset, SeekOrigin.Current);
+            BytesLeft -= offset;
         }
 
 
@@ -137,11 +183,11 @@ namespace PiffLibrary
             if (mBitsLeft != 0)
                 throw new ArgumentException("Reading unaligned byte. Please check your layout.");
 
-            if (mBytesLeft == 0)
+            if (BytesLeft == 0)
             {
                 // Slice boundary
                 result = 0;
-                return PiffReadStatuses.EofPremature;
+                return PiffReadStatuses.Eof;
             }
 
             var read = mUnderlying.ReadByte();
@@ -149,14 +195,14 @@ namespace PiffLibrary
             if (read >= 0)
             {
                 result = (byte) read;
-                mBytesLeft--;
+                BytesLeft--;
                 return PiffReadStatuses.Continue;
             }
             else
             {
                 result = 0;
-                mBytesLeft = 0;
-                return PiffReadStatuses.EofPremature;
+                BytesLeft = 0;
+                return PiffReadStatuses.Eof;
             }
         }
 
@@ -206,13 +252,13 @@ namespace PiffLibrary
         /// </summary>
         public int Read(byte[] buffer, int offset, int count)
         {
-            var toRead = Math.Min((ulong)count, mBytesLeft);
+            var toRead = Math.Min((ulong)count, BytesLeft);
             var len = mUnderlying.Read(buffer, offset, (int) toRead);
 
             if ((ulong) len == toRead)
-                mBytesLeft -= (uint) len;
+                BytesLeft -= (uint) len;
             else
-                mBytesLeft = 0;
+                BytesLeft = 0;
 
             return len;
         }

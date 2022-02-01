@@ -110,7 +110,7 @@ namespace PiffLibrary.Test.Boxes
 
             var status = PiffReader.ReadBox(input, ctx, out var box);
 
-            Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
+            Assert.AreEqual(1, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
             Assert.AreEqual(PiffReadStatuses.Continue, status);
             var ftyp = box as PiffFileTypeBox;

@@ -34,6 +34,7 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiString(0, out var s3));
             Assert.AreEqual("", s3);
             Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadAsciiString(2, out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadAsciiString(2, out _));
         }
     }
 }

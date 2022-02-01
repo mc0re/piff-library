@@ -73,6 +73,7 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Padb_ReadBoxTooLong()
         {
+            // 2 in the end means 2 4-bit samples, 0x7 and 0x7; next 0 is surplus
             var bytes = new byte[] { 0, 0, 0, 18, 0x70, 0x61, 0x64, 0x62, 0, 0, 0, 0, 0, 0, 0, 2, 0x77, 0 };
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext{ AnyRoot = true };

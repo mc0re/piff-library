@@ -113,16 +113,30 @@ namespace PiffLibrary
             box = (PiffBoxBase) Activator.CreateInstance(type);
             box.BoxType = id;
 
-            if (length - header > 0)
+            var bodyLength = length - header;
+            
+            if (bodyLength > 0)
             {
-                using (var inputSlice = new BitReadStream(input, length - header))
+                if (bodyLength > input.BytesLeft)
+                {
+                    ctx.AddError($"Box length claims {bodyLength} bytes, only {input.BytesLeft} bytes left in box '{id}' at position {startPosition}. Adjusting.");
+                    bodyLength = input.BytesLeft;
+                }
+
+                using (var inputSlice = new BitReadStream(input, bodyLength, id))
                 {
                     ctx.Push(box, startPosition);
                     var statusProps = PiffPropertyInfo.ReadObject(box, inputSlice, ctx);
                     ctx.Pop();
 
-                    if (inputSlice.BytesLeft > 0)
-                        ctx.AddWarning($"Extra {inputSlice.BytesLeft} bytes at the end of box '{id}' at position {startPosition}. Skipping.");
+                    var bytesLeft = inputSlice.BytesLeft;
+                    input.Advance(bodyLength - bytesLeft);
+
+                    if (bytesLeft > 0)
+                    {
+                        ctx.AddWarning($"Extra {bytesLeft} bytes at the end of box '{id}' at position {startPosition}. Skipping.");
+                        input.Seek(bytesLeft);
+                    }
 
                     return statusProps;
                 }
@@ -158,16 +172,19 @@ namespace PiffLibrary
             var bytesInLen = input.Read(LengthArray, 0, sizeof(uint));
 
             // End of file
-            if (bytesInLen == 0)
+            if (bytesInLen < sizeof(uint))
             {
                 length = 0;
-                return PiffReadStatuses.Eof;
-            }
-            else if (bytesInLen < sizeof(uint))
-            {
-                ctx.AddError($"Malformed file: end of file when reading the next box length.");
-                length = 0;
-                return PiffReadStatuses.EofPremature;
+
+                if (bytesInLen == 0)
+                {
+                    return PiffReadStatuses.Eof;
+                }
+                else
+                {
+                    ctx.AddError($"Malformed file: end of file when reading the next box length.");
+                    return PiffReadStatuses.EofPremature;
+                }
             }
 
             length = LengthArray.GetUInt32(0);

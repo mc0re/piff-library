@@ -286,24 +286,17 @@ namespace PiffLibrary
         /// </summary>
         public static PiffReadStatuses ReadAsciiString(this BitReadStream bytes, int length, out string ascii)
         {
-            var status = PiffReadStatuses.Continue;
-            var str = new List<byte>();
+            var buffer = new byte[length];
+            var read = bytes.Read(buffer, 0, length);
 
-            while (length > 0)
+            if (read < length)
             {
-                status = bytes.ReadByte(out var b);
-                if (status != PiffReadStatuses.Continue)
-                {
-                    if (str.Count == 0) status = PiffReadStatuses.Eof;
-                    break;
-                }
-
-                str.Add(b);
-                length--;
+                ascii = string.Empty;
+                return read == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
             }
 
-            ascii = Encoding.ASCII.GetString(str.ToArray());
-            return status;
+            ascii = Encoding.ASCII.GetString(buffer);
+            return PiffReadStatuses.Continue;
         }
 
 

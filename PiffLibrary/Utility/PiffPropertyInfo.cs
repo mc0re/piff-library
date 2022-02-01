@@ -334,17 +334,19 @@ namespace PiffLibrary
         private PiffReadStatuses ReadArray(object targetObject, BitReadStream input, PiffReadContext ctx)
         {
             var list = new List<object>();
-            var count = ArraySize ?? int.MaxValue;
             var status = PiffReadStatuses.Continue;
 
+            var count = ArraySize ?? int.MaxValue;
             while (count > 0)
             {
                 status = ReadSingleValue(targetObject, input, ctx, out var item);
+
                 if (status != PiffReadStatuses.Continue)
                 {
-                    if (input.BytesLeft > 0)
+                    // If it's an array without size, and all went well so far
+                    if (status == PiffReadStatuses.Eof && input.BytesLeft == 0 && ! ArraySize.HasValue)
                     {
-                        ctx.AddWarning($"Box size for {targetObject.GetType().Name} is {input.BytesLeft} bytes more than the actual data. Adjusting.");
+                        status = PiffReadStatuses.Continue;
                     }
                     break;
                 }
