@@ -333,6 +333,50 @@ namespace PiffLibrary
 
         private PiffReadStatuses ReadArray(object targetObject, BitReadStream input, PiffReadContext ctx)
         {
+            PiffReadStatuses status;
+            Array array;
+
+            // Can add short, ushort, int, uint, ulong, string, Guid
+            switch (Format)
+            {
+                case PiffDataFormats.UInt8:
+                    status = ReadByteArray(input, ctx, out array);
+                    break;
+                default:
+                    status = ReadVariableSizeArray(targetObject, input, ctx, out array);
+                    break;
+            }
+
+            if (Property.CanWrite)
+            {
+                Property.SetValue(targetObject, array);
+            }
+
+            if (ArraySize.HasValue && ArraySize.Value < array.Length)
+            {
+                ctx.AddWarning($"Expected {ArraySize.Value} elements, got only {array.Length} for {targetObject.GetType().Name}.{Property.Name}.");
+            }
+
+            return status;
+        }
+
+
+        private PiffReadStatuses ReadByteArray(BitReadStream input, PiffReadContext ctx, out Array result)
+        {
+            var count = ArraySize ?? (int) input.BytesLeft;
+            var buffer = new byte[count];
+            var read = input.Read(buffer, 0, count);
+            result = buffer;
+
+            return read == count ? PiffReadStatuses.Continue : PiffReadStatuses.EofPremature;
+        }
+
+
+        /// <summary>
+        /// Read array element by element, assuming their sizes can differ.
+        /// </summary>
+        private PiffReadStatuses ReadVariableSizeArray(object targetObject, BitReadStream input, PiffReadContext ctx, out Array result)
+        {
             var list = new List<object>();
             var status = PiffReadStatuses.Continue;
 
@@ -344,7 +388,7 @@ namespace PiffLibrary
                 if (status != PiffReadStatuses.Continue)
                 {
                     // If it's an array without size, and all went well so far
-                    if (status == PiffReadStatuses.Eof && input.BytesLeft == 0 && ! ArraySize.HasValue)
+                    if (status == PiffReadStatuses.Eof && input.BytesLeft == 0 && !ArraySize.HasValue)
                     {
                         status = PiffReadStatuses.Continue;
                     }
@@ -355,19 +399,12 @@ namespace PiffLibrary
                 count--;
             }
 
-            if (Property.CanWrite)
-            {
-                var array = Array.CreateInstance(ElementType, list.Count);
-                Property.SetValue(targetObject, array);
+            var array = Array.CreateInstance(ElementType, list.Count);
 
-                for (var i = 0; i < list.Count; i++)
-                    array.SetValue(list[i], i);
-            }
+            for (var i = 0; i < list.Count; i++)
+                array.SetValue(list[i], i);
 
-            if (ArraySize.HasValue && ArraySize.Value < list.Count)
-            {
-                ctx.AddWarning($"Expected {ArraySize.Value} elements, got only {list.Count} for {targetObject.GetType().Name}.{Property.Name}.");
-            }
+            result = array;
 
             return status;
         }
