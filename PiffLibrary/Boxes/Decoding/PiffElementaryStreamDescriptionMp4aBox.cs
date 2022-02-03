@@ -11,7 +11,7 @@ namespace PiffLibrary.Boxes
 
         #region Elementary Stream Descriptor block
 
-        public byte EsdTag { get; set; } = PiffEsdsBlockIds.Esd;
+        public byte EsdTag { get; } = PiffEsdsBlockIds.Esd;
 
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace PiffLibrary.Boxes
 
         #region Decoder Config Descriptor block
 
-        public byte DcdTag { get; set; } = PiffEsdsBlockIds.Dcd;
+        public byte DcdTag { get; } = PiffEsdsBlockIds.Dcd;
 
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace PiffLibrary.Boxes
 
         #region Decoder Specific Info block
 
-        public byte DsiTag { get; set; } = PiffEsdsBlockIds.Dsi;
+        public byte DsiTag { get; } = PiffEsdsBlockIds.Dsi;
 
         /// <summary>
         /// Codec data size.
@@ -99,7 +99,7 @@ namespace PiffLibrary.Boxes
 
         #region Sync Layer Config Descriptor block
 
-        public byte SlcTag { get; set; } = PiffEsdsBlockIds.Slc;
+        public byte SlcTag { get; } = PiffEsdsBlockIds.Slc;
 
 
         /// <summary>
