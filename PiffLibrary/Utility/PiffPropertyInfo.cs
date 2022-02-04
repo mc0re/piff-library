@@ -381,23 +381,17 @@ namespace PiffLibrary
             var status = PiffReadStatuses.Continue;
 
             var count = ArraySize ?? int.MaxValue;
-            while (count > 0)
+            while (!input.IsEmpty && count > 0)
             {
                 status = ReadSingleValue(targetObject, input, ctx, out var item);
-
-                if (status != PiffReadStatuses.Continue)
-                {
-                    // If it's an array without size, and all went well so far
-                    if (status == PiffReadStatuses.Eof && input.BytesLeft == 0 && !ArraySize.HasValue)
-                    {
-                        status = PiffReadStatuses.Continue;
-                    }
-                    break;
-                }
+                if (status != PiffReadStatuses.Continue) break;
 
                 list.Add(item);
                 count--;
             }
+
+            if (ArraySize.HasValue && count > 0)
+                ctx.AddError($"Not enough items read in {targetObject.GetType().Name}: expected {ArraySize}, got {ArraySize - count}.");
 
             var array = Array.CreateInstance(ElementType, list.Count);
 
@@ -550,6 +544,11 @@ namespace PiffLibrary
                     result = strz;
                     return status;
 
+                case PiffDataFormats.AsciiPascal:
+                    status = input.ReadAsciiPascalString(out var strp);
+                    result = strp;
+                    return status;
+
                 case PiffDataFormats.Utf8Zero:
                     status = input.ReadUtf8ZeroString(out var utfz);
                     result = utfz;
@@ -656,6 +655,7 @@ namespace PiffLibrary
                     return (ulong)((string)value).Length * 8;
 
                 case PiffDataFormats.AsciiZero:
+                case PiffDataFormats.AsciiPascal:
                     return (ulong)((string)value).Length * 8 + 8;
 
                 case PiffDataFormats.Utf8Zero:
@@ -772,6 +772,11 @@ namespace PiffLibrary
 
                 case PiffDataFormats.AsciiZero:
                     output.WriteBytes(Encoding.ASCII.GetBytes((string)value).Append((byte)0));
+                    break;
+
+                case PiffDataFormats.AsciiPascal:
+                    output.WriteByte((byte) ((string)value).Length);
+                    output.WriteBytes(Encoding.ASCII.GetBytes((string)value));
                     break;
 
                 case PiffDataFormats.Utf8Zero:

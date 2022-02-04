@@ -12,7 +12,7 @@ namespace PiffLibrary.Boxes
     /// </summary>
     [BoxName("enca")]
     [ChildType(typeof(PiffProtectionSchemeInformationBox))]
-    [ChildType(typeof(PiffElementaryStreamDescriptionMp4aBox))] // For WMA streams a "wfex" block comes instead
+    [ChildType(typeof(PiffElementaryStreamDescriptionBox))] // For WMA streams a "wfex" block comes instead
     [ChildType(typeof(PiffChannelLayoutBox))]
     [ChildType(typeof(PiffSamplingRateBox))] // For V1 only
     [ChildType(typeof(PiffDownmixInstructionsBox))] 
@@ -100,7 +100,7 @@ namespace PiffLibrary.Boxes
             SampleSize = audio.BitsPerSample;
             SampleRate = (uint) audio.SamplingRate << 16;
             var scheme = PiffProtectionSchemeInformationBox.CreateAudio(audio.CodecId, keyId);
-            var desc = PiffElementaryStreamDescriptionMp4aBox.Create(
+            var desc = PiffElementaryStreamDescriptionBox.Create(
                 audio.CodecId, 0, audio.BitRate, BufferSize, audio.CodecData);
             Children = new PiffBoxBase[] { desc, scheme };
         }

@@ -250,6 +250,7 @@ namespace PiffLibrary
         internal static PiffReadStatuses ReadDynamicInt(this BitReadStream bytes, out int result)
         {
             byte b;
+            var read = 0;
             result = 0;
 
             do
@@ -259,8 +260,9 @@ namespace PiffLibrary
                     return result == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
 
                 result = (result << 7) | (b & 0x7F);
+                read++;
             }
-             while (b > 0x7F);
+             while (read < 4 && b > 0x7F);
 
             return PiffReadStatuses.Continue;
         }
@@ -313,7 +315,7 @@ namespace PiffLibrary
                 status = bytes.ReadByte(out var b);
                 if (status != PiffReadStatuses.Continue)
                 {
-                    if (str.Count == 0) status = PiffReadStatuses.Eof;
+                    if (str.Count != 0) status = PiffReadStatuses.EofPremature;
                     break;
                 }
                 if (b == 0) break;
@@ -322,6 +324,31 @@ namespace PiffLibrary
             }
 
             ascii = Encoding.ASCII.GetString(str.ToArray());
+            return status;
+        }
+
+
+        /// <summary>
+        /// Read a Pascal-style ASCII string.
+        /// </summary>
+        public static PiffReadStatuses ReadAsciiPascalString(this BitReadStream bytes, out string ascii)
+        {
+            var status = bytes.ReadByte(out var length);
+            if (status != PiffReadStatuses.Continue)
+            {
+                ascii = string.Empty;
+                return PiffReadStatuses.Eof;
+            }
+
+            var buf = new byte[length];
+            var read = bytes.Read(buf, 0, length);
+            if (read < length)
+            {
+                ascii = string.Empty;
+                return PiffReadStatuses.EofPremature;
+            }
+
+            ascii = Encoding.ASCII.GetString(buf);
             return status;
         }
 

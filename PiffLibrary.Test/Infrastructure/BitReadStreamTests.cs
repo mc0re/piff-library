@@ -18,7 +18,7 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(2, b0);
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadByte(out var b1));
             Assert.AreEqual(3, b1);
-            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadByte(out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadByte(out _));
         }
 
 
@@ -34,14 +34,14 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(14, buf[2]);
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadByte(out var b3));
             Assert.AreEqual(15, b3);
-            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadByte(out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadByte(out _));
         }
 
 
         [TestMethod]
         public void BitStream_ReadBitsAligned()
         {
-            using var sut = new BitReadStream(new MemoryStream(new byte[] { 0b11011011, 0b11000101 }), true);
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 0b1_10_11011, 0b1100_0_101 }), true);
 
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadBits(1, false, out var b1));
             Assert.AreEqual(1, b1);
@@ -55,7 +55,7 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(0, b5);
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadBits(3, false, out var b6));
             Assert.AreEqual(5, b6);
-            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadBits(1, false, out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadBits(1, false, out _));
         }
 
 
@@ -70,9 +70,10 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(0x07, b2);
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadBits(12, false, out var b3));
             Assert.AreEqual(0x0AAA, b3);
-            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadBits(3, false, out var b4));
-            Assert.AreEqual(5, b4);
-            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadBits(1, false, out _));
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadBits(2, false, out var b4));
+            Assert.AreEqual(2, b4);
+            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadBits(2, false, out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadBits(2, false, out _));
         }
 
 
@@ -85,7 +86,7 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(-1, b1);
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadBits(4, true, out var b2));
             Assert.AreEqual(-8, b2);
-            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadBits(1, false, out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadBits(1, false, out _));
         }
 
 

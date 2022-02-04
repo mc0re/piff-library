@@ -113,6 +113,11 @@
         AsciiZero,
 
         /// <summary>
+        /// Pascal-style string with the 1-st byte giving the length.
+        /// </summary>
+        AsciiPascal,
+
+        /// <summary>
         /// 1-4 bytes per character, 0-termination.
         /// </summary>
         Utf8Zero,

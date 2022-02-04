@@ -92,6 +92,12 @@ namespace PiffLibrary
         /// </summary>
         public ulong BytesLeft { get; private set; }
 
+
+        /// <summary>
+        /// Whether there is any data left in the stream.
+        /// </summary>
+        public bool IsEmpty => BytesLeft == 0 && mBitsLeft == 0;
+
         #endregion
 
 
@@ -226,7 +232,10 @@ namespace PiffLibrary
                 {
                     // Read next full byte
                     var status = ReadByte(out mBitsStore);
-                    if (status != PiffReadStatuses.Continue) return status;
+                    if (status != PiffReadStatuses.Continue)
+                    {
+                        return nofBits == bitsToReadLeft ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+                    }
 
                     mBitsLeft = ByteSize;
                 }
