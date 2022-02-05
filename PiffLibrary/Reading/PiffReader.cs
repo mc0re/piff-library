@@ -130,7 +130,7 @@ namespace PiffLibrary
                     ctx.Pop();
 
                     var bytesLeft = inputSlice.BytesLeft;
-                    input.Advance(bodyLength - bytesLeft);
+                    input.Consolidate(inputSlice);
 
                     if (bytesLeft > 0)
                     {

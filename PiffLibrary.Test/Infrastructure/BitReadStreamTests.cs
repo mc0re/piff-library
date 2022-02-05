@@ -9,6 +9,8 @@ namespace PiffLibrary.Test.Infrastructure
     [TestClass]
     public class BitReadStreamTests
     {
+        #region BitStream tests
+
         [TestMethod]
         public void BitStream_ReadByte()
         {
@@ -19,6 +21,38 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadByte(out var b1));
             Assert.AreEqual(3, b1);
             Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadByte(out _));
+        }
+
+
+        [TestMethod]
+        public void BitStream_ReadByteMisconfig()
+        {
+            var ms = new MemoryStream(new byte[] { 2, 3 });
+            using var sut = new BitReadStream(ms, true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadByte(out var b0));
+            Assert.AreEqual(2, b0);
+
+            ms.SetLength(1);
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadByte(out _));
+        }
+
+
+        [TestMethod]
+        public void BitStream_ReadByteSeek()
+        {
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 2, 3 }), true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadByte(out var b0));
+            Assert.AreEqual(2, b0);
+            Assert.AreEqual(1uL, sut.BytesLeft);
+
+            Assert.IsTrue(sut.Seek(1uL));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadByte(out _));
+            Assert.AreEqual(0uL, sut.BytesLeft);
+
+            Assert.IsFalse(sut.Seek(1uL));
+            Assert.AreEqual(0uL, sut.BytesLeft);
         }
 
 
@@ -35,6 +69,26 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadByte(out var b3));
             Assert.AreEqual(15, b3);
             Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadByte(out _));
+        }
+
+
+        [TestMethod]
+        public void BitStream_ReadBlockMisconfig()
+        {
+            var ms = new MemoryStream(new byte[] { 12, 13, 14, 15 });
+            using var sut = new BitReadStream(ms, true);
+
+            var buf = new byte[2];
+            Assert.AreEqual(2, sut.Read(buf, 0, 2));
+            Assert.AreEqual(12, buf[0]);
+            Assert.AreEqual(13, buf[1]);
+
+            ms.ReadByte();
+
+            Assert.AreEqual(2uL, sut.BytesLeft);
+            Assert.AreEqual(1, sut.Read(buf, 0, 2));
+            Assert.AreEqual(15, buf[0]);
+            Assert.AreEqual(0uL, sut.BytesLeft);
         }
 
 
@@ -108,5 +162,29 @@ namespace PiffLibrary.Test.Infrastructure
 
             Assert.ThrowsException<ArgumentException>(() => sut.ReadBits(32, false, out _));
         }
+
+
+        [TestMethod]
+        public void BitStream_CreateSlice()
+        {
+            using var main = new BitReadStream(new MemoryStream(new byte[] { 2, 3, 4 }), true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, main.ReadByte(out var b0));
+            Assert.AreEqual(2, b0);
+
+            using var sut = new BitReadStream(main, 1, "sub-stream");
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadByte(out var b1));
+            Assert.AreEqual(3, b1);
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadByte(out _));
+
+            main.Consolidate(sut);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, main.ReadByte(out var b2));
+            Assert.AreEqual(4, b2);
+            Assert.AreEqual(PiffReadStatuses.Eof, main.ReadByte(out _));
+        }
+
+        #endregion
     }
 }

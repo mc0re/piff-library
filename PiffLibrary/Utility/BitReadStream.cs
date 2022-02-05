@@ -47,6 +47,12 @@ namespace PiffLibrary
 
 
         /// <summary>
+        /// Initial length of the slice.
+        /// </summary>
+        private readonly ulong mLength;
+
+
+        /// <summary>
         /// Whether we need to dispose the <see cref="mUnderlying"/> stream
         /// when calling <see cref="Dispose"/>.
         /// </summary>
@@ -133,6 +139,7 @@ namespace PiffLibrary
             mDisposeUnderlying = disposeUnderlying;
         }
 
+
         /// <summary>
         /// Create a slice of the <paramref name="underlying"/> stream
         /// from its current position and <paramref name="length"/> bytes long.
@@ -140,11 +147,15 @@ namespace PiffLibrary
         public BitReadStream(BitReadStream underlying, ulong length, string name = "")
         {
             mUnderlying = underlying.mUnderlying;
+            mLength = length;
             BytesLeft = length;
             mName = name;
         }
 
 
+        /// <summary>
+        /// DIspose the underlying stream, if requested upon creation.
+        /// </summary>
         public void Dispose()
         {
             if (!mIsDisposed)
@@ -162,22 +173,35 @@ namespace PiffLibrary
         #region API
         
         /// <summary>
-        /// Move the internal position by <paramref name="offset"/> bytes.
-        /// The underlying stream was already moved.
+        /// The slice moved the stream position unknown to the parent of that slice.
+        /// Now we're done with the slice, let's consolidate the positions.
         /// </summary>
-        public void Advance(ulong offset)
+        public void Consolidate(BitReadStream slice)
         {
-            BytesLeft -= offset;
+            BytesLeft -= slice.mLength - slice.BytesLeft;
         }
 
 
         /// <summary>
         /// Move the read position forward.
         /// </summary>
-        public void Seek(ulong offset)
+        /// <returns>
+        /// <see langword="false"/> if the offset was beyond the slice, and had to be adjusted.
+        /// </returns>
+        public bool Seek(ulong offset)
         {
-            mUnderlying.Seek((long) offset, SeekOrigin.Current);
+            var res = true;
+            
+            if (offset > BytesLeft)
+            {
+                offset = BytesLeft;
+                res = false;
+            }
+
             BytesLeft -= offset;
+            mUnderlying.Seek((long) offset, SeekOrigin.Current);
+
+            return res;
         }
 
 
@@ -206,6 +230,7 @@ namespace PiffLibrary
             }
             else
             {
+                // Can only happen if BytesLeft is out of sync or unknown
                 result = 0;
                 BytesLeft = 0;
                 return PiffReadStatuses.Eof;
@@ -267,7 +292,10 @@ namespace PiffLibrary
             if ((ulong) len == toRead)
                 BytesLeft -= (uint) len;
             else
+            {
+                // Can only happen if BytesLeft is out of sync or unknown
                 BytesLeft = 0;
+            }
 
             return len;
         }

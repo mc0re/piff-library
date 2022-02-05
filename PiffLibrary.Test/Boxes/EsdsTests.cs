@@ -45,6 +45,23 @@ namespace PiffLibrary.Test.Boxes
 
             var box = new PiffElementaryStreamDescriptionBox
             {
+                Descriptor = new PiffDescriptorContainer
+                {
+                    Tag = PiffEsdsBlockIds.Esd,
+                    Esd = new PiffElementaryStreamDescriptor
+                    {
+                    },
+                    Children = new[]
+                    {
+                        new PiffDescriptorContainer
+                        {
+                            Tag = PiffEsdsBlockIds.Dcd,
+                            Dcd = new PiffDecoderConfigDescription
+                            {
+                            }
+                        }
+                    }
+                }
             };
             PiffWriter.WriteBox(output, box, ctx);
             
