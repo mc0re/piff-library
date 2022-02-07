@@ -40,7 +40,7 @@ namespace PiffLibrary.Test
             using (var dump = File.OpenWrite(@"C:\Temp\piff.bin"))
                 stream.CopyTo(dump);
 
-            Assert.AreEqual(6112, stream.Length);
+            Assert.AreEqual(6103, stream.Length);
 
             // Read it back out
             stream.Position = 0;

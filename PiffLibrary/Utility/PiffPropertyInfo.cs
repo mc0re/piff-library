@@ -24,27 +24,38 @@ namespace PiffLibrary
         /// </summary>
         public PropertyInfo Property { get; }
 
+
         /// <summary>
         /// Whether the property is an array.
         /// In this case, <see cref="ArraySize"/> might define the size of the array.
         /// </summary>
         public bool IsArray { get; }
 
+
         /// <summary>
         /// Type of the field or item type if it is an array.
         /// </summary>
         public Type ElementType { get; }
+
 
         /// <summary>
         /// Data format for this property or for an item, if this is an array.
         /// </summary>
         public PiffDataFormats Format { get; }
 
+
+        /// <summary>
+        /// Whether this property is a combined length of the following properties.
+        /// </summary>
+        public bool IsLength { get; }
+
+
         /// <summary>
         /// The number of bytes in the value or for an item, if it is an array.
         /// </summary>
         public int ItemSize { get; }
         
+
         /// <summary>
         /// If not specified, read until the end of box.
         /// </summary>
@@ -64,6 +75,7 @@ namespace PiffLibrary
             IsArray = prop.PropertyType.IsArray;
             ElementType = IsArray ? prop.PropertyType.GetElementType() : prop.PropertyType;
             Format = GetPropertyFormat(prop, ElementType, target);
+            IsLength = Property.GetCustomAttribute<PiffObjectLengthAttribute>() != null;
 
             var lengthAttr = Property.GetCustomAttribute<PiffStringLengthAttribute>();
             if (Format == PiffDataFormats.Ascii)
@@ -114,17 +126,28 @@ namespace PiffLibrary
         /// <returns>Read status from <see cref="PiffReader"/>.</returns>
         public static PiffReadStatuses ReadObject(object target, BitReadStream input, PiffReadContext ctx)
         {
+            var tempInput = input;
+
             foreach (var prop in GetProperties(target))
             {
                 if (prop.Format == PiffDataFormats.Skip) continue;
 
-                var status = prop.ReadValue(target, input, ctx);
+                var status = prop.ReadValue(target, tempInput, ctx);
                 if (status != PiffReadStatuses.Continue)
                 {
                     // EOF at the expected place means we're finished reading this object
                     return status == PiffReadStatuses.Eof ? PiffReadStatuses.Continue : status;
                 }
+
+                if (prop.IsLength)
+                {
+                    var len = (uint) Convert.ChangeType(prop.Property.GetValue(target), typeof(uint));
+                    tempInput = new BitReadStream(input, len);
+                }
             }
+
+            if (tempInput != input)
+                input.Consolidate(tempInput);
 
             return PiffReadStatuses.Continue;
         }
@@ -148,32 +171,24 @@ namespace PiffLibrary
         /// </summary>
         public static void WriteObject(BitWriteStream output, object source, PiffWriteContext ctx)
         {
-            foreach (var p in GetProperties(source))
-                p.WriteValue(output, source, ctx);
-        }
-
-
-        /// <summary>
-        /// Write a single value or array with the given format.
-        /// Skip the writing alltogether if the valus is <see langword="null"/>.
-        /// </summary>
-        public void WriteValue(BitWriteStream output, object target, PiffWriteContext ctx)
-        {
-            var value = Property.GetValue(target);
-
-            if (value is null || Format == PiffDataFormats.Skip)
-                return;
-
-            if (IsArray)
+            foreach (var prop in GetProperties(source))
             {
-                foreach (var item in value as Array)
+                if (prop.Format == PiffDataFormats.Skip) continue;
+
+                var value = prop.Property.GetValue(source);
+                if (value is null) continue;
+
+                if (prop.IsArray)
                 {
-                    WriteSingleValue(output, item, Format, ctx);
+                    foreach (var item in value as Array)
+                    {
+                        WriteSingleValue(output, item, prop.Format, ctx);
+                    }
                 }
-            }
-            else
-            {
-                WriteSingleValue(output, value, Format, ctx);
+                else
+                {
+                    WriteSingleValue(output, value, prop.Format, ctx);
+                }
             }
         }
 
@@ -323,7 +338,14 @@ namespace PiffLibrary
 
                 if (Property.CanWrite)
                 {
-                    Property.SetValue(targetObject, value);
+                    try
+                    {
+                        Property.SetValue(targetObject, value);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        throw new ArgumentException($"Error when writing to '{targetObject.GetType().Name}.{Property.Name}'.", ex);
+                    }
                 }
 
                 return PiffReadStatuses.Continue;
@@ -649,7 +671,7 @@ namespace PiffLibrary
                     return 64;
 
                 case PiffDataFormats.DynamicInt:
-                    return (ulong)((int)value).ToDynamic().Count() * 8;
+                    return ((uint)value).ToDynamicLen() * 8;
 
                 case PiffDataFormats.Ascii:
                     return (ulong)((string)value).Length * 8;
@@ -763,7 +785,7 @@ namespace PiffLibrary
                     break;
 
                 case PiffDataFormats.DynamicInt:
-                    output.WriteBytes(((int)value).ToDynamic());
+                    output.WriteBytes(((uint)value).ToDynamic());
                     break;
 
                 case PiffDataFormats.Ascii:

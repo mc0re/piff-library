@@ -30,20 +30,10 @@ namespace PiffLibrary.Boxes
         /// </summary>
         private PiffElementaryStreamDescriptionBox(ushort streamId, uint bitRate, int bufferSize, byte[] codecData)
         {
-            var dsiContainer = new PiffDescriptorContainer
-            {
-                Tag = PiffEsdsBlockIds.Dsi,
-                Length = codecData.Length,
-            };
-            dsiContainer.Dsi = new PiffDecoderSpecificInfoDescriptor(dsiContainer)
-            {
-                DsiData = codecData.ToArray()
-            };
-
             Descriptor = new PiffDescriptorContainer
             {
                 Tag = PiffEsdsBlockIds.Esd,
-                Length = codecData.Length + 18 + 1 + 10,
+                Length = (uint) codecData.Length + 18 + 1 + 10,
                 Esd = new PiffElementaryStreamDescriptor
                 {
                     StreamId = streamId,
@@ -53,14 +43,22 @@ namespace PiffLibrary.Boxes
                     new PiffDescriptorContainer
                     {
                         Tag = PiffEsdsBlockIds.Dcd,
-                        Length = codecData.Length + 18,
+                        Length = (uint) codecData.Length + 18,
                         Dcd = new PiffDecoderConfigDescription
                         {
                             BufferSizeDb = bufferSize,
                             MaxBitRate = bitRate,
                             AverageBitRate = bitRate
                         },
-                        Children = new[] { dsiContainer }
+                        Children = new[] { new PiffDescriptorContainer
+                        {
+                            Tag = PiffEsdsBlockIds.Dsi,
+                            Length = (uint) codecData.Length,
+                            Dsi = new PiffDecoderSpecificInfoDescriptor()
+                            {
+                                DsiData = codecData.ToArray()
+                            }
+                        }}
                     },
                     new PiffDescriptorContainer
                     {

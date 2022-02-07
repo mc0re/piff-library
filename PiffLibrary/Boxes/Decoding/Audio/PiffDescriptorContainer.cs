@@ -13,8 +13,9 @@
         /// <summary>
         /// Length of the descriptor's data (after the length field) and all its children.
         /// </summary>
+        [PiffObjectLength]
         [PiffDataFormat(PiffDataFormats.DynamicInt)]
-        public int Length { get; set; }
+        public uint Length { get; set; }
 
 
         [PiffDataFormat(nameof(FoundEsdTag))]

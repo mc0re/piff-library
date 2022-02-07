@@ -32,7 +32,21 @@ namespace PiffLibrary.Test.Boxes
             var esds = box as PiffElementaryStreamDescriptionBox;
             Assert.IsNotNull(esds);
             Assert.AreEqual(PiffEsdsBlockIds.Esd, esds.Descriptor.Tag);
-            Assert.AreEqual(25, esds.Descriptor.Length);
+            Assert.AreEqual(25u, esds.Descriptor.Length);
+            Assert.IsNotNull(esds.Descriptor.Esd);
+            Assert.AreEqual(2, esds.Descriptor.Children.Length);
+
+            var dcd = esds.Descriptor.Children[0];
+            Assert.AreEqual(PiffEsdsBlockIds.Dcd, dcd.Tag);
+            Assert.AreEqual(17u, dcd.Length);
+            Assert.IsNotNull(dcd.Dcd);
+            Assert.AreEqual(0x40, dcd.Dcd.ObjectType);
+
+            var slc = esds.Descriptor.Children[1];
+            Assert.AreEqual(PiffEsdsBlockIds.Slc, slc.Tag);
+            Assert.AreEqual(1u, slc.Length);
+            Assert.IsNotNull(slc.Slc);
+            Assert.AreEqual(2, slc.Slc.PredefinedSync);
         }
 
 
@@ -65,7 +79,7 @@ namespace PiffLibrary.Test.Boxes
             };
             PiffWriter.WriteBox(output, box, ctx);
             
-            CollectionAssert.AreEqual(EsdsSample, ms.GetBuffer().Take((int) ms.Length).ToArray());
+            TestUtil.Compare(EsdsSample, ms.GetBuffer().Take((int) ms.Length).ToArray());
         }
     }
 }

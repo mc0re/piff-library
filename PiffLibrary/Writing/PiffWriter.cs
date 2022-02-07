@@ -112,11 +112,7 @@ namespace PiffLibrary
                 output.WriteBytes(boxLength.ToBigEndian());
             }
 
-            var propValues = PiffPropertyInfo.GetProperties(box).ToArray();
-            foreach (var value in propValues)
-            {
-                value.WriteValue(output, box, ctx);
-            }
+            PiffPropertyInfo.WriteObject(output, box, ctx);
 
             ctx.End(box);
         }

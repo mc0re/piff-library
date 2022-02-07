@@ -186,5 +186,81 @@ namespace PiffLibrary.Test.Infrastructure
         }
 
         #endregion
+
+
+        #region Extension tests
+
+        [TestMethod]
+        public void BitStream_ReadDynamicInt()
+        {
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 0x81, 0x53, 0xFF }), true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadDynamicInt(out var d));
+            Assert.AreEqual(0xD3u, d);
+            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadDynamicInt(out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadDynamicInt(out _));
+        }
+
+
+        [TestMethod]
+        public void BitStream_ReadGuid()
+        {
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 }), true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadGuid(out var guid));
+            Assert.AreEqual(new Guid("01020304-0506-0708-090a-0b0c0d0e0f10"), guid);
+            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadGuid(out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadGuid(out _));
+        }
+
+
+        [TestMethod]
+        public void StringRead_AsciiZero()
+        {
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 0x41, 0x62, 0, 0x43, 0, 0, 0x44 }), true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiZeroString(out var s1));
+            Assert.AreEqual("Ab", s1);
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiZeroString(out var s2));
+            Assert.AreEqual("C", s2);
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiZeroString(out var s3));
+            Assert.AreEqual("", s3);
+            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadAsciiZeroString(out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadAsciiZeroString(out _));
+        }
+
+
+        [TestMethod]
+        public void StringRead_Ascii()
+        {
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 0x41, 0x62, 0x43, 0x44 }), true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiString(2, out var s1));
+            Assert.AreEqual("Ab", s1);
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiString(1, out var s2));
+            Assert.AreEqual("C", s2);
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiString(0, out var s3));
+            Assert.AreEqual("", s3);
+            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadAsciiString(2, out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadAsciiString(2, out _));
+        }
+
+
+        [TestMethod]
+        public void StringRead_AsciiPascal()
+        {
+            using var sut = new BitReadStream(new MemoryStream(new byte[] { 2, 0x41, 0x62, 1, 0x43, 0, 10 }), true);
+
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiPascalString(out var s1));
+            Assert.AreEqual("Ab", s1);
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiPascalString(out var s2));
+            Assert.AreEqual("C", s2);
+            Assert.AreEqual(PiffReadStatuses.Continue, sut.ReadAsciiPascalString(out var s3));
+            Assert.AreEqual("", s3);
+            Assert.AreEqual(PiffReadStatuses.EofPremature, sut.ReadAsciiPascalString(out _));
+            Assert.AreEqual(PiffReadStatuses.Eof, sut.ReadAsciiPascalString(out _));
+        }
+
+        #endregion
     }
 }

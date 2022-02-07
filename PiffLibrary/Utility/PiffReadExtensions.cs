@@ -247,7 +247,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read 8..32-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static PiffReadStatuses ReadDynamicInt(this BitReadStream bytes, out int result)
+        internal static PiffReadStatuses ReadDynamicInt(this BitReadStream bytes, out uint result)
         {
             byte b;
             var read = 0;
@@ -259,7 +259,7 @@ namespace PiffLibrary
                 if (status != PiffReadStatuses.Continue)
                     return result == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
 
-                result = (result << 7) | (b & 0x7F);
+                result = (result << 7) | (b & 0x7Fu);
                 read++;
             }
              while (read < 4 && b > 0x7F);
