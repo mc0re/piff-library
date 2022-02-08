@@ -107,9 +107,25 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Write a number of bytes from the given buffer.
+        /// </summary>
         public void Write(byte[] buffer, int offset, int length)
         {
             mUnderlying.Write(buffer, offset, length);
+        }
+
+
+        /// <summary>
+        /// Write all bytes of <paramref name="substream"/> into <see langword="this"/> stream.
+        /// </summary>
+        public void Consolidate(BitWriteStream substream)
+        {
+            if (!substream.mUnderlying.CanSeek || !substream.mUnderlying.CanRead)
+                throw new ArgumentException("Cannot copy data from this stream.");
+
+            substream.mUnderlying.Seek(0, SeekOrigin.Begin);
+            substream.mUnderlying.CopyTo(mUnderlying);
         }
 
         #endregion

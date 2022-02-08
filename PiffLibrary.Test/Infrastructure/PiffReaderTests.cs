@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-
+using System.Linq;
 
 namespace PiffLibrary.Test
 {
@@ -35,12 +35,10 @@ namespace PiffLibrary.Test
             var videoOffsets = new[] { new PiffSampleOffsetDto { Time = 0, Offset = (ulong) videoOffset } };
             PiffWriter.WriteFooter(stream, PiffWriterTests.SpeedwayManifest, audioOffsets, videoOffsets, ctx);
 
-            // Dump for HEX viewer
-            stream.Position = 0;
-            using (var dump = File.OpenWrite(@"C:\Temp\piff.bin"))
-                stream.CopyTo(dump);
-
             Assert.AreEqual(6103, stream.Length);
+            var actual = stream.GetBuffer().Take((int) stream.Length).ToArray();
+            var expected = File.ReadAllBytes("Data/piff-result.bin");
+            TestUtil.Compare(expected.Take((int) stream.Length).ToArray(), actual);
 
             // Read it back out
             stream.Position = 0;

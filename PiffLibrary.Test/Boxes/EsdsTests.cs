@@ -72,6 +72,29 @@ namespace PiffLibrary.Test.Boxes
                             Tag = PiffEsdsBlockIds.Dcd,
                             Dcd = new PiffDecoderConfigDescription
                             {
+                                ObjectType = 64,
+                                StreamType = 5,
+                                AverageBitRate = 0x2A66D,
+                                MaxBitRate = 0x2A66D
+                            },
+                            Children = new[]
+                            {
+                                new PiffDescriptorContainer
+                                {
+                                    Tag = PiffEsdsBlockIds.Dsi,
+                                    Dsi = new PiffDecoderSpecificInfoDescriptor
+                                    {
+                                        DsiData = new byte[] { 0x11, 0x90 }
+                                    }
+                                }
+                            }
+                        },
+                        new PiffDescriptorContainer
+                        {
+                            Tag = PiffEsdsBlockIds.Slc,
+                            Slc = new PiffSyncLayerConfigDescription
+                            {
+                                PredefinedSync = 2
                             }
                         }
                     }

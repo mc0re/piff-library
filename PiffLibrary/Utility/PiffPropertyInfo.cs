@@ -126,13 +126,13 @@ namespace PiffLibrary
         /// <returns>Read status from <see cref="PiffReader"/>.</returns>
         public static PiffReadStatuses ReadObject(object target, BitReadStream input, PiffReadContext ctx)
         {
-            var tempInput = input;
+            var currentInput = input;
 
             foreach (var prop in GetProperties(target))
             {
                 if (prop.Format == PiffDataFormats.Skip) continue;
 
-                var status = prop.ReadValue(target, tempInput, ctx);
+                var status = prop.ReadValue(target, currentInput, ctx);
                 if (status != PiffReadStatuses.Continue)
                 {
                     // EOF at the expected place means we're finished reading this object
@@ -142,12 +142,15 @@ namespace PiffLibrary
                 if (prop.IsLength)
                 {
                     var len = (uint) Convert.ChangeType(prop.Property.GetValue(target), typeof(uint));
-                    tempInput = new BitReadStream(input, len);
+                    currentInput = new BitReadStream(input, len);
                 }
             }
 
-            if (tempInput != input)
-                input.Consolidate(tempInput);
+            if (currentInput != input)
+            {
+                input.Consolidate(currentInput);
+                currentInput.Dispose();
+            }
 
             return PiffReadStatuses.Continue;
         }
@@ -171,9 +174,17 @@ namespace PiffLibrary
         /// </summary>
         public static void WriteObject(BitWriteStream output, object source, PiffWriteContext ctx)
         {
+            var currentOutput = output;
+
             foreach (var prop in GetProperties(source))
             {
                 if (prop.Format == PiffDataFormats.Skip) continue;
+
+                if (prop.IsLength)
+                {
+                    currentOutput = new BitWriteStream(new MemoryStream(), true);
+                    continue;
+                }
 
                 var value = prop.Property.GetValue(source);
                 if (value is null) continue;
@@ -182,13 +193,20 @@ namespace PiffLibrary
                 {
                     foreach (var item in value as Array)
                     {
-                        WriteSingleValue(output, item, prop.Format, ctx);
+                        WriteSingleValue(currentOutput, item, prop.Format, ctx);
                     }
                 }
                 else
                 {
-                    WriteSingleValue(output, value, prop.Format, ctx);
+                    WriteSingleValue(currentOutput, value, prop.Format, ctx);
                 }
+            }
+
+            if (currentOutput != output)
+            {
+                output.WriteBytes(((uint) currentOutput.Position).ToDynamic());
+                output.Consolidate(currentOutput);
+                currentOutput.Dispose();
             }
         }
 
