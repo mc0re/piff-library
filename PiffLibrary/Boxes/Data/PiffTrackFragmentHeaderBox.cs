@@ -13,6 +13,13 @@
     [BoxName("tfhd")]
     public sealed class PiffTrackFragmentHeaderBox : PiffFullBoxBase
     {
+        #region Constants
+
+        public const int FlagsDescriptionIndexPresent = 2;
+
+        #endregion
+
+
         #region Properties
 
         /// <summary>
@@ -57,7 +64,7 @@
 
 
         private PiffDataFormats FlagsHaveIndex() =>
-            (Flags & 2) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
+            (Flags & FlagsDescriptionIndexPresent) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         private PiffDataFormats FlagsHaveDuration() =>

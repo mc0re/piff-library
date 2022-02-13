@@ -14,14 +14,15 @@
         /// <summary>
         /// Format of the auxiliary information.
         /// </summary>
-        [PiffDataFormat(nameof(HasAuxInfo))]
-        public uint AuxInfoType { get; set; }
+        [PiffDataFormat(nameof(HasAuxType))]
+        [PiffStringLength(4)]
+        public string AuxInfoType { get; set; }
 
 
         /// <summary>
         /// Depends on <see cref="AuxInfoType"/>.
         /// </summary>
-        [PiffDataFormat(nameof(HasAuxInfo))]
+        [PiffDataFormat(nameof(HasAuxParameter))]
         public uint AuxInfoTypeParameter { get; set; }
 
 
@@ -55,7 +56,11 @@
         private uint SampleInfoCount => DefaultSampleInfoSize == 0 ? SampleCount : 0;
 
 
-        private PiffDataFormats HasAuxInfo() =>
+        private PiffDataFormats HasAuxType() =>
+            (Flags & 1) != 0 ? PiffDataFormats.Ascii : PiffDataFormats.Skip;
+
+
+        private PiffDataFormats HasAuxParameter() =>
             (Flags & 1) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
         #endregion

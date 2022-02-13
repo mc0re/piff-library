@@ -49,7 +49,7 @@ namespace PiffLibrary
             {
                 var moof = ReadBox<PiffMovieFragmentBox>(input, new PiffReadContext { AnyRoot = true });
 
-                return moof.First<PiffMovieFragmentHeaderBox>().Sequence;
+                return moof.FirstOfType<PiffMovieFragmentHeaderBox>().Sequence;
             }
         }
 
@@ -60,7 +60,7 @@ namespace PiffLibrary
             {
                 var moof = ReadBox<PiffMovieFragmentBox>(input, new PiffReadContext { AnyRoot = true });
 
-                return moof.First<PiffTrackFragmentBox>().First<PiffTrackFragmentHeaderBox>().TrackId;
+                return moof.FirstOfType<PiffTrackFragmentBox>().FirstOfType<PiffTrackFragmentHeaderBox>().TrackId;
             }
         }
 

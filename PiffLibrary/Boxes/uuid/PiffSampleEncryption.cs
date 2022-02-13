@@ -11,6 +11,8 @@ namespace PiffLibrary.Boxes
         #region Constants
 
         public static readonly Guid BoxId = Guid.Parse("a2394f52-5a9b-4f14-a244-6c427c648df4");
+        
+        public const int OverrideTrack = 1;
 
         #endregion
 
@@ -63,7 +65,7 @@ namespace PiffLibrary.Boxes
         /// If bit 0 is not set, use parameters from <see cref="PiffProtectionTrackEncryption"/>.
         /// </summary>
         private PiffDataFormats UseAlgorithmInfo() =>
-            (ParentFlags & 1) != 0 ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
+            (ParentFlags & OverrideTrack) != 0 ? PiffDataFormats.InlineObject : PiffDataFormats.Skip;
 
         #endregion
     }

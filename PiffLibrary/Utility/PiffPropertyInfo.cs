@@ -75,9 +75,11 @@ namespace PiffLibrary
             IsArray = prop.PropertyType.IsArray;
             ElementType = IsArray ? prop.PropertyType.GetElementType() : prop.PropertyType;
             Format = GetPropertyFormat(prop, ElementType, target);
-            IsLength = Property.GetCustomAttribute<PiffObjectLengthAttribute>() != null;
+            if (Format == PiffDataFormats.Skip) return;
 
+            IsLength = Property.GetCustomAttribute<PiffObjectLengthAttribute>() != null;
             var lengthAttr = Property.GetCustomAttribute<PiffStringLengthAttribute>();
+
             if (Format == PiffDataFormats.Ascii)
             {
                 if (lengthAttr is null)

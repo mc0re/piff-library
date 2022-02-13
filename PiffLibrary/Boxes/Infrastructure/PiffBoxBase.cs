@@ -86,7 +86,7 @@ namespace PiffLibrary.Boxes
         /// Return the first child of the given type.
         /// There may be more of those, they are ignored.
         /// </summary>
-        public TBox First<TBox>() where TBox : PiffBoxBase
+        public TBox FirstOfType<TBox>() where TBox : PiffBoxBase
         {
             return Children?.OfType<TBox>().FirstOrDefault();
         }
@@ -96,11 +96,11 @@ namespace PiffLibrary.Boxes
         /// Return the first grandchild for the given path.
         /// There may be more children on every junction, they are ignored.
         /// </summary>
-        public TBoxL2 First<TBoxL1, TBoxL2>()
+        public TBoxL2 FirstOfType<TBoxL1, TBoxL2>()
             where TBoxL1 : PiffBoxBase
             where TBoxL2 : PiffBoxBase
         {
-            return First<TBoxL1>()?.Children.OfType<TBoxL2>().FirstOrDefault();
+            return FirstOfType<TBoxL1>()?.Children.OfType<TBoxL2>().FirstOrDefault();
         }
 
 
@@ -108,12 +108,12 @@ namespace PiffLibrary.Boxes
         /// Return the first great-grandchild for the given path.
         /// There may be more children on every junction, they are ignored.
         /// </summary>
-        public TBoxL3 First<TBoxL1, TBoxL2, TBoxL3>()
+        public TBoxL3 FirstOfType<TBoxL1, TBoxL2, TBoxL3>()
             where TBoxL1 : PiffBoxBase
             where TBoxL2 : PiffBoxBase
             where TBoxL3 : PiffBoxBase
         {
-            return First<TBoxL1, TBoxL2>()?.Children.OfType<TBoxL3>().FirstOrDefault();
+            return FirstOfType<TBoxL1, TBoxL2>()?.Children.OfType<TBoxL3>().FirstOrDefault();
         }
 
 
@@ -121,20 +121,20 @@ namespace PiffLibrary.Boxes
         /// Return the first great-grandchild for the given path.
         /// There may be more children on every junction, they are ignored.
         /// </summary>
-        public TBoxL4 First<TBoxL1, TBoxL2, TBoxL3, TBoxL4>()
+        public TBoxL4 FirstOfType<TBoxL1, TBoxL2, TBoxL3, TBoxL4>()
             where TBoxL1 : PiffBoxBase
             where TBoxL2 : PiffBoxBase
             where TBoxL3 : PiffBoxBase
             where TBoxL4 : PiffBoxBase
         {
-            return First<TBoxL1, TBoxL2, TBoxL3>()?.Children.OfType<TBoxL4>().FirstOrDefault();
+            return FirstOfType<TBoxL1, TBoxL2, TBoxL3>()?.Children.OfType<TBoxL4>().FirstOrDefault();
         }
 
 
         /// <summary>
         /// Return all children of the given type.
         /// </summary>
-        public TBox[] OfType<TBox>() where TBox : PiffBoxBase
+        public TBox[] ChildrenOfType<TBox>() where TBox : PiffBoxBase
         {
             if (Children is null)
                 return default;
