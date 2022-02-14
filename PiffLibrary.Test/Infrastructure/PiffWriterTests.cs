@@ -122,7 +122,7 @@ namespace PiffLibrary.Test
             var videoOffsets = new[] { new PiffSampleOffsetDto { Time = 0, Offset = (ulong) videoOffset } };
             PiffWriter.WriteFooter(output, SpeedwayManifest, audioOffsets, videoOffsets, ctx);
 
-            Assert.AreEqual(2501, output.Length);
+            Assert.AreEqual(2492, output.Length);
         }
     }
 }

@@ -46,52 +46,52 @@
         UInt7,
 
         /// <summary>
-        /// 1-byte signed nteger. Default for <see langword="sbyte"/>.
+        /// 1-byte signed integer, aligned to byte boundary. Default for <see langword="sbyte"/>.
         /// </summary>
         Int8,
 
         /// <summary>
-        /// 1-byte unsigned nteger. Default for <see langword="byte"/>.
+        /// 1-byte unsigned integer, aligned to byte boundary. Default for <see langword="byte"/>.
         /// </summary>
         UInt8,
 
         /// <summary>
-        /// 12-bits integer.
+        /// 12-bits signed integer.
         /// </summary>
         Int12,
 
         /// <summary>
-        /// 2-byte integer. Default for <see langword="short"/>.
+        /// 2-byte signed integer, aligned to byte boundary. Default for <see langword="short"/>.
         /// </summary>
         Int16,
 
         /// <summary>
-        /// 2-byte unsigned integer. Default for <see langword="ushort"/>.
+        /// 2-byte unsigned integer, aligned to byte boundary. Default for <see langword="ushort"/>.
         /// </summary>
         UInt16,
 
         /// <summary>
-        /// Write the 3 right-most bytes of the integer.
+        /// 3-byte unsigned integer, aligned to byte boundary.
         /// </summary>
         Int24,
 
         /// <summary>
-        /// 4-byte integer. Default for <see langword="int"/>.
+        /// 4-byte signed integer, aligned to byte boundary. Default for <see langword="int"/>.
         /// </summary>
         Int32,
 
         /// <summary>
-        /// 4-byte unsigned integer. Default for <see langword="uint"/>.
+        /// 4-byte unsigned integer, aligned to byte boundary. Default for <see langword="uint"/>.
         /// </summary>
         UInt32,
 
         /// <summary>
-        /// 8-byte integer. Default for <see langword="long"/>.
+        /// 8-byte signed integer, aligned to byte boundary. Default for <see langword="long"/>.
         /// </summary>
         Int64,
 
         /// <summary>
-        /// 8-byte unsigned integer. Default for <see langword="ulong"/>.
+        /// 8-byte unsigned integer, aligned to byte boundary. Default for <see langword="ulong"/>.
         /// </summary>
         UInt64,
 
@@ -111,6 +111,11 @@
         /// 1 byte per character, 0-termination.
         /// </summary>
         AsciiZero,
+
+        /// <summary>
+        /// Pascal-style string with the 1-st byte giving the length.
+        /// </summary>
+        AsciiPascal,
 
         /// <summary>
         /// 1-4 bytes per character, 0-termination.

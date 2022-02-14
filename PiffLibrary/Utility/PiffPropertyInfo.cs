@@ -24,27 +24,38 @@ namespace PiffLibrary
         /// </summary>
         public PropertyInfo Property { get; }
 
+
         /// <summary>
         /// Whether the property is an array.
         /// In this case, <see cref="ArraySize"/> might define the size of the array.
         /// </summary>
         public bool IsArray { get; }
 
+
         /// <summary>
         /// Type of the field or item type if it is an array.
         /// </summary>
         public Type ElementType { get; }
+
 
         /// <summary>
         /// Data format for this property or for an item, if this is an array.
         /// </summary>
         public PiffDataFormats Format { get; }
 
+
+        /// <summary>
+        /// Whether this property is a combined length of the following properties.
+        /// </summary>
+        public bool IsLength { get; }
+
+
         /// <summary>
         /// The number of bytes in the value or for an item, if it is an array.
         /// </summary>
         public int ItemSize { get; }
         
+
         /// <summary>
         /// If not specified, read until the end of box.
         /// </summary>
@@ -64,8 +75,11 @@ namespace PiffLibrary
             IsArray = prop.PropertyType.IsArray;
             ElementType = IsArray ? prop.PropertyType.GetElementType() : prop.PropertyType;
             Format = GetPropertyFormat(prop, ElementType, target);
+            if (Format == PiffDataFormats.Skip) return;
 
+            IsLength = Property.GetCustomAttribute<PiffObjectLengthAttribute>() != null;
             var lengthAttr = Property.GetCustomAttribute<PiffStringLengthAttribute>();
+
             if (Format == PiffDataFormats.Ascii)
             {
                 if (lengthAttr is null)
@@ -111,34 +125,36 @@ namespace PiffLibrary
         /// Read out properties of <paramref name="target"/> object (can be a box)
         /// from <paramref name="input"/>.
         /// </summary>
-        /// <returns>The number of bytes read</returns>
-        public static long ReadObject(object target, BitReadStream input, long bytesLeft, PiffReadContext ctx)
+        /// <returns>Read status from <see cref="PiffReader"/>.</returns>
+        public static PiffReadStatuses ReadObject(object target, BitReadStream input, PiffReadContext ctx)
         {
-            var readBytes = 0L;
+            var currentInput = input;
 
             foreach (var prop in GetProperties(target))
             {
                 if (prop.Format == PiffDataFormats.Skip) continue;
 
-                var readSize = prop.ReadValue(target, input, bytesLeft, ctx);
-                if (readSize < 0)
-                    return readSize;
-
-                readBytes += readSize;
-
-                if (bytesLeft < readSize)
+                var status = prop.ReadValue(target, currentInput, ctx);
+                if (status != PiffReadStatuses.Continue)
                 {
-                    ctx.AddWarning($"At position {input.Position} read beyond box boundaries (bytes left {bytesLeft}, read {readSize}). Backtracking.");
-                    input.Seek(-(int)(readSize - bytesLeft), SeekOrigin.Current);
-                    break;
+                    // EOF at the expected place means we're finished reading this object
+                    return status == PiffReadStatuses.Eof ? PiffReadStatuses.Continue : status;
                 }
 
-                bytesLeft -= readSize;
-                if (bytesLeft <= 0)
-                    break;
+                if (prop.IsLength)
+                {
+                    var len = (uint) Convert.ChangeType(prop.Property.GetValue(target), typeof(uint));
+                    currentInput = new BitReadStream(input, len);
+                }
             }
 
-            return readBytes;
+            if (currentInput != input)
+            {
+                input.Consolidate(currentInput);
+                currentInput.Dispose();
+            }
+
+            return PiffReadStatuses.Continue;
         }
 
 
@@ -160,32 +176,39 @@ namespace PiffLibrary
         /// </summary>
         public static void WriteObject(BitWriteStream output, object source, PiffWriteContext ctx)
         {
-            foreach (var p in GetProperties(source))
-                p.WriteValue(output, source, ctx);
-        }
+            var currentOutput = output;
 
-
-        /// <summary>
-        /// Write a single value or array with the given format.
-        /// Skip the writing alltogether if the valus is <see langword="null"/>.
-        /// </summary>
-        public void WriteValue(BitWriteStream output, object target, PiffWriteContext ctx)
-        {
-            var value = Property.GetValue(target);
-
-            if (value is null || Format == PiffDataFormats.Skip)
-                return;
-
-            if (IsArray)
+            foreach (var prop in GetProperties(source))
             {
-                foreach (var item in value as Array)
+                if (prop.Format == PiffDataFormats.Skip) continue;
+
+                if (prop.IsLength)
                 {
-                    WriteSingleValue(output, item, Format, ctx);
+                    currentOutput = new BitWriteStream(new MemoryStream(), true);
+                    continue;
+                }
+
+                var value = prop.Property.GetValue(source);
+                if (value is null) continue;
+
+                if (prop.IsArray)
+                {
+                    foreach (var item in value as Array)
+                    {
+                        WriteSingleValue(currentOutput, item, prop.Format, ctx);
+                    }
+                }
+                else
+                {
+                    WriteSingleValue(currentOutput, value, prop.Format, ctx);
                 }
             }
-            else
+
+            if (currentOutput != output)
             {
-                WriteSingleValue(output, value, Format, ctx);
+                output.WriteBytes(((uint) currentOutput.Position).ToDynamic());
+                output.Consolidate(currentOutput);
+                currentOutput.Dispose();
             }
         }
 
@@ -320,90 +343,106 @@ namespace PiffLibrary
         #region Reading utility
 
         /// <summary>
-        /// Read this value into the given <paramref name="targetObject"/>.
+        /// Read <see langword="this"/> value into the given <paramref name="targetObject"/>.
         /// </summary>
-        /// <returns>The number of bytes read</returns>
-        private long ReadValue(object targetObject, BitReadStream input, long bytesLeft, PiffReadContext ctx)
+        private PiffReadStatuses ReadValue(object targetObject, BitReadStream input, PiffReadContext ctx)
         {
-            var readBytes = 0L;
-
             if (IsArray)
             {
-                var list = new List<object>();
-                var count = ArraySize ?? int.MaxValue;
-
-                while (count > 0 && bytesLeft > 0)
-                {
-                    var readSize = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object item);
-                    if (readSize < 0) return readSize;
-
-                    if (item != null)
-                        list.Add(item);
-    
-                    readBytes += readSize;
-                    bytesLeft -= readSize;
-                    count--;
-                }
-
-                if (Property.CanWrite)
-                {
-                    var array = Array.CreateInstance(ElementType, list.Count);
-                    Property.SetValue(targetObject, array);
-
-                    for (var i = 0; i < list.Count; i++)
-                        array.SetValue(list[i], i);
-                }
+                return ReadArray(targetObject, input, ctx);
             }
             else
             {
-                readBytes = ReadSingleValue(targetObject, input, bytesLeft, ctx, out object value);
-                if (readBytes < 0) return readBytes;
+                var status = ReadSingleValue(targetObject, input, ctx, out var value);
+                if (status != PiffReadStatuses.Continue) return status;
 
                 if (Property.CanWrite)
                 {
-                    Property.SetValue(targetObject, value);
+                    try
+                    {
+                        Property.SetValue(targetObject, value);
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        throw new ArgumentException($"Error when writing to '{targetObject.GetType().Name}.{Property.Name}'.", ex);
+                    }
                 }
+
+                return PiffReadStatuses.Continue;
+            }
+        }
+
+
+        private PiffReadStatuses ReadArray(object targetObject, BitReadStream input, PiffReadContext ctx)
+        {
+            PiffReadStatuses status;
+            Array array;
+
+            // Can add short, ushort, int, uint, ulong, string, Guid
+            switch (Format)
+            {
+                case PiffDataFormats.UInt8:
+                    status = ReadByteArray(input, ctx, out array);
+                    break;
+                default:
+                    status = ReadVariableSizeArray(targetObject, input, ctx, out array);
+                    break;
             }
 
-            return readBytes;
+            if (Property.CanWrite)
+            {
+                Property.SetValue(targetObject, array);
+            }
+
+            if (ArraySize.HasValue && ArraySize.Value < array.Length)
+            {
+                ctx.AddWarning($"Expected {ArraySize.Value} elements, got only {array.Length} for {targetObject.GetType().Name}.{Property.Name}.");
+            }
+
+            return status;
+        }
+
+
+        private PiffReadStatuses ReadByteArray(BitReadStream input, PiffReadContext ctx, out Array result)
+        {
+            var count = ArraySize ?? (int) input.BytesLeft;
+            var buffer = new byte[count];
+            var read = input.Read(buffer, 0, count);
+            result = buffer;
+
+            return read == count ? PiffReadStatuses.Continue : PiffReadStatuses.EofPremature;
         }
 
 
         /// <summary>
-        /// Read a box, a POCO, a fixed-length string, or a primitive value.
+        /// Read array element by element, assuming their sizes can differ.
         /// </summary>
-        /// <returns>
-        /// The number of bytes read. Can be 0 if we only read a few bits.
-        /// -1 of there was an error. Skip to the end of the box.
-        /// </returns>
-        private long ReadSingleValue(
-            object targetObject, BitReadStream input, long bytesLeft,
-            PiffReadContext ctx, out object value)
+        private PiffReadStatuses ReadVariableSizeArray(object targetObject, BitReadStream input, PiffReadContext ctx, out Array result)
         {
-            long readBytes;
+            var list = new List<object>();
+            var status = PiffReadStatuses.Continue;
 
-            switch (Format)
+            var count = ArraySize ?? int.MaxValue;
+            while (!input.IsEmpty && count > 0)
             {
-                case PiffDataFormats.Ascii:
-                    value = input.ReadAsciiString(ItemSize);
-                    readBytes = ItemSize;
-                    break;
+                status = ReadSingleValue(targetObject, input, ctx, out var item);
+                if (status != PiffReadStatuses.Continue) break;
 
-                case PiffDataFormats.InlineObject:
-                    readBytes = ReadPoco(targetObject, input, bytesLeft, ElementType, ctx, out value);
-                    break;
-
-                case PiffDataFormats.Box:
-                    readBytes = PiffReader.ReadBox(input, ctx, out PiffBoxBase box);
-                    value = box;
-                    break;
-
-                default:
-                    readBytes = ReadPrimitiveValue(input, Format, out value);
-                    break;
+                list.Add(item);
+                count--;
             }
 
-            return readBytes;
+            if (ArraySize.HasValue && count > 0)
+                ctx.AddError($"Not enough items read in {targetObject.GetType().Name}: expected {ArraySize}, got {ArraySize - count}.");
+
+            var array = Array.CreateInstance(ElementType, list.Count);
+
+            for (var i = 0; i < list.Count; i++)
+                array.SetValue(list[i], i);
+
+            result = array;
+
+            return status;
         }
 
 
@@ -411,122 +450,160 @@ namespace PiffLibrary
         /// Read a plain object. If it has a constructor with a parent, use it.
         /// </summary>
         /// <returns>The number of bytes read</returns>
-        private static long ReadPoco(
-            object parentObject, BitReadStream input, long bytesLeft, Type propertyType,
-            PiffReadContext ctx, out object obj)
+        private static PiffReadStatuses ReadPoco(
+            object parentObject, BitReadStream input, Type propertyType, PiffReadContext ctx, out object obj)
         {
             if (propertyType.GetConstructor(Type.EmptyTypes) != null)
                 obj = Activator.CreateInstance(propertyType);
             else
                 obj = Activator.CreateInstance(propertyType, parentObject);
         
-            return ReadObject(obj, input, bytesLeft, ctx);
+            return ReadObject(obj, input, ctx);
         }
 
 
         /// <summary>
-        /// Read an integer (of many formats), a GUID or a zero-terminated string.
+        /// Read an integer (of many formats), a GUID, a string (of many formats),
+        /// a box, or a POCO.
         /// </summary>
-        /// <returns>The number of bytes read</returns>
-        private static long ReadPrimitiveValue(BitReadStream bytes, PiffDataFormats format, out object value)
+        private PiffReadStatuses ReadSingleValue(object targetObject, BitReadStream input, PiffReadContext ctx, out object result)
         {
-            var pos = bytes.Position;
+            PiffReadStatuses status;
 
-            switch (format)
+            switch (Format)
             {
+                case PiffDataFormats.InlineObject:
+                    status = ReadPoco(targetObject, input, ElementType, ctx, out result);
+                    return status;
+
+                case PiffDataFormats.Box:
+                    status = PiffReader.ReadBox(input, ctx, out var box);
+                    result = box;
+                    return status;
+
                 case PiffDataFormats.UInt1:
-                    value = (byte)bytes.ReadBits(1, false);
-                    break;
+                    status = input.ReadBits(1, false, out var u1);
+                    result = (byte) u1;
+                    return status;
 
                 case PiffDataFormats.UInt2Minus1:
-                    value = (byte)(bytes.ReadBits(2, false) + 1);
-                    break;
+                    status = input.ReadBits(2, false, out var u2m);
+                    result = (byte) (u2m + 1);
+                    return status;
 
                 case PiffDataFormats.UInt3:
-                    value = (byte)bytes.ReadBits(3, false);
-                    break;
+                    status = input.ReadBits(3, false, out var u3);
+                    result = (byte) u3;
+                    return status;
 
                 case PiffDataFormats.UInt4:
-                    value = (byte)bytes.ReadBits(4, false);
-                    break;
+                    status = input.ReadBits(4, false, out var u4);
+                    result = (byte) u4;
+                    return status;
 
                 case PiffDataFormats.UInt5:
-                    value = (byte)bytes.ReadBits(5, false);
-                    break;
+                    status = input.ReadBits(5, false, out var u5);
+                    result = (byte) u5;
+                    return status;
 
                 case PiffDataFormats.UInt6:
-                    value = (byte)bytes.ReadBits(6, false);
-                    break;
+                    status = input.ReadBits(6, false, out var u6);
+                    result = (byte) u6;
+                    return status;
 
                 case PiffDataFormats.UInt7:
-                    value = (byte)bytes.ReadBits(7, false);
-                    break;
+                    status = input.ReadBits(7, false, out var u7);
+                    result = (byte) u7;
+                    return status;
 
                 case PiffDataFormats.Int8:
-                    value = (sbyte)bytes.ReadByte();
-                    break;
+                    status = input.ReadByte(out var s8);
+                    result = (sbyte) s8;
+                    return status;
 
                 case PiffDataFormats.UInt8:
-                    value = (byte)bytes.ReadByte();
-                    break;
+                    status = input.ReadByte(out var u8);
+                    result = (byte) u8;
+                    return status;
 
                 case PiffDataFormats.Int12:
-                    value = (short)bytes.ReadBits(12, true);
-                    break;
+                    status = input.ReadBits(12, true, out var s12);
+                    result = (short) s12;
+                    return status;
 
                 case PiffDataFormats.Int16:
-                    value = bytes.ReadInt16();
-                    break;
+                    status = input.ReadInt16(out var s16);
+                    result = s16;
+                    return status;
 
                 case PiffDataFormats.UInt16:
-                    value = bytes.ReadUInt16();
-                    break;
+                    status = input.ReadUInt16(out var u16);
+                    result = u16;
+                    return status;
 
                 case PiffDataFormats.Int24:
-                    value = bytes.ReadInt24();
-                    break;
+                    status = input.ReadInt24(out var s24);
+                    result = s24;
+                    return status;
 
                 case PiffDataFormats.Int32:
-                    value = bytes.ReadInt32();
-                    break;
+                    status = input.ReadInt32(out var s32);
+                    result = s32;
+                    return status;
 
                 case PiffDataFormats.UInt32:
-                    value = bytes.ReadUInt32();
-                    break;
+                    status = input.ReadUInt32(out var u32);
+                    result = u32;
+                    return status;
 
                 case PiffDataFormats.Int64:
-                    value = bytes.ReadInt64();
-                    break;
+                    status = input.ReadInt64(out var s64);
+                    result = s64;
+                    return status;
 
                 case PiffDataFormats.UInt64:
-                    value = bytes.ReadUInt64();
-                    break;
+                    status = input.ReadUInt64(out var u64);
+                    result = u64;
+                    return status;
 
                 case PiffDataFormats.DynamicInt:
-                    value = bytes.ReadDynamicInt();
-                    break;
+                    status = input.ReadDynamicInt(out var sdyn);
+                    result = sdyn;
+                    return status;
 
                 case PiffDataFormats.GuidBytes:
-                    value = bytes.ReadGuid();
-                    break;
+                    status = input.ReadGuid(out var guid);
+                    result = guid;
+                    return status;
+
+                case PiffDataFormats.Ascii:
+                    status = input.ReadAsciiString(ItemSize, out var ascii);
+                    result = ascii;
+                    return status;
 
                 case PiffDataFormats.AsciiZero:
-                    value = bytes.ReadAsciiString();
-                    break;
+                    status = input.ReadAsciiZeroString(out var strz);
+                    result = strz;
+                    return status;
+
+                case PiffDataFormats.AsciiPascal:
+                    status = input.ReadAsciiPascalString(out var strp);
+                    result = strp;
+                    return status;
 
                 case PiffDataFormats.Utf8Zero:
-                    value = bytes.ReadUtf8String();
-                    break;
+                    status = input.ReadUtf8ZeroString(out var utfz);
+                    result = utfz;
+                    return status;
 
                 case PiffDataFormats.Utf8Or16Zero:
-                    value = bytes.ReadUtf8Or16String();
-                    break;
+                    status = input.ReadUtf8Or16ZeroString(out var utfz8or16);
+                    result = utfz8or16;
+                    return status;
 
                 default:
-                    throw new ArgumentException($"Format '{format}' is not yet supported for reading.");
+                    throw new ArgumentException($"Format '{Format}' is not yet supported for reading.");
             }
-
-            return bytes.Position - pos;
         }
 
         #endregion
@@ -614,12 +691,13 @@ namespace PiffLibrary
                     return 64;
 
                 case PiffDataFormats.DynamicInt:
-                    return (ulong)((int)value).ToDynamic().Count() * 8;
+                    return ((uint)value).ToDynamicLen() * 8;
 
                 case PiffDataFormats.Ascii:
                     return (ulong)((string)value).Length * 8;
 
                 case PiffDataFormats.AsciiZero:
+                case PiffDataFormats.AsciiPascal:
                     return (ulong)((string)value).Length * 8 + 8;
 
                 case PiffDataFormats.Utf8Zero:
@@ -727,7 +805,7 @@ namespace PiffLibrary
                     break;
 
                 case PiffDataFormats.DynamicInt:
-                    output.WriteBytes(((int)value).ToDynamic());
+                    output.WriteBytes(((uint)value).ToDynamic());
                     break;
 
                 case PiffDataFormats.Ascii:
@@ -736,6 +814,11 @@ namespace PiffLibrary
 
                 case PiffDataFormats.AsciiZero:
                     output.WriteBytes(Encoding.ASCII.GetBytes((string)value).Append((byte)0));
+                    break;
+
+                case PiffDataFormats.AsciiPascal:
+                    output.WriteByte((byte) ((string)value).Length);
+                    output.WriteBytes(Encoding.ASCII.GetBytes((string)value));
                     break;
 
                 case PiffDataFormats.Utf8Zero:

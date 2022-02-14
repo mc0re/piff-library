@@ -2,6 +2,14 @@
 {
     /// <summary>
     /// Object descriptor type ID.
+    /// 
+    /// Other known tags:
+    /// - 1 or 17 - Object descriptor
+    /// - 2 or 16 - Initial object descriptor
+    /// - 10 - IPMP descriptor pointer
+    /// - 11 - IPMP descriptor
+    /// - 14 - ES ID INC descriptor
+    /// - 15 - ES ID REF descriptor
     /// </summary>
     internal static class PiffEsdsBlockIds
     {

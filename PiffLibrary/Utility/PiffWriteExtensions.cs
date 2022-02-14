@@ -110,26 +110,36 @@ namespace PiffLibrary
         /// <summary>
         /// Write multiple bytes, with highest bit signifying that another byte follows.
         /// </summary>
-        /// <remarks>
-        /// To simplify length calculation, always write 4 bytes.
-        /// </remarks>
-        public static IEnumerable<byte> ToDynamic(this int value)
+        public static IEnumerable<byte> ToDynamic(this uint value)
         {
-            var bytes = new byte[4];
-            var idx = 3;
+            var numBytes = (int) value.ToDynamicLen();
+            var idx = numBytes;
+            var bytes = new byte[numBytes];
 
             while (value > 0)
             {
+                idx--;
                 var part = value & 0x7F;
                 value >>= 7;
                 bytes[idx] = (byte)part;
-                idx--;
             }
 
-            for (var setBitIdx = 0; setBitIdx < 3; setBitIdx++)
+            for (var setBitIdx = 0; setBitIdx < numBytes - 1; setBitIdx++)
                 bytes[setBitIdx] |= 0x80;
 
             return bytes;
+        }
+
+
+        /// <summary>
+        /// Calculate the number of bytes needed to store the number as dynamic.
+        /// </summary>
+        public static uint ToDynamicLen(this uint value)
+        {
+            return value > 0b1111111_1111111_1111111 ? 4u :
+                   value > 0b1111111_1111111 ? 3u :
+                   value > 0b1111111 ? 2u :
+                   1u;
         }
 
         #endregion

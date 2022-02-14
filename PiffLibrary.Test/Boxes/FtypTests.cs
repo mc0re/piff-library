@@ -16,11 +16,11 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(16L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
@@ -38,11 +38,11 @@ namespace PiffLibrary.Test.Boxes
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(24L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
@@ -54,18 +54,18 @@ namespace PiffLibrary.Test.Boxes
 
 
         [TestMethod]
-        public void Ftype_ReadNoCompat64bit()
+        public void Ftype_ReadNoCompat64BitLength()
         {
             var bytes = new byte[] {
                 0, 0, 0, 1, 0x66, 0x74, 0x79, 0x70, 0, 0, 0, 0, 0, 0, 0, 24, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2 };
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(1, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(24L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
@@ -77,24 +77,49 @@ namespace PiffLibrary.Test.Boxes
         [TestMethod]
         public void Ftype_ReadLimitedCompat()
         {
-            // Two items in the last array, but the box length limits to 1
+            // The box length limits the array to 1 element, the other one is ignored
             var bytes = new byte[] {
                 0, 0, 0, 20, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
                 0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
             using var input = new BitReadStream(new MemoryStream(bytes, false), true);
             var ctx = new PiffReadContext();
 
-            var length = PiffReader.ReadBox(input, ctx, out var box);
+            var status = PiffReader.ReadBox(input, ctx, out var box);
 
             Assert.AreEqual(0, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
             Assert.IsNotNull(box);
-            Assert.AreEqual(20L, length);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
             var ftyp = box as PiffFileTypeBox;
             Assert.IsNotNull(ftyp);
             Assert.AreEqual("majr", ftyp.MajorBrand);
             Assert.AreEqual(2u, ftyp.MinorVersion);
             Assert.AreEqual(1, ftyp.CompatibleBrands.Length);
             Assert.AreEqual("com1", ftyp.CompatibleBrands[0]);
+        }
+
+
+        [TestMethod]
+        public void Ftype_ReadExpectedMore()
+        {
+            // The box length claims there are 3 elements, but there is only data for 2
+            var bytes = new byte[] {
+                0, 0, 0, 28, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x61, 0x6A, 0x72, 0, 0, 0, 2,
+                0x63, 0x6F, 0x6D, 0x31, 0x63, 0x6F, 0x6D, 0x32 };
+            using var input = new BitReadStream(new MemoryStream(bytes, false), true);
+            var ctx = new PiffReadContext();
+
+            var status = PiffReader.ReadBox(input, ctx, out var box);
+
+            Assert.AreEqual(1, ctx.Messages.Count, ctx.Messages.Any() ? ctx.Messages.First() : "");
+            Assert.IsNotNull(box);
+            Assert.AreEqual(PiffReadStatuses.Continue, status);
+            var ftyp = box as PiffFileTypeBox;
+            Assert.IsNotNull(ftyp);
+            Assert.AreEqual("majr", ftyp.MajorBrand);
+            Assert.AreEqual(2u, ftyp.MinorVersion);
+            Assert.AreEqual(2, ftyp.CompatibleBrands.Length);
+            Assert.AreEqual("com1", ftyp.CompatibleBrands[0]);
+            Assert.AreEqual("com2", ftyp.CompatibleBrands[1]);
         }
 
 

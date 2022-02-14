@@ -29,6 +29,8 @@ namespace PiffLibrary
 
         private static readonly byte[] mGuidBuffer = new byte[16];
 
+        private static UnicodeEncoding mUtf16 = new UnicodeEncoding(true, true);
+
         #endregion
 
 
@@ -126,161 +128,254 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 16-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static short ReadInt16(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadInt16(this BitReadStream bytes, out short result)
         {
-            if (bytes.Read(mInt16Buffer, 0, mInt16Buffer.Length) < mInt16Buffer.Length)
-                return BitReadStream.Eof;
+            var len = bytes.Read(mInt16Buffer, 0, mInt16Buffer.Length);
+            if (len < mInt16Buffer.Length)
+            {
+                result = 0;
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
 
-            return mInt16Buffer.GetInt16();
+            result = mInt16Buffer.GetInt16();
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read a 16-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static ushort ReadUInt16(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadUInt16(this BitReadStream bytes, out ushort result)
         {
-            if (bytes.Read(mInt16Buffer, 0, mInt16Buffer.Length) < mInt16Buffer.Length)
-                return 0xFFFF; // BitReadStream.Eof
+            var len = bytes.Read(mInt16Buffer, 0, mInt16Buffer.Length);
+            if (len < mInt16Buffer.Length)
+            {
+                result = 0;
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
 
-            return mInt16Buffer.GetUInt16();
+            result = mInt16Buffer.GetUInt16();
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read a 24-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static int ReadInt24(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadInt24(this BitReadStream bytes, out int result)
         {
-            if (bytes.Read(mInt24Buffer, 0, mInt24Buffer.Length) < mInt24Buffer.Length)
-                return BitReadStream.Eof;
+            var len = bytes.Read(mInt24Buffer, 0, mInt24Buffer.Length);
+            if (len < mInt24Buffer.Length)
+            {
+                result = 0;
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
 
-            return mInt24Buffer.GetInt24();
+            result = mInt24Buffer.GetInt24();
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read a 32-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static int ReadInt32(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadInt32(this BitReadStream bytes, out int result)
         {
-            if (bytes.Read(mInt32Buffer, 0, mInt32Buffer.Length) < mInt32Buffer.Length)
-                return BitReadStream.Eof;
+            var len = bytes.Read(mInt32Buffer, 0, mInt32Buffer.Length);
+            if (len < mInt32Buffer.Length)
+            {
+                result = 0;
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
 
-            return mInt32Buffer.GetInt32();
+            result = mInt32Buffer.GetInt32();
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read a 32-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static uint ReadUInt32(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadUInt32(this BitReadStream bytes, out uint result)
         {
-            if (bytes.Read(mInt32Buffer, 0, mInt32Buffer.Length) < mInt32Buffer.Length)
-                return 0xFFFFFFFF; // BitReadStream.Eof
+            var len = bytes.Read(mInt32Buffer, 0, mInt32Buffer.Length);
+            if (len < mInt32Buffer.Length)
+            {
+                result = 0;
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
 
-            return mInt32Buffer.GetUInt32();
+            result = mInt32Buffer.GetUInt32();
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read a 64-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static long ReadInt64(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadInt64(this BitReadStream bytes, out long result)
         {
-            if (bytes.Read(mInt64Buffer, 0, mInt64Buffer.Length) < mInt64Buffer.Length)
-                return BitReadStream.Eof;
+            var len = bytes.Read(mInt64Buffer, 0, mInt64Buffer.Length);
+            if (len < mInt64Buffer.Length)
+            {
+                result = 0;
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
 
-            return mInt64Buffer.GetInt64();
+            result = mInt64Buffer.GetInt64();
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read a 64-bit unsigned integer in big-endian format from a stream.
         /// </summary>
-        internal static ulong ReadUInt64(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadUInt64(this BitReadStream bytes, out ulong result)
         {
-            if (bytes.Read(mInt64Buffer, 0, mInt64Buffer.Length) < mInt64Buffer.Length)
-                return 0xFFFFFFFFFFFFFFFF; // BitReadStream.Eof
+            var len = bytes.Read(mInt64Buffer, 0, mInt64Buffer.Length);
+            if (len < mInt64Buffer.Length)
+            {
+                result = 0;
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
 
-            return mInt64Buffer.GetUInt64();
+            result = mInt64Buffer.GetUInt64();
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read 8..32-bit integer in big-endian format from a stream.
         /// </summary>
-        internal static int ReadDynamicInt(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadDynamicInt(this BitReadStream bytes, out uint result)
         {
-            var res = 0;
-            int b;
+            byte b;
+            var read = 0;
+            result = 0;
 
             do
             {
-                b = bytes.ReadByte();
-                res = (res << 7) | (b & 0x7F);
-            }
-             while (b > 0x7F);
+                var status = bytes.ReadByte(out b);
+                if (status != PiffReadStatuses.Continue)
+                    return result == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
 
-            return res;
+                result = (result << 7) | (b & 0x7Fu);
+                read++;
+            }
+             while (read < 4 && b > 0x7F);
+
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read a 16-byte GUID in big-endian format from a stream.
         /// </summary>
-        internal static Guid ReadGuid(this BitReadStream bytes)
+        internal static PiffReadStatuses ReadGuid(this BitReadStream bytes, out Guid result)
         {
-            if (bytes.Read(mGuidBuffer, 0, mGuidBuffer.Length) < mGuidBuffer.Length)
-                return Guid.Empty;
+            var len = bytes.Read(mGuidBuffer, 0, mGuidBuffer.Length);
+            if (len < mGuidBuffer.Length)
+                return len == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
 
             var fromBe = (from i in PiffWriteExtensions.GuidByteOrder select mGuidBuffer[i]).ToArray();
-            return new Guid(fromBe);
-        }
-
-
-        /// <summary>
-        /// Read a 0-terminated ASCII string.
-        /// </summary>
-        public static string ReadAsciiString(this BitReadStream bytes)
-        {
-            var str = new List<byte>();
-            int b;
-
-            while ((b = bytes.ReadByte()) > 0)
-                str.Add((byte) b);
-
-            return Encoding.ASCII.GetString(str.ToArray());
+            result = new Guid(fromBe);
+            return PiffReadStatuses.Continue;
         }
 
 
         /// <summary>
         /// Read the given number of ASCII characters from a string.
         /// </summary>
-        public static string ReadAsciiString(this BitReadStream bytes, int length)
+        public static PiffReadStatuses ReadAsciiString(this BitReadStream bytes, int length, out string ascii)
         {
-            var chars = Enumerable.Range(0, length)
-                                  .Select(_ => bytes.ReadByte())
-                                  .TakeWhile(c => c != BitReadStream.Eof)
-                                  .Select(c => (byte)c)
-                                  .ToArray();
+            var buffer = new byte[length];
+            var read = bytes.Read(buffer, 0, length);
 
-            return Encoding.ASCII.GetString(chars);
+            if (read < length)
+            {
+                ascii = string.Empty;
+                return read == 0 ? PiffReadStatuses.Eof : PiffReadStatuses.EofPremature;
+            }
+
+            ascii = Encoding.ASCII.GetString(buffer);
+            return PiffReadStatuses.Continue;
+        }
+
+
+        /// <summary>
+        /// Read a 0-terminated ASCII string.
+        /// </summary>
+        public static PiffReadStatuses ReadAsciiZeroString(this BitReadStream bytes, out string ascii)
+        {
+            var str = new List<byte>();
+            PiffReadStatuses status;
+
+            while (true)
+            {
+                status = bytes.ReadByte(out var b);
+                if (status != PiffReadStatuses.Continue)
+                {
+                    if (str.Count != 0) status = PiffReadStatuses.EofPremature;
+                    break;
+                }
+                if (b == 0) break;
+
+                str.Add(b);
+            }
+
+            ascii = Encoding.ASCII.GetString(str.ToArray());
+            return status;
+        }
+
+
+        /// <summary>
+        /// Read a Pascal-style ASCII string.
+        /// </summary>
+        public static PiffReadStatuses ReadAsciiPascalString(this BitReadStream bytes, out string ascii)
+        {
+            var status = bytes.ReadByte(out var length);
+            if (status != PiffReadStatuses.Continue)
+            {
+                ascii = string.Empty;
+                return PiffReadStatuses.Eof;
+            }
+
+            var buf = new byte[length];
+            var read = bytes.Read(buf, 0, length);
+            if (read < length)
+            {
+                ascii = string.Empty;
+                return PiffReadStatuses.EofPremature;
+            }
+
+            ascii = Encoding.ASCII.GetString(buf);
+            return status;
         }
 
 
         /// <summary>
         /// Read a 0-terminated UTF8 string.
         /// </summary>
-        public static string ReadUtf8String(this BitReadStream bytes)
+        public static PiffReadStatuses ReadUtf8ZeroString(this BitReadStream bytes, out string utf)
         {
             var str = new List<byte>();
-            int b;
+            PiffReadStatuses status;
 
-            while ((b = bytes.ReadByte()) > 0)
-                str.Add((byte) b);
+            while (true)
+            {
+                status = bytes.ReadByte(out var b);
+                if (status != PiffReadStatuses.Continue)
+                {
+                    if (str.Count == 0) status = PiffReadStatuses.Eof;
+                    break;
+                }
+                if (b == 0) break;
 
-            return Encoding.UTF8.GetString(str.ToArray());
+                str.Add(b);
+            }
+
+            utf = Encoding.UTF8.GetString(str.ToArray());
+            return status;
         }
 
 
@@ -288,19 +383,30 @@ namespace PiffLibrary
         /// Read a 0-terminated UTF-8 or UTF-16 string.
         /// UTF-16 must start with byte order mark 0xFEFF.
         /// </summary>
-        public static string ReadUtf8Or16String(this BitReadStream bytes)
+        public static PiffReadStatuses ReadUtf8Or16ZeroString(this BitReadStream bytes, out string utf)
         {
             var str = new List<byte>();
-            int b;
+            PiffReadStatuses status;
 
-            // EOF = -1, end-of-string = 0
-            while ((b = bytes.ReadByte()) > 0)
-                str.Add((byte) b);
+            while (true)
+            {
+                status = bytes.ReadByte(out var b);
+                if (status != PiffReadStatuses.Continue)
+                {
+                    if (str.Count == 0) status = PiffReadStatuses.Eof;
+                    break;
+                }
+                if (b == 0) break;
+
+                str.Add(b);
+            }
 
             if (str.Count > 2 && str[0] == 0xFE && str[1] == 0xFF)
-                return new UnicodeEncoding(true, true).GetString(str.ToArray());
+                utf = mUtf16.GetString(str.ToArray());
+            else
+                utf = Encoding.UTF8.GetString(str.ToArray());
 
-            return Encoding.UTF8.GetString(str.ToArray());
+            return status;
         }
 
         #endregion

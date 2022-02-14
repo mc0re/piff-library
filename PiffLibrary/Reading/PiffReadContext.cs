@@ -54,11 +54,20 @@ namespace PiffLibrary
 
 
         /// <summary>
+        /// Add a new information message during reading.
+        /// </summary>
+        internal void AddInfo(string message) => Messages.Add(message);
+
+
+        /// <summary>
         /// Add a new warning during reading.
         /// </summary>
         internal void AddWarning(string message) => Messages.Add(message);
 
 
+        /// <summary>
+        /// Add a new error message during reading.
+        /// </summary>
         internal void AddError(string message) => Messages.Add(message);
 
 

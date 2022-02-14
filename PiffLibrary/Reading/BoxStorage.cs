@@ -74,7 +74,7 @@ namespace PiffLibrary.Infrastructure
 
 
         /// <summary>
-        /// Find a box by its name.
+        /// Find box type by its name. If the box is not known, use <see cref="PiffCatchAllBox"/>.
         /// </summary>
         public FindBoxResults FindBox(Type parentType, string name, out Type boxType)
         {

@@ -12,7 +12,7 @@ namespace PiffLibrary.Boxes
     /// </summary>
     [BoxName("enca")]
     [ChildType(typeof(PiffProtectionSchemeInformationBox))]
-    [ChildType(typeof(PiffElementaryStreamDescriptionMp4aBox))] // For WMA streams a "wfex" block comes instead
+    [ChildType(typeof(PiffElementaryStreamDescriptionBox))] // For WMA streams a "wfex" block comes instead
     [ChildType(typeof(PiffChannelLayoutBox))]
     [ChildType(typeof(PiffSamplingRateBox))] // For V1 only
     [ChildType(typeof(PiffDownmixInstructionsBox))] 
@@ -25,16 +25,22 @@ namespace PiffLibrary.Boxes
         #endregion
 
 
-        #region Properties
+        #region Version property
 
         /// <summary>
         /// Defines V0 or V1 type of box.
         /// </summary>
         public ushort Version { get; set; }
 
+        #endregion
 
-        [PiffArraySize(3)]
-        public short[] Reserved2 { get; } = { 0, 0, 0 };
+
+        #region Properties for version 0
+
+        public ushort QtRevision { get; set; }
+
+
+        public uint QtVendor { get; set; }
 
 
         /// <summary>
@@ -51,8 +57,10 @@ namespace PiffLibrary.Boxes
         public ushort SampleSize { get; set; }
 
 
-        [PiffArraySize(2)]
-        public short[] Reserved3 { get; } = { 0, 0 };
+        public ushort QtCompressionId { get; set; }
+
+
+        public ushort QtPacketSize { get; set; }
 
 
         /// <summary>
@@ -92,7 +100,7 @@ namespace PiffLibrary.Boxes
             SampleSize = audio.BitsPerSample;
             SampleRate = (uint) audio.SamplingRate << 16;
             var scheme = PiffProtectionSchemeInformationBox.CreateAudio(audio.CodecId, keyId);
-            var desc = PiffElementaryStreamDescriptionMp4aBox.Create(
+            var desc = PiffElementaryStreamDescriptionBox.Create(
                 audio.CodecId, 0, audio.BitRate, BufferSize, audio.CodecData);
             Children = new PiffBoxBase[] { desc, scheme };
         }

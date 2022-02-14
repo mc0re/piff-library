@@ -28,6 +28,9 @@
     <None Update="Data\moof-1.bin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Data\piff-result.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\SuperSpeedway_720_230.ismv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

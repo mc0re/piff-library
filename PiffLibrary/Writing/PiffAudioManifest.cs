@@ -7,7 +7,7 @@
         /// </summary>
         public ulong Duration { get; set; }
 
-        public int BitRate { get; set; }
+        public uint BitRate { get; set; }
 
         public ushort Channels { get; set; }
 

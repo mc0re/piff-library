@@ -3,6 +3,7 @@
 
 namespace PiffLibrary.Boxes
 {
+
     /// <summary>
     /// Defines encryption parameters for all samples in a track,
     /// unless overwritten by <see cref="PiffSampleEncryption"/> extension box.
@@ -18,26 +19,59 @@ namespace PiffLibrary.Boxes
 
         #region Properties
 
+        public byte Reserved1 { get; }
+
+
+        [PiffDataFormat(PiffDataFormats.UInt4)]
+        public byte DefaultCryptByteBlock { get; set; }
+
+
+        [PiffDataFormat(PiffDataFormats.UInt4)]
+        public byte DefaultSkipByteBlock { get; set; }
+
+
         /// <summary>
-        /// 0 - not encrypted
-        /// 1 - AES 128-bit in CTR mode
-        /// 2 - AES 128-bit in CBC mode
+        /// Default track encryption algorithm.
+        /// Overriden by <see cref="PiffSampleEncryptionAlgorithm"/>.
+        /// Values are from <see cref="PiffEncryptionTypes"/>.
         /// </summary>
-        [PiffDataFormat(PiffDataFormats.Int24)]
-        public int DefaultAlgorithmId { get; set; } = 1;
+        [PiffDataFormat(PiffDataFormats.UInt8)]
+        public PiffEncryptionTypes DefaultAlgorithmId { get; set; } = PiffEncryptionTypes.AesCtr;
 
 
         /// <summary>
+        /// Default initialization ector size.
+        /// Overriden by <see cref="PiffSampleEncryptionAlgorithm"/>.
+        /// 
         /// 8 for AES-CTR
         /// 16 for AES-CTR and AES-CBC
         /// </summary>
-        public byte DefaultIvSize { get; set; } = 8;
+        public byte DefaultPerSampleIvSize { get; set; } = 8;
 
 
         /// <summary>
         /// Default encryption key ID.
         /// </summary>
         public Guid ContentKeyId { get; set; }
+
+
+        /// <summary>
+        /// Max 16.
+        /// </summary>
+        [PiffDataFormat(nameof(UseConstantIv))]
+        public byte ConstantInitVectorSize { get; set; }
+
+
+        [PiffArraySize(nameof(ConstantInitVectorSize))]
+        public byte[] ConstantInitVector { get; set; }
+
+        #endregion
+
+
+        #region Format
+
+        private PiffDataFormats UseConstantIv() =>
+            DefaultPerSampleIvSize == 0 ? PiffDataFormats.UInt8 : PiffDataFormats.Skip;
 
         #endregion
     }
