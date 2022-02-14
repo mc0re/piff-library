@@ -177,6 +177,7 @@ namespace PiffLibrary
         public static void WriteObject(BitWriteStream output, object source, PiffWriteContext ctx)
         {
             var currentOutput = output;
+            PiffPropertyInfo lengthProp = null;
 
             foreach (var prop in GetProperties(source))
             {
@@ -185,6 +186,7 @@ namespace PiffLibrary
                 if (prop.IsLength)
                 {
                     currentOutput = new BitWriteStream(new MemoryStream(), true);
+                    lengthProp = prop;
                     continue;
                 }
 
@@ -206,7 +208,7 @@ namespace PiffLibrary
 
             if (currentOutput != output)
             {
-                output.WriteBytes(((uint) currentOutput.Position).ToDynamic());
+                WriteSingleValue(output, (uint) currentOutput.Position, lengthProp.Format, ctx);
                 output.Consolidate(currentOutput);
                 currentOutput.Dispose();
             }
@@ -773,39 +775,39 @@ namespace PiffLibrary
                     break;
 
                 case PiffDataFormats.Int12:
-                    output.WriteBits((short)value, 12);
+                    output.WriteBits(value.As<short>(), 12);
                     break;
 
                 case PiffDataFormats.Int16:
-                    output.WriteBytes(((short)value).ToBigEndian());
+                    output.WriteBytes(value.As<short>().ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt16:
-                    output.WriteBytes(((ushort)value).ToBigEndian());
+                    output.WriteBytes(value.As<ushort>().ToBigEndian());
                     break;
 
                 case PiffDataFormats.Int24:
-                    output.WriteBytes(((int)value).ToBigEndian().Skip(1));
+                    output.WriteBytes(value.As<int>().ToBigEndian().Skip(1));
                     break;
 
                 case PiffDataFormats.Int32:
-                    output.WriteBytes(((int)value).ToBigEndian());
+                    output.WriteBytes(value.As<int>().ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt32:
-                    output.WriteBytes(((uint)value).ToBigEndian());
+                    output.WriteBytes(value.As<uint>().ToBigEndian());
                     break;
 
                 case PiffDataFormats.Int64:
-                    output.WriteBytes(((long)value).ToBigEndian());
+                    output.WriteBytes(value.As<long>().ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt64:
-                    output.WriteBytes(((ulong)value).ToBigEndian());
+                    output.WriteBytes(value.As<ulong>().ToBigEndian());
                     break;
 
                 case PiffDataFormats.DynamicInt:
-                    output.WriteBytes(((uint)value).ToDynamic());
+                    output.WriteBytes(value.As<uint>().ToDynamic());
                     break;
 
                 case PiffDataFormats.Ascii:

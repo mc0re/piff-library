@@ -46,6 +46,18 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Write a box to the given stream.
+        /// </summary>
+        public static void WriteBox(Stream output, PiffBoxBase box, PiffWriteContext ctx)
+        {
+            using (var bs = new BitWriteStream(output, false))
+            {
+                WriteBox(bs, box, ctx);
+            }
+        }
+
+
         public static TimeSpan GetDuration(long duration, int timeScale)
             => TimeSpan.FromSeconds(duration / (double)timeScale);
 
@@ -103,12 +115,12 @@ namespace PiffLibrary
             if (boxLength <= uint.MaxValue)
             {
                 output.WriteBytes(((uint)boxLength).ToBigEndian());
-                output.WriteBytes(Encoding.ASCII.GetBytes(boxNameAttr.Name));
+                output.WriteBytes(Encoding.ASCII.GetBytes(box.BoxType));
             }
             else
             {
                 output.WriteBytes(PiffBoxBase.Length64.ToBigEndian());
-                output.WriteBytes(Encoding.ASCII.GetBytes(boxNameAttr.Name));
+                output.WriteBytes(Encoding.ASCII.GetBytes(box.BoxType));
                 output.WriteBytes(boxLength.ToBigEndian());
             }
 
