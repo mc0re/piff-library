@@ -33,7 +33,6 @@ namespace PiffLibrary.Boxes
         /// <summary>
         /// Default track encryption algorithm.
         /// Overriden by <see cref="PiffSampleEncryptionAlgorithm"/>.
-        /// Values are from <see cref="PiffEncryptionTypes"/>.
         /// </summary>
         [PiffDataFormat(PiffDataFormats.UInt8)]
         public PiffEncryptionTypes DefaultAlgorithmId { get; set; } = PiffEncryptionTypes.AesCtr;

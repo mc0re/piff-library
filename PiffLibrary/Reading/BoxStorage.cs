@@ -74,6 +74,15 @@ namespace PiffLibrary.Infrastructure
 
 
         /// <summary>
+        /// Get the default box name.
+        /// </summary>
+        public string GetBoxName(Type boxType)
+        {
+            return boxType.GetCustomAttribute<BoxNameAttribute>().Name;
+        }
+
+
+        /// <summary>
         /// Find box type by its name. If the box is not known, use <see cref="PiffCatchAllBox"/>.
         /// </summary>
         public FindBoxResults FindBox(Type parentType, string name, out Type boxType)

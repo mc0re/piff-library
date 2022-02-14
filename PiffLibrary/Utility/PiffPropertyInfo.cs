@@ -739,39 +739,39 @@ namespace PiffLibrary
             switch (format)
             {
                 case PiffDataFormats.UInt1:
-                    output.WriteBits((byte) value, 1);
+                    output.WriteBits(value.As<byte>(), 1);
                     break;
 
                 case PiffDataFormats.UInt2Minus1:
-                    output.WriteBits((byte) ((byte) value - 1), 2);
+                    output.WriteBits((byte) (value.As<byte>() - 1), 2);
                     break;
 
                 case PiffDataFormats.UInt3:
-                    output.WriteBits((byte) value, 3);
+                    output.WriteBits(value.As<byte>(), 3);
                     break;
 
                 case PiffDataFormats.UInt4:
-                    output.WriteBits((byte) value, 4);
+                    output.WriteBits(value.As<byte>(), 4);
                     break;
 
                 case PiffDataFormats.UInt5:
-                    output.WriteBits((byte) value, 5);
+                    output.WriteBits(value.As<byte>(), 5);
                     break;
 
                 case PiffDataFormats.UInt6:
-                    output.WriteBits((byte) value, 6);
+                    output.WriteBits(value.As<byte>(), 6);
                     break;
 
                 case PiffDataFormats.UInt7:
-                    output.WriteBits((byte) value, 7);
+                    output.WriteBits(value.As<byte>(), 7);
                     break;
 
                 case PiffDataFormats.Int8:
-                    output.WriteByte((byte)(sbyte)value);
+                    output.WriteByte((byte) value.As<sbyte>());
                     break;
 
                 case PiffDataFormats.UInt8:
-                    output.WriteByte((byte)value);
+                    output.WriteByte(value.As<byte>());
                     break;
 
                 case PiffDataFormats.Int12:

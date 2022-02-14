@@ -70,6 +70,15 @@ namespace PiffLibrary
         #region Box reading API
 
         /// <summary>
+        /// Get the default box name.
+        /// </summary>
+        public static string GetBoxName<TBox>() where TBox : PiffBoxBase
+        {
+            return sBoxes.GetBoxName(typeof(TBox));
+        }
+
+
+        /// <summary>
         /// Read a box if it is of expected type. Back off if it's not.
         /// </summary>
         /// <param name="input">Input stream</param>
