@@ -84,7 +84,7 @@ namespace PiffLibrary
         /// <param name="input">Input stream</param>
         internal static PiffReadStatuses ReadBox(BitReadStream input, PiffReadContext ctx, out PiffBoxBase box)
         {
-            var startPosition = input.Position; // Used only for logs and messages
+            var startPosition = (ulong) input.Position;
             var header = PiffBoxBase.HeaderLength;
             box = null;
 
@@ -121,6 +121,7 @@ namespace PiffLibrary
 
             box = (PiffBoxBase) Activator.CreateInstance(type);
             box.BoxType = id;
+            box.StartOffset = startPosition;
 
             var bodyLength = length - header;
             
@@ -134,7 +135,7 @@ namespace PiffLibrary
 
                 using (var inputSlice = new BitReadStream(input, bodyLength, id))
                 {
-                    ctx.Push(box, startPosition);
+                    ctx.Push(box, startPosition, length);
                     var statusProps = PiffPropertyInfo.ReadObject(box, inputSlice, ctx);
                     ctx.Pop();
 
@@ -175,7 +176,8 @@ namespace PiffLibrary
         /// <summary>
         /// Read the 4-byte box length.
         /// </summary>
-        private static PiffReadStatuses ReadBoxLength(BitReadStream input, PiffReadContext ctx, long startPosition, out ulong length)
+        private static PiffReadStatuses ReadBoxLength(
+            BitReadStream input, PiffReadContext ctx, ulong startPosition, out ulong length)
         {
             // In case it's 64-bit length, prepare a larger buffer
             var bytesInLen = input.Read(LengthArray, 0, sizeof(uint));
@@ -219,7 +221,8 @@ namespace PiffLibrary
         /// <summary>
         /// Read box name.
         /// </summary>
-        private static PiffReadStatuses ReadBoxName(BitReadStream input, PiffReadContext ctx, long startPosition, out string boxId)
+        private static PiffReadStatuses ReadBoxName(
+            BitReadStream input, PiffReadContext ctx, ulong startPosition, out string boxId)
         {
             var status = input.ReadAsciiString(PiffBoxBase.BoxTypeLength, out boxId);
 
@@ -242,7 +245,8 @@ namespace PiffLibrary
         /// <summary>
         /// Read the 8-byte box length.
         /// </summary>
-        private static PiffReadStatuses ReadBoxLength64(BitReadStream input, PiffReadContext ctx, long startPosition, string boxId, out ulong length)
+        private static PiffReadStatuses ReadBoxLength64(
+            BitReadStream input, PiffReadContext ctx, ulong startPosition, string boxId, out ulong length)
         {
             var bytesInLen64 = input.Read(Length64Array, 0, sizeof(ulong));
 

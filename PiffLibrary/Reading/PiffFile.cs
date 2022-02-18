@@ -34,10 +34,9 @@ namespace PiffLibrary
         /// <remarks>
         /// Limitations: we do not handle fragments stream.
         /// </remarks>
-        public static PiffFile ParseButSkipData(Stream input)
+        public static PiffFile ParseButSkipData(Stream input, PiffReadContext ctx)
         {
             var file = new PiffFile();
-            var ctx = new PiffReadContext();
 
             using (var bits = new BitReadStream(input, false))
             {

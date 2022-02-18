@@ -3,7 +3,7 @@
 
 namespace PiffLibrary
 {
-    internal sealed class UpdateableString
+    public sealed class UpdateableString
     {
         private readonly object mSource;
         private readonly Func<object, object[], string> mGeneratorFn;

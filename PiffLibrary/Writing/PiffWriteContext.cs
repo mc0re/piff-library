@@ -1,5 +1,6 @@
-﻿using PiffLibrary.Boxes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using PiffLibrary.Boxes;
+
 
 namespace PiffLibrary
 {
@@ -8,6 +9,9 @@ namespace PiffLibrary
         private int mLevel;
 
         public IList<string> Dump { get; } = new List<string>();
+
+
+        public IList<string> Errors { get; } = new List<string>();
 
 
         internal void Start(PiffBoxBase box, long position)
@@ -20,6 +24,12 @@ namespace PiffLibrary
         internal void End(PiffBoxBase _)
         {
             mLevel--;
+        }
+
+
+        public void AddError(string message)
+        {
+            Errors.Add(message);
         }
     }
 }

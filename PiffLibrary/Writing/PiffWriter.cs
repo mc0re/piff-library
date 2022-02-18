@@ -58,6 +58,20 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Write a box header to the given stream.
+        /// The header includes the length and box ID.
+        /// No other data is written, it's the responsibility of the caller.
+        /// </summary>
+        public static void WriteBoxHeader(Stream output, PiffBoxBase box, PiffWriteContext ctx)
+        {
+            using (var bs = new BitWriteStream(output, false))
+            {
+                WriteBoxHeader(bs, box);
+            }
+        }
+
+
         public static TimeSpan GetDuration(long duration, int timeScale)
             => TimeSpan.FromSeconds(duration / (double)timeScale);
 
@@ -105,6 +119,20 @@ namespace PiffLibrary
 
             ctx.Start(box, output.Position);
 
+            WriteBoxHeader(output, box);
+
+            PiffPropertyInfo.WriteObject(output, box, ctx);
+
+            ctx.End(box);
+        }
+
+        #endregion
+
+
+        #region Utility
+
+        private static void WriteBoxHeader(BitWriteStream output, PiffBoxBase box)
+        {
             var type = box.GetType();
             var boxNameAttr = type.GetCustomAttribute<BoxNameAttribute>();
             if (boxNameAttr is null)
@@ -114,7 +142,7 @@ namespace PiffLibrary
 
             if (boxLength <= uint.MaxValue)
             {
-                output.WriteBytes(((uint)boxLength).ToBigEndian());
+                output.WriteBytes(((uint) boxLength).ToBigEndian());
                 output.WriteBytes(Encoding.ASCII.GetBytes(box.BoxType));
             }
             else
@@ -123,10 +151,6 @@ namespace PiffLibrary
                 output.WriteBytes(Encoding.ASCII.GetBytes(box.BoxType));
                 output.WriteBytes(boxLength.ToBigEndian());
             }
-
-            PiffPropertyInfo.WriteObject(output, box, ctx);
-
-            ctx.End(box);
         }
 
         #endregion

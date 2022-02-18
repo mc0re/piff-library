@@ -40,12 +40,18 @@ namespace PiffLibrary.Boxes
 
         #region Inherited properties
 
-
         /// <summary>
         /// The actual box name - useful for boxes with multiple names.
         /// </summary>
         [PiffDataFormat(PiffDataFormats.Skip)]
         public string BoxType { get; set; }
+
+
+        /// <summary>
+        /// Offset of the box's header in the file. Filled out when reading.
+        /// </summary>
+        [PiffDataFormat(PiffDataFormats.Skip)]
+        public ulong StartOffset { get; set; }
 
 
         /// <summary>

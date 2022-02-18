@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PiffLibrary
 {
-    internal sealed class PiffReadContext
+    public sealed class PiffReadContext
     {
         #region Properties
 
@@ -71,12 +71,12 @@ namespace PiffLibrary
         internal void AddError(string message) => Messages.Add(message);
 
 
-        internal void Push(PiffBoxBase box, long position)
+        internal void Push(PiffBoxBase box, ulong position, ulong size)
         {
 #if DEBUG
             Dump.Add(new UpdateableString(
-                box, (o, st) => $"{st[0]}{o} (:{st[1]})",
-                new string(' ', Hierarchy.Count * 2), position));
+                box, (o, st) => $"{st[0]}{o} (:{st[1]} + {st[2]})",
+                new string(' ', Hierarchy.Count * 2), position, size));
 #endif
 
             Hierarchy.Push(box);
