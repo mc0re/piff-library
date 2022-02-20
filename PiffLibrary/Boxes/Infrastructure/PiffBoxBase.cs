@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
+
 
 namespace PiffLibrary.Boxes
 {
@@ -51,7 +51,14 @@ namespace PiffLibrary.Boxes
         /// Offset of the box's header in the file. Filled out when reading.
         /// </summary>
         [PiffDataFormat(PiffDataFormats.Skip)]
-        public ulong StartOffset { get; set; }
+        public ulong OriginalPosition { get; set; }
+
+
+        /// <summary>
+        /// Size of the box in bytes, including header and ID. Filled out when reading.
+        /// </summary>
+        [PiffDataFormat(PiffDataFormats.Skip)]
+        public ulong OriginalSize { get; set; }
 
 
         /// <summary>

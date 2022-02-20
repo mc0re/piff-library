@@ -61,13 +61,12 @@ namespace PiffLibrary
         /// <summary>
         /// Write a box header to the given stream.
         /// The header includes the length and box ID.
-        /// No other data is written, it's the responsibility of the caller.
         /// </summary>
-        public static void WriteBoxHeader(Stream output, PiffBoxBase box, PiffWriteContext ctx)
+        public static void WriteBoxHeader(Stream output, string boxType, ulong length)
         {
             using (var bs = new BitWriteStream(output, false))
             {
-                WriteBoxHeader(bs, box);
+                WriteBoxHeader(bs, boxType, length);
             }
         }
 
@@ -119,7 +118,14 @@ namespace PiffLibrary
 
             ctx.Start(box, output.Position);
 
-            WriteBoxHeader(output, box);
+            var type = box.GetType();
+            var boxNameAttr = type.GetCustomAttribute<BoxNameAttribute>();
+            if (boxNameAttr is null)
+                throw new ArgumentException($"Box name is not defined for type '{type.Name}'.");
+
+            var boxLength = GetBoxLength(box);
+
+            WriteBoxHeader(output, box.BoxType, boxLength);
 
             PiffPropertyInfo.WriteObject(output, box, ctx);
 
@@ -131,25 +137,18 @@ namespace PiffLibrary
 
         #region Utility
 
-        private static void WriteBoxHeader(BitWriteStream output, PiffBoxBase box)
+        private static void WriteBoxHeader(BitWriteStream output, string boxType, ulong length)
         {
-            var type = box.GetType();
-            var boxNameAttr = type.GetCustomAttribute<BoxNameAttribute>();
-            if (boxNameAttr is null)
-                throw new ArgumentException($"Box name is not defined for type '{type.Name}'.");
-
-            var boxLength = GetBoxLength(box);
-
-            if (boxLength <= uint.MaxValue)
+            if (length <= uint.MaxValue)
             {
-                output.WriteBytes(((uint) boxLength).ToBigEndian());
-                output.WriteBytes(Encoding.ASCII.GetBytes(box.BoxType));
+                output.WriteBytes(((uint) length).ToBigEndian());
+                output.WriteBytes(Encoding.ASCII.GetBytes(boxType));
             }
             else
             {
                 output.WriteBytes(PiffBoxBase.Length64.ToBigEndian());
-                output.WriteBytes(Encoding.ASCII.GetBytes(box.BoxType));
-                output.WriteBytes(boxLength.ToBigEndian());
+                output.WriteBytes(Encoding.ASCII.GetBytes(boxType));
+                output.WriteBytes(length.ToBigEndian());
             }
         }
 

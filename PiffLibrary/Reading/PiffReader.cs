@@ -121,7 +121,8 @@ namespace PiffLibrary
 
             box = (PiffBoxBase) Activator.CreateInstance(type);
             box.BoxType = id;
-            box.StartOffset = startPosition;
+            box.OriginalPosition = startPosition;
+            box.OriginalSize = length;
 
             var bodyLength = length - header;
             

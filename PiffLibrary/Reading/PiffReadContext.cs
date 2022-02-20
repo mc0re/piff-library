@@ -34,6 +34,12 @@ namespace PiffLibrary
 
 
         /// <summary>
+        /// If there were any error messages.
+        /// </summary>
+        public bool IsError { get; private set; }
+
+
+        /// <summary>
         /// Used for checking children.
         /// </summary>
         public PiffBoxBase CurrentBox => Hierarchy.Any() ? Hierarchy.Peek() : null;
@@ -68,7 +74,11 @@ namespace PiffLibrary
         /// <summary>
         /// Add a new error message during reading.
         /// </summary>
-        internal void AddError(string message) => Messages.Add(message);
+        internal void AddError(string message)
+        {
+            IsError = true;
+            Messages.Add(message);
+        }
 
 
         internal void Push(PiffBoxBase box, ulong position, ulong size)

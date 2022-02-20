@@ -29,12 +29,13 @@ namespace PiffLibrary
 
 
         /// <summary>
-        /// Parse the given file. Keep all boxes but the "mdat" ones.
+        /// Parse the given file. Special processing might be applied for particular boxes.
         /// </summary>
         /// <remarks>
         /// Limitations: we do not handle fragments stream.
         /// </remarks>
-        public static PiffFile ParseButSkipData(Stream input, PiffReadContext ctx)
+        public static PiffFile Parse(
+            Stream input, PiffReadContext ctx)
         {
             var file = new PiffFile();
 
@@ -51,8 +52,8 @@ namespace PiffLibrary
 
                     switch (box)
                     {
-                        case PiffMediaDataBox _:
-                            keep = false;
+                        case PiffMediaDataBox mdat:
+                            mdat.RawData = null;
                             break;
 
                         default:

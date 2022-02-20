@@ -43,7 +43,7 @@ namespace PiffLibrary.Test
             // Read it back out
             stream.Position = 0;
             var rctx = new PiffReadContext();
-            var piff = PiffFile.ParseButSkipData(stream, rctx);
+            var piff = PiffFile.Parse(stream, rctx);
 
             Assert.IsNotNull(piff);
         }
