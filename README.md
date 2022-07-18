@@ -19,5 +19,5 @@ The process is:
 
 Simple reading:
 ```csharp
-var inputFile = PiffFile.Parse(inputStream);
+var inputFile = PiffFile.ParseButSkipData(inputStream);
 ```

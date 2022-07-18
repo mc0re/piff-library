@@ -45,7 +45,12 @@ namespace PiffLibrary.Boxes
 
 
         /// <summary>
-        /// First 10 bytes are binary data.
+        /// First 10 bytes are some numbers in little endian format:
+        /// - 4 bytes block length
+        /// - 2 bytes value 1
+        /// - 2 bytes value 1
+        /// - 2 bytes payload length
+        /// 
         /// Then XML in Unicode comes in:
         /// &lt;WRMHEADER&gt;...&lt;/WRMHEADER&gt;
         /// 
