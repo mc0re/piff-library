@@ -1,4 +1,5 @@
 ﻿using PiffLibrary.Boxes;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,7 +35,33 @@ namespace PiffLibrary
         /// <remarks>
         /// Limitations: we do not handle fragments stream.
         /// </remarks>
-        public static PiffFile ParseButSkipData(Stream input)
+        public static PiffFile ParseAll(Stream input)
+        {
+            return ParseFile(input, null);
+        }
+
+
+        /// <summary>
+        /// Parse the given file, until the given predicate returns true.
+        /// For instance, when a certain box is found at the top level.
+        /// Keep all boxes but the "mdat" ones.
+        /// </summary>
+        /// <remarks>
+        /// Limitations: we do not handle fragments stream.
+        /// </remarks>
+        public static PiffFile ParseUntil(Stream input, Func<PiffBoxBase, bool> fnStop)
+        {
+            return ParseFile(input, fnStop);
+        }
+
+        
+        /// <summary>
+        /// Parse the given file. Keep all boxes but the "mdat" ones.
+        /// </summary>
+        /// <remarks>
+        /// Limitations: we do not handle fragments stream.
+        /// </remarks>
+        private static PiffFile ParseFile(Stream input, Func<PiffBoxBase, bool> fnStop)
         {
             var file = new PiffFile();
             var ctx = new PiffReadContext();
@@ -62,6 +89,9 @@ namespace PiffLibrary
 
                     if (keep)
                         file.Boxes.Add(box);
+
+                    if (fnStop != null && fnStop(box))
+                        break;
                 }
             }
 

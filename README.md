@@ -19,5 +19,11 @@ The process is:
 
 Simple reading:
 ```csharp
-var inputFile = PiffFile.ParseButSkipData(inputStream);
+// Parse all boxes. "mdat" are parsed, but their data is discarded,
+// and shall be retrieved later using either Position property or
+// location boxes.
+var inputFile = PiffFile.ParseAll(inputStream);
+
+// Parse until PiffMovieBox is fully parsed, ignore the rest.
+var inputFile = PiffFile.ParseUntil(inputStream, b => b is PiffMovieBox);
 ```

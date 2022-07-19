@@ -737,75 +737,75 @@ namespace PiffLibrary
             switch (format)
             {
                 case PiffDataFormats.UInt1:
-                    output.WriteBits((byte) value, 1);
+                    output.WriteBits(Convert.ToByte(value), 1);
                     break;
 
                 case PiffDataFormats.UInt2Minus1:
-                    output.WriteBits((byte) ((byte) value - 1), 2);
+                    output.WriteBits((byte) (Convert.ToByte(value) - 1), 2);
                     break;
 
                 case PiffDataFormats.UInt3:
-                    output.WriteBits((byte) value, 3);
+                    output.WriteBits(Convert.ToByte(value), 3);
                     break;
 
                 case PiffDataFormats.UInt4:
-                    output.WriteBits((byte) value, 4);
+                    output.WriteBits(Convert.ToByte(value), 4);
                     break;
 
                 case PiffDataFormats.UInt5:
-                    output.WriteBits((byte) value, 5);
+                    output.WriteBits(Convert.ToByte(value), 5);
                     break;
 
                 case PiffDataFormats.UInt6:
-                    output.WriteBits((byte) value, 6);
+                    output.WriteBits(Convert.ToByte(value), 6);
                     break;
 
                 case PiffDataFormats.UInt7:
-                    output.WriteBits((byte) value, 7);
+                    output.WriteBits(Convert.ToByte(value), 7);
                     break;
 
                 case PiffDataFormats.Int8:
-                    output.WriteByte((byte)(sbyte)value);
+                    output.WriteByte((byte) Convert.ToSByte(value));
                     break;
 
                 case PiffDataFormats.UInt8:
-                    output.WriteByte((byte)value);
+                    output.WriteByte(Convert.ToByte(value));
                     break;
 
                 case PiffDataFormats.Int12:
-                    output.WriteBits((short)value, 12);
+                    output.WriteBits(Convert.ToInt16(value), 12);
                     break;
 
                 case PiffDataFormats.Int16:
-                    output.WriteBytes(((short)value).ToBigEndian());
+                    output.WriteBytes(Convert.ToInt16(value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt16:
-                    output.WriteBytes(((ushort)value).ToBigEndian());
+                    output.WriteBytes(Convert.ToUInt16(value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.Int24:
-                    output.WriteBytes(((int)value).ToBigEndian().Skip(1));
+                    output.WriteBytes(Convert.ToInt32(value).ToBigEndian().Skip(1));
                     break;
 
                 case PiffDataFormats.Int32:
-                    output.WriteBytes(((int)value).ToBigEndian());
+                    output.WriteBytes(Convert.ToInt32(value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt32:
-                    output.WriteBytes(((uint)value).ToBigEndian());
+                    output.WriteBytes(Convert.ToUInt32(value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.Int64:
-                    output.WriteBytes(((long)value).ToBigEndian());
+                    output.WriteBytes(Convert.ToInt64(value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.UInt64:
-                    output.WriteBytes(((ulong)value).ToBigEndian());
+                    output.WriteBytes(Convert.ToUInt64(value).ToBigEndian());
                     break;
 
                 case PiffDataFormats.DynamicInt:
-                    output.WriteBytes(((uint)value).ToDynamic());
+                    output.WriteBytes(Convert.ToUInt32(value).ToDynamic());
                     break;
 
                 case PiffDataFormats.Ascii:

@@ -71,12 +71,12 @@ namespace PiffLibrary
         internal void AddError(string message) => Messages.Add(message);
 
 
-        internal void Push(PiffBoxBase box, long position)
+        internal void Push(PiffBoxBase box)
         {
 #if DEBUG
             Dump.Add(new UpdateableString(
                 box, (o, st) => $"{st[0]}{o} (:{st[1]})",
-                new string(' ', Hierarchy.Count * 2), position));
+                new string(' ', Hierarchy.Count * 2), box.Position));
 #endif
 
             Hierarchy.Push(box);

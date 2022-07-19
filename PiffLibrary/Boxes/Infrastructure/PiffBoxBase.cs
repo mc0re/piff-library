@@ -49,6 +49,14 @@ namespace PiffLibrary.Boxes
 
 
         /// <summary>
+        /// Box'es position when read from a file (the first byte of the length).
+        /// It might not be the same during writing.
+        /// </summary>
+        [PiffDataFormat(PiffDataFormats.Skip)]
+        public long Position { get; set; }
+
+
+        /// <summary>
         /// Children boxes.
         /// All boxes have their children as the only fields,
         /// or as the last fields.

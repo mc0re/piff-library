@@ -75,7 +75,7 @@ namespace PiffLibrary
         /// <param name="input">Input stream</param>
         internal static PiffReadStatuses ReadBox(BitReadStream input, PiffReadContext ctx, out PiffBoxBase box)
         {
-            var startPosition = input.Position; // Used only for logs and messages
+            var startPosition = input.Position;
             var header = PiffBoxBase.HeaderLength;
             box = null;
 
@@ -112,6 +112,7 @@ namespace PiffLibrary
 
             box = (PiffBoxBase) Activator.CreateInstance(type);
             box.BoxType = id;
+            box.Position = startPosition;
 
             var bodyLength = length - header;
             
@@ -125,7 +126,7 @@ namespace PiffLibrary
 
                 using (var inputSlice = new BitReadStream(input, bodyLength, id))
                 {
-                    ctx.Push(box, startPosition);
+                    ctx.Push(box);
                     var statusProps = PiffPropertyInfo.ReadObject(box, inputSlice, ctx);
                     ctx.Pop();
 
