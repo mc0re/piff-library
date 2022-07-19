@@ -15,7 +15,7 @@ namespace PiffLibrary
     /// Switching to .NET Standard 2.1 or .NET 5+ would allow using Span<>
     /// and stackalloc, eliminating this problem.
     /// </summary>
-    public static class PiffReadExtensions
+    internal static class PiffReadExtensions
     {
         #region Static buffers
 

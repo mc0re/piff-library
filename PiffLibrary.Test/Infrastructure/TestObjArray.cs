@@ -5,8 +5,8 @@ namespace PiffLibrary.Test
     internal class TestObjArray
     {
         [PiffDataFormat(PiffDataFormats.AsciiZero)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        public TestObjArrayItem[] Items { get; set; }
+        public TestObjArrayItem[]? Items { get; set; }
     }
 }

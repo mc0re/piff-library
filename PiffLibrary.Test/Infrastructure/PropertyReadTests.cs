@@ -88,6 +88,7 @@ namespace PiffLibrary.Test.Infrastructure
 
             Assert.AreEqual(PiffReadStatuses.Continue, status);
             Assert.AreEqual("Ab", obj.Name);
+            Assert.IsNotNull(obj.Numbers);
             Assert.AreEqual(2, obj.Numbers.Length);
             Assert.AreEqual(1, obj.Numbers[0]);
             Assert.AreEqual(2, obj.Numbers[1]);
@@ -105,6 +106,7 @@ namespace PiffLibrary.Test.Infrastructure
 
             Assert.AreEqual(PiffReadStatuses.EofPremature, status);
             Assert.AreEqual("Ab", obj.Name);
+            Assert.IsNotNull(obj.Numbers);
             Assert.AreEqual(1, obj.Numbers.Length);
             Assert.AreEqual(1, obj.Numbers[0]);
         }
@@ -121,6 +123,7 @@ namespace PiffLibrary.Test.Infrastructure
 
             Assert.AreEqual(PiffReadStatuses.Continue, status);
             Assert.AreEqual("Ab", obj.Name);
+            Assert.IsNotNull(obj.Items);
             Assert.AreEqual(2, obj.Items.Length);
             Assert.AreEqual(1, obj.Items[0].Number);
             Assert.AreEqual(2, obj.Items[1].Number);
@@ -138,6 +141,7 @@ namespace PiffLibrary.Test.Infrastructure
 
             Assert.AreEqual(PiffReadStatuses.EofPremature, status);
             Assert.AreEqual("Ab", obj.Name);
+            Assert.IsNotNull(obj.Items);
             Assert.AreEqual(1, obj.Items.Length);
             Assert.AreEqual(1, obj.Items[0].Number);
         }
