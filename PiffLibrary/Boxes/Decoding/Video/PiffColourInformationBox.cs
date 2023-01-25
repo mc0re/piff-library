@@ -9,6 +9,7 @@
         /// - "rICC"
         /// - "prof"
         /// </summary>
+        [PiffStringLength(4)]
         public string ColorType { get; set; }
 
 
