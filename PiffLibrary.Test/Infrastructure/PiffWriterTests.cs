@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PiffLibrary.Boxes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,6 +56,58 @@ namespace PiffLibrary.Test
                 ProtectionSystemId = PlayReadyGuid,
                 ProtectionData = PlayReadyProtectionData
             };
+
+
+        [TestMethod]
+        public void Writer_WriteBox()
+        {
+            var ftyp = new byte[] {
+                0, 0, 0, 20, 0x66, 0x74, 0x79, 0x70, 0x61, 0x62, 0x63, 0x64, 0, 0, 0, 10,
+                0x65, 0x66, 0x67, 0x68 };
+
+            var ctx = new PiffWriteContext();
+            var ms = new MemoryStream();
+            using var output = new BitWriteStream(ms, true);
+            var box = new PiffFileTypeBox { MajorBrand = "abcd", MinorVersion = 10, CompatibleBrands = new[] { "efgh" } };
+
+            PiffWriter.WriteBox(output, box, ctx);
+
+            var bytes = ms.GetBuffer().Take((int) ms.Length).ToArray();
+            TestUtil.Compare(ftyp, bytes);
+        }
+
+
+        [TestMethod]
+        public void Writer_WriteNullBox()
+        {
+            var ctx = new PiffWriteContext();
+            var ms = new MemoryStream();
+            using var output = new BitWriteStream(ms, true);
+
+            PiffWriter.WriteBox(output, null, ctx);
+
+            Assert.AreEqual(0L, ms.Length);
+        }
+
+
+        [TestMethod]
+        public void Writer_WriteBoxNewId()
+        {
+            var ftyp = new byte[] {
+                0, 0, 0, 20, 0x73, 0x6b, 0x69, 0x70, 0x61, 0x62, 0x63, 0x64, 0, 0, 0, 10,
+                0x65, 0x66, 0x67, 0x68 };
+
+            var ctx = new PiffWriteContext();
+            var ms = new MemoryStream();
+            using var output = new BitWriteStream(ms, true);
+            var box = new PiffFileTypeBox { MajorBrand = "abcd", MinorVersion = 10, CompatibleBrands = new[] { "efgh" } };
+            box.BoxType = "skip";
+
+            PiffWriter.WriteBox(output, box, ctx);
+
+            var bytes = ms.GetBuffer().Take((int) ms.Length).ToArray();
+            TestUtil.Compare(ftyp, bytes);
+        }
 
 
         [TestMethod]

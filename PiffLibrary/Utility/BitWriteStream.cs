@@ -69,12 +69,6 @@ namespace PiffLibrary
         }
 
 
-        public void Seek(int offset, SeekOrigin origin)
-        {
-            mUnderlying.Seek(offset, origin);
-        }
-
-
         public void WriteByte(byte value)
         {
             mUnderlying.WriteByte(value);

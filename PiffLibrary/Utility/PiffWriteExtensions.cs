@@ -154,5 +154,18 @@ namespace PiffLibrary
         }
 
         #endregion
+
+
+        #region Type conversion
+
+        /// <summary>
+        /// Use type converter if necessary.
+        /// </summary>
+        public static T As<T>(this object value)
+        {
+            return value is T v ? v : (T) Convert.ChangeType(value, typeof(T));
+        }
+
+        #endregion
     }
 }

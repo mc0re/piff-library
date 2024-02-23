@@ -9,12 +9,9 @@ namespace PiffLibrary.Boxes
 
         /// <summary>
         /// Identifies encryption algorithm.
-        /// - 0 - not encrypted
-        /// - 1 - AES-CTR 128 bit
-        /// - 2 - AES-CBC 128 bit
         /// </summary>
         [PiffDataFormat(PiffDataFormats.Int24)]
-        public int AlgorithmId { get; set; }
+        public PiffEncryptionTypes AlgorithmId { get; set; }
 
 
         /// <summary>

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
+
 
 namespace PiffLibrary.Boxes
 {
@@ -40,7 +40,6 @@ namespace PiffLibrary.Boxes
 
         #region Inherited properties
 
-
         /// <summary>
         /// The actual box name - useful for boxes with multiple names.
         /// </summary>
@@ -49,11 +48,17 @@ namespace PiffLibrary.Boxes
 
 
         /// <summary>
-        /// Box'es position when read from a file (the first byte of the length).
-        /// It might not be the same during writing.
+        /// Offset of the box's header in the file. Filled out when reading.
         /// </summary>
         [PiffDataFormat(PiffDataFormats.Skip)]
-        public long Position { get; set; }
+        public ulong OriginalPosition { get; set; }
+
+
+        /// <summary>
+        /// Size of the box in bytes, including header and ID. Filled out when reading.
+        /// </summary>
+        [PiffDataFormat(PiffDataFormats.Skip)]
+        public ulong OriginalSize { get; set; }
 
 
         /// <summary>

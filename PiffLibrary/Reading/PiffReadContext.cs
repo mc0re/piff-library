@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace PiffLibrary
 {
-    internal sealed class PiffReadContext
+    public sealed class PiffReadContext
     {
         #region Properties
 
@@ -31,6 +31,12 @@ namespace PiffLibrary
         /// A list of parsing warnings.
         /// </summary>
         public IList<string> Messages { get; } = new List<string>();
+
+
+        /// <summary>
+        /// If there were any error messages.
+        /// </summary>
+        public bool IsError { get; private set; }
 
 
         /// <summary>
@@ -68,15 +74,19 @@ namespace PiffLibrary
         /// <summary>
         /// Add a new error message during reading.
         /// </summary>
-        internal void AddError(string message) => Messages.Add(message);
+        internal void AddError(string message)
+        {
+            IsError = true;
+            Messages.Add(message);
+        }
 
 
-        internal void Push(PiffBoxBase box)
+        internal void Push(PiffBoxBase box, ulong position, ulong size)
         {
 #if DEBUG
             Dump.Add(new UpdateableString(
-                box, (o, st) => $"{st[0]}{o} (:{st[1]})",
-                new string(' ', Hierarchy.Count * 2), box.Position));
+                box, (o, st) => $"{st[0]}{o} (:{st[1]} + {st[2]})",
+                new string(' ', Hierarchy.Count * 2), position, size));
 #endif
 
             Hierarchy.Push(box);

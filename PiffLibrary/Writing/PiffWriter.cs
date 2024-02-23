@@ -46,6 +46,31 @@ namespace PiffLibrary
         }
 
 
+        /// <summary>
+        /// Write a box to the given stream.
+        /// </summary>
+        public static void WriteBox(Stream output, PiffBoxBase box, PiffWriteContext ctx)
+        {
+            using (var bs = new BitWriteStream(output, false))
+            {
+                WriteBox(bs, box, ctx);
+            }
+        }
+
+
+        /// <summary>
+        /// Write a box header to the given stream.
+        /// The header includes the length and box ID.
+        /// </summary>
+        public static void WriteBoxHeader(Stream output, string boxType, ulong length)
+        {
+            using (var bs = new BitWriteStream(output, false))
+            {
+                WriteBoxHeader(bs, boxType, length);
+            }
+        }
+
+
         public static TimeSpan GetDuration(long duration, int timeScale)
             => TimeSpan.FromSeconds(duration / (double)timeScale);
 
@@ -100,21 +125,31 @@ namespace PiffLibrary
 
             var boxLength = GetBoxLength(box);
 
-            if (boxLength <= uint.MaxValue)
-            {
-                output.WriteBytes(((uint)boxLength).ToBigEndian());
-                output.WriteBytes(Encoding.ASCII.GetBytes(boxNameAttr.Name));
-            }
-            else
-            {
-                output.WriteBytes(PiffBoxBase.Length64.ToBigEndian());
-                output.WriteBytes(Encoding.ASCII.GetBytes(boxNameAttr.Name));
-                output.WriteBytes(boxLength.ToBigEndian());
-            }
+            WriteBoxHeader(output, box.BoxType, boxLength);
 
             PiffPropertyInfo.WriteObject(output, box, ctx);
 
             ctx.End(box);
+        }
+
+        #endregion
+
+
+        #region Utility
+
+        private static void WriteBoxHeader(BitWriteStream output, string boxType, ulong length)
+        {
+            if (length <= uint.MaxValue)
+            {
+                output.WriteBytes(((uint) length).ToBigEndian());
+                output.WriteBytes(Encoding.ASCII.GetBytes(boxType));
+            }
+            else
+            {
+                output.WriteBytes(PiffBoxBase.Length64.ToBigEndian());
+                output.WriteBytes(Encoding.ASCII.GetBytes(boxType));
+                output.WriteBytes(length.ToBigEndian());
+            }
         }
 
         #endregion

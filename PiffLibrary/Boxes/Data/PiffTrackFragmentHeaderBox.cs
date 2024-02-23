@@ -15,7 +15,15 @@
     {
         #region Constants
 
+        public const int FlagsBaseOffsetPresent = 1;
+
         public const int FlagsDescriptionIndexPresent = 2;
+        
+        public const int FlagsDefaultDurationPresent = 8;
+
+        public const int FlagsDefaultSizePresent = 0x10;
+        
+        public const int FlagsDefaultFlagsPresent = 0x20;
 
         #endregion
 
@@ -60,7 +68,7 @@
         #region Format API
 
         private PiffDataFormats FlagsHaveBaseOffset() =>
-            (Flags & 1) != 0 ? PiffDataFormats.UInt64 : PiffDataFormats.Skip;
+            (Flags & FlagsBaseOffsetPresent) != 0 ? PiffDataFormats.UInt64 : PiffDataFormats.Skip;
 
 
         private PiffDataFormats FlagsHaveIndex() =>
@@ -68,15 +76,15 @@
 
 
         private PiffDataFormats FlagsHaveDuration() =>
-            (Flags & 8) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
+            (Flags & FlagsDefaultDurationPresent) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         private PiffDataFormats FlagsHaveSize() =>
-            (Flags & 0x10) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
+            (Flags & FlagsDefaultSizePresent) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         private PiffDataFormats FlagsHaveFlags() =>
-            (Flags & 0x20) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
+            (Flags & FlagsDefaultFlagsPresent) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
         #endregion
     }

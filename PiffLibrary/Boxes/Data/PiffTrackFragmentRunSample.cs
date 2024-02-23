@@ -2,6 +2,13 @@
 {
     public sealed class PiffTrackFragmentRunSample
     {
+        #region Constants
+
+        public const int FlagsSampleIsDifference = 0x10000;
+
+        #endregion
+
+
         #region Properties
 
         [PiffDataFormat(PiffDataFormats.Skip)]
@@ -9,19 +16,19 @@
 
 
         [PiffDataFormat(nameof(FlagsHaveDuration))]
-        public uint SampleDuration { get; set; }
+        public uint Duration { get; set; }
 
 
         [PiffDataFormat(nameof(FlagsHaveSize))]
-        public uint SampleSize { get; set; }
+        public uint Size { get; set; }
 
 
         [PiffDataFormat(nameof(FlagsHaveFlags))]
-        public uint SampleFlags { get; set; }
+        public uint Flags { get; set; }
 
 
         [PiffDataFormat(nameof(GetOffsetFormat))]
-        public long SampleOffset { get; set; }
+        public long TimeOffset { get; set; }
 
         #endregion
 
@@ -39,22 +46,22 @@
         #region Format API
 
         private PiffDataFormats FlagsHaveDuration() =>
-            (Parent.Flags & 0x100) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
+            (Parent.Flags & PiffTrackFragmentRunBox.FlagsSampleDurationPresent) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         private PiffDataFormats FlagsHaveSize() =>
-            (Parent.Flags & 0x200) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
+            (Parent.Flags & PiffTrackFragmentRunBox.FlagsSampleSizePresent) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         private PiffDataFormats FlagsHaveFlags() =>
-            (Parent.Flags & 0x400) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
+            (Parent.Flags & PiffTrackFragmentRunBox.FlagsSampleFlagsPresent) != 0 ? PiffDataFormats.UInt32 : PiffDataFormats.Skip;
 
 
         /// <summary>
         /// Version = 0 - unsigned, otherwise signed.
         /// </summary>
         private PiffDataFormats GetOffsetFormat() =>
-            (Parent.Flags & 0x800) == 0 ? PiffDataFormats.Skip :
+            (Parent.Flags & PiffTrackFragmentRunBox.FlagsTimeOffsetPresent) == 0 ? PiffDataFormats.Skip :
             Parent.Version == 0 ? PiffDataFormats.UInt32 :
             PiffDataFormats.Int32;
 

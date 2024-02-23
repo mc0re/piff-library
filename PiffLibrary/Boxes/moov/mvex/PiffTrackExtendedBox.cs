@@ -17,10 +17,10 @@
         public uint DefaultDescriptionIndex { get; set; }
 
 
-        public uint DefaultDuration { get; set; }
+        public uint DefaultSampleDuration { get; set; }
 
 
-        public uint DefaultSize { get; set; }
+        public uint DefaultSampleSize { get; set; }
 
 
         /// <summary>
@@ -31,7 +31,7 @@
         /// 3 bits - padding as <see cref="PiffPaddingBitsBox.Padding"/>
         /// 1 bit - samples are non-sync, see <see cref="PiffSyncSampleBox"/>
         /// </summary>
-        public ushort DefaultFlags { get; set; }
+        public ushort DefaultSampleFlags { get; set; }
 
         /// <summary>
         /// Default for <see cref="PiffDegradationPriorityBox"/>.
