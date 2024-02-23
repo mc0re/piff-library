@@ -34,7 +34,7 @@ namespace PiffLibrary
         #endregion
 
 
-        #region Read data from a byte array
+        #region Read data from a byte array (big-endian)
 
         /// <summary>
         /// Read a 16-bit signed integer in big-endian format from a byte array.
@@ -286,7 +286,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read the given number of ASCII characters from a string.
         /// </summary>
-        public static PiffReadStatuses ReadAsciiString(this BitReadStream bytes, int length, out string ascii)
+        internal static PiffReadStatuses ReadAsciiString(this BitReadStream bytes, int length, out string ascii)
         {
             var buffer = new byte[length];
             var read = bytes.Read(buffer, 0, length);
@@ -305,7 +305,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 0-terminated ASCII string.
         /// </summary>
-        public static PiffReadStatuses ReadAsciiZeroString(this BitReadStream bytes, out string ascii)
+        internal static PiffReadStatuses ReadAsciiZeroString(this BitReadStream bytes, out string ascii)
         {
             var str = new List<byte>();
             PiffReadStatuses status;
@@ -331,7 +331,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a Pascal-style ASCII string.
         /// </summary>
-        public static PiffReadStatuses ReadAsciiPascalString(this BitReadStream bytes, out string ascii)
+        internal static PiffReadStatuses ReadAsciiPascalString(this BitReadStream bytes, out string ascii)
         {
             var status = bytes.ReadByte(out var length);
             if (status != PiffReadStatuses.Continue)
@@ -356,7 +356,7 @@ namespace PiffLibrary
         /// <summary>
         /// Read a 0-terminated UTF8 string.
         /// </summary>
-        public static PiffReadStatuses ReadUtf8ZeroString(this BitReadStream bytes, out string utf)
+        internal static PiffReadStatuses ReadUtf8ZeroString(this BitReadStream bytes, out string utf)
         {
             var str = new List<byte>();
             PiffReadStatuses status;
@@ -383,7 +383,7 @@ namespace PiffLibrary
         /// Read a 0-terminated UTF-8 or UTF-16 string.
         /// UTF-16 must start with byte order mark 0xFEFF.
         /// </summary>
-        public static PiffReadStatuses ReadUtf8Or16ZeroString(this BitReadStream bytes, out string utf)
+        internal static PiffReadStatuses ReadUtf8Or16ZeroString(this BitReadStream bytes, out string utf)
         {
             var str = new List<byte>();
             PiffReadStatuses status;
