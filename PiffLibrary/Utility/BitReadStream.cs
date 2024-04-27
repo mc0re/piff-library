@@ -68,6 +68,7 @@ namespace PiffLibrary
         /// <summary>
         /// For debugging.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Used for debugging")]
         private readonly string mName;
 
 

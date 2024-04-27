@@ -18,7 +18,7 @@ namespace PiffLibrary
         /// Mapping between box name and type.
         /// The same type can have multiple names (see e.g. <see cref="PiffSkipBox"/>).
         /// </summary>
-        private static readonly BoxStorage sBoxes = new BoxStorage();
+        private static readonly BoxStorage Boxes = new BoxStorage();
 
         private static readonly byte[] LengthArray = new byte[sizeof(uint)];
 
@@ -35,7 +35,7 @@ namespace PiffLibrary
         /// </summary>
         static PiffReader()
         {
-            sBoxes.Collect();
+            Boxes.Collect();
         }
 
         #endregion
@@ -74,7 +74,7 @@ namespace PiffLibrary
         /// </summary>
         public static string GetBoxName<TBox>() where TBox : PiffBoxBase
         {
-            return sBoxes.GetBoxName(typeof(TBox));
+            return Boxes.GetBoxName(typeof(TBox));
         }
 
 
@@ -104,7 +104,7 @@ namespace PiffLibrary
                 ctx.AddInfo($"Box '{id}' at position {startPosition} has 64-bit length {length}.");
             }
 
-            switch (sBoxes.FindBox(ctx.CurrentBox?.GetType(), id, out var type))
+            switch (Boxes.FindBox(ctx.CurrentBox?.GetType(), id, out var type))
             {
                 case FindBoxResults.Unrecognized:
                     ctx.AddWarning($"Unrecognized box '{id}' at position {startPosition}.");
