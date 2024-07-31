@@ -52,10 +52,6 @@ namespace PiffLibrary
             mDisposeUnderlying = disposeUnderlying;
         }
 
-        #endregion
-
-
-        #region API
 
         public void Dispose()
         {
@@ -68,6 +64,10 @@ namespace PiffLibrary
             }
         }
 
+        #endregion
+
+
+        #region API
 
         public void WriteByte(byte value)
         {

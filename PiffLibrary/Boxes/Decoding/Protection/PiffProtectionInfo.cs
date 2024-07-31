@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 
 namespace PiffLibrary.Boxes
@@ -51,13 +52,7 @@ namespace PiffLibrary.Boxes
         /// - 2 bytes value 1
         /// - 2 bytes payload length
         /// 
-        /// Then XML in Unicode comes in:
-        /// &lt;WRMHEADER&gt;...&lt;/WRMHEADER&gt;
-        /// 
-        /// - WRMHEADER/DATA/KID - Base-64 encoded GUID
-        /// - WRMHEADER/DATA/LA_URL - License aquisition URL
-        /// - WRMHEADER/DATA/DS_ID - Base-64 encoded domain service GUID
-        /// 
+        /// Then XML in Unicode comes in (see <see cref="CreateWrmHeader"/>).
         /// Used by Windows.Media.Protection.PlayReady.PlayReadyLicenseAcquisitionServiceRequest
         /// </summary>
         [PiffArraySize(nameof(DataSize))]
@@ -77,6 +72,40 @@ namespace PiffLibrary.Boxes
         public PiffProtectionInfo(PiffExtensionBox parent)
         {
             mParentVersion = parent.Version;
+        }
+
+        #endregion
+
+
+        #region API
+
+        /// <summary>
+        /// Create a protection XML.
+        /// </summary>
+        /// <param name="keyLength">Length of the key value.</param>
+        /// <param name="algId">Encryption algorithm.</param>
+        /// <param name="keyId">Key ID (base-64 encoded `Guid.ToByteArray()`).</param>
+        /// <param name="checkSum">Key ID encrypted with key value (see PlayReadyRightsManagementHeader), base-64.</param>
+        /// <param name="acquisitionUrl">URL for PlayReady.</param>
+        /// <returns>The XML to incorporate into the video file.</returns>
+        public static string CreateWrmHeader(int keyLength, string algId, string keyId, string checkSum, string acquisitionUrl) =>
+            $"<WRMHEADER version=\"4.0.0.0\" xmlns=\"http://schemas.microsoft.com/DRM/2007/03/PlayReadyHeader\"><DATA><PROTECTINFO><KEYLEN>{keyLength}</KEYLEN><ALGID>{algId}</ALGID></PROTECTINFO><KID>{keyId}</KID><CHECKSUM>{checkSum}</CHECKSUM><LA_URL>{acquisitionUrl}</LA_URL></DATA></WRMHEADER>";
+
+
+        /// <summary>
+        /// Create <see cref="BinData"/> content off the given XML payload.
+        /// </summary>
+        public static byte[] CreateBinData(string payload)
+        {
+            var strLen = payload.Length * 2; // Unicode
+            var res = new byte[strLen + 10];
+
+            Array.Copy(BitConverter.GetBytes(strLen + 10), res, 4);
+            Array.Copy(new byte[] {1, 0, 1, 0}, 0, res, 4, 4);
+            Array.Copy(BitConverter.GetBytes((short)strLen), 0, res, 8, 2);
+            Encoding.Unicode.GetBytes(payload, 0, payload.Length, res, 10);
+
+            return res;
         }
 
         #endregion
