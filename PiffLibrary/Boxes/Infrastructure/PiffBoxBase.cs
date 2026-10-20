@@ -77,7 +77,7 @@ namespace PiffLibrary.Boxes
         public PiffBoxBase()
         {
             // When creating boxes in code, use the first name by default
-            BoxType = GetType().GetCustomAttribute<BoxNameAttribute>().Name;
+            BoxType = GetType().GetCustomAttributes<BoxNameAttribute>().First().Name;
         }
 
         #endregion

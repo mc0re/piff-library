@@ -104,6 +104,18 @@ namespace PiffLibrary.Test
 
 
         [TestMethod]
+        public void File_FreeBox_Read()
+        {
+            using var input = new MemoryStream(CreateFile(16), false);
+
+            var piff = PiffFile.Parse(input, new PiffReadContext());
+
+            Assert.AreEqual("free", piff.GetSingleBox<PiffSkipBox>().BoxType);
+            Assert.AreEqual(4, piff.Boxes.Count);
+        }
+
+
+        [TestMethod]
         public void File_SkipMediaData_TextFile_NoMovie()
         {
             var text = Encoding.ASCII.GetBytes(string.Concat(Enumerable.Repeat("Hello, this is not an MP4 file.\n", 100)));
@@ -133,7 +145,7 @@ namespace PiffLibrary.Test
             var mdat = Box("mdat", new byte[mediaDataSize]);
             var moov = Box("moov", Box("trak", Box("tkhd", tkhd), Box("edts", Box("elst", elst))));
 
-            return ftyp.Concat(mdat).Concat(moov).ToArray();
+            return ftyp.Concat(Box("free")).Concat(mdat).Concat(moov).ToArray();
         }
 
 
