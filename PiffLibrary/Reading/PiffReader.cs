@@ -134,6 +134,13 @@ namespace PiffLibrary
                     bodyLength = input.BytesLeft;
                 }
 
+                if (ctx.SkipMediaData && box is PiffMediaDataBox)
+                {
+                    ctx.AddInfo($"Skipping {bodyLength} bytes of media data in box '{id}' at position {startPosition}.");
+                    input.Seek(bodyLength);
+                    return PiffReadStatuses.Continue;
+                }
+
                 using (var inputSlice = new BitReadStream(input, bodyLength, id))
                 {
                     ctx.Push(box, startPosition, length);

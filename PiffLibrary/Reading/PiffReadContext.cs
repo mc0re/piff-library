@@ -16,6 +16,14 @@ namespace PiffLibrary
 
 
         /// <summary>
+        /// Seek over the payload of media data boxes ("mdat") instead of reading it.
+        /// The boxes are kept, with <see cref="PiffMediaDataBox.RawData"/> set to <see langword="null"/>.
+        /// Allows reading the structure of large files without loading the media.
+        /// </summary>
+        public bool SkipMediaData { get; set; }
+
+
+        /// <summary>
         /// Reading hierarchy. Must be empty when the file is read out.
         /// </summary>
         public Stack<PiffBoxBase> Hierarchy { get; } = new Stack<PiffBoxBase>();
