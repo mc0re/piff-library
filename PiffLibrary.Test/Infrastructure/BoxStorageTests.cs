@@ -108,7 +108,7 @@ namespace PiffLibrary.Test.Infrastructure
         [TestMethod]
         public void BoxStorage_GetBoxName_SeveralNames_Ok()
         {
-            Assert.AreEqual("skip", PiffReader.GetBoxName<PiffSkipBox>());
+            Assert.AreEqual("free", PiffReader.GetBoxName<PiffSkipBox>());
             Assert.AreEqual(new PiffSkipBox().BoxType, PiffReader.GetBoxName<PiffSkipBox>());
             Assert.AreEqual("hint", PiffReader.GetBoxName<PiffItemReferenceItemBox>());
         }
