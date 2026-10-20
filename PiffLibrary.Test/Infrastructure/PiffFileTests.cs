@@ -18,18 +18,22 @@ namespace PiffLibrary.Test
             private readonly Stream mUnderlying;
 
 
+            private readonly bool mCanSeek;
+
+
             public long BytesRead { get; private set; }
 
 
-            public CountingStream(Stream underlying)
+            public CountingStream(Stream underlying, bool canSeek = true)
             {
                 mUnderlying = underlying;
+                mCanSeek = canSeek;
             }
 
 
             public override bool CanRead => true;
 
-            public override bool CanSeek => true;
+            public override bool CanSeek => mCanSeek;
 
             public override bool CanWrite => false;
 
@@ -51,7 +55,8 @@ namespace PiffLibrary.Test
             }
 
 
-            public override long Seek(long offset, SeekOrigin origin) => mUnderlying.Seek(offset, origin);
+            public override long Seek(long offset, SeekOrigin origin) =>
+                mCanSeek ? mUnderlying.Seek(offset, origin) : throw new NotSupportedException();
 
             public override void Flush() { }
 
@@ -116,6 +121,61 @@ namespace PiffLibrary.Test
 
 
         [TestMethod]
+        public void File_SkipMediaData_NonSeekable_Ok()
+        {
+            using var input = new CountingStream(new MemoryStream(CreateFile(MediaDataSize), false), false);
+            var ctx = new PiffReadContext { SkipMediaData = true };
+
+            var piff = PiffFile.Parse(input, ctx);
+
+            Assert.IsFalse(ctx.IsError, string.Join("; ", ctx.Messages));
+            Assert.IsNull(piff.GetSingleBox<PiffMediaDataBox>().RawData);
+
+            var track = piff.GetSingleBox<PiffMovieBox>().ChildrenOfType<PiffTrackBox>().Single();
+            Assert.AreEqual(7u, track.FirstOfType<PiffTrackHeaderBox>().TrackId);
+        }
+
+
+        [TestMethod]
+        public void File_FreeBox_WriteRoundTrip_Ok()
+        {
+            var original =
+                Box("ftyp", Encoding.ASCII.GetBytes("isom\0\0\0\0isom"))
+                .Concat(Box("free", new byte[] { 1, 2, 3, 4 }))
+                .ToArray();
+            var piff = PiffFile.Parse(new MemoryStream(original, false), new PiffReadContext());
+            var ctx = new PiffWriteContext();
+            using var output = new MemoryStream();
+
+            foreach (var box in piff.Boxes)
+            {
+                PiffWriter.WriteBox(output, box, ctx);
+            }
+
+            var reread = PiffFile.Parse(new MemoryStream(output.ToArray(), false), new PiffReadContext());
+
+            Assert.AreEqual(0, ctx.Errors.Count, string.Join("; ", ctx.Errors));
+            CollectionAssert.AreEqual(original, output.ToArray());
+            Assert.AreEqual("free", reread.GetSingleBox<PiffSkipBox>().BoxType);
+        }
+
+
+        [TestMethod]
+        public void File_EmptyEditBox_FirstOfType_Null()
+        {
+            using var input = new MemoryStream(CreateFile(16, false), false);
+
+            var piff = PiffFile.Parse(input, new PiffReadContext());
+
+            var movie = piff.GetSingleBox<PiffMovieBox>();
+            var track = movie.ChildrenOfType<PiffTrackBox>().Single();
+            Assert.IsNull(track.FirstOfType<PiffEditBox>().Children);
+            Assert.IsNull(track.FirstOfType<PiffEditBox, PiffEditListBox>());
+            Assert.IsNull(movie.FirstOfType<PiffTrackBox, PiffEditBox, PiffEditListBox>());
+        }
+
+
+        [TestMethod]
         public void File_SkipMediaData_TextFile_NoMovie()
         {
             var text = Encoding.ASCII.GetBytes(string.Concat(Enumerable.Repeat("Hello, this is not an MP4 file.\n", 100)));
@@ -132,9 +192,10 @@ namespace PiffLibrary.Test
         #region Utility
 
         /// <summary>
-        /// A file with "ftyp", "mdat" of the given size and "moov" with one track (ID 7) and an edit list.
+        /// A file with "ftyp", "free", "mdat" of the given size and "moov" with one track (ID 7) and an "edts",
+        /// holding an edit list unless <paramref name="withEditList"/> is cleared.
         /// </summary>
-        private static byte[] CreateFile(int mediaDataSize)
+        private static byte[] CreateFile(int mediaDataSize, bool withEditList = true)
         {
             var tkhd = new byte[84];
             tkhd[15] = 7;
@@ -143,7 +204,8 @@ namespace PiffLibrary.Test
 
             var ftyp = Box("ftyp", Encoding.ASCII.GetBytes("isom\0\0\0\0isom"));
             var mdat = Box("mdat", new byte[mediaDataSize]);
-            var moov = Box("moov", Box("trak", Box("tkhd", tkhd), Box("edts", Box("elst", elst))));
+            var edts = withEditList ? Box("edts", Box("elst", elst)) : Box("edts");
+            var moov = Box("moov", Box("trak", Box("tkhd", tkhd), edts));
 
             return ftyp.Concat(Box("free")).Concat(mdat).Concat(moov).ToArray();
         }

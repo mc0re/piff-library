@@ -78,7 +78,11 @@ namespace PiffLibrary.Infrastructure
         /// </summary>
         public string GetBoxName(Type boxType)
         {
-            return boxType.GetCustomAttribute<BoxNameAttribute>().Name;
+            var boxNameAttr = boxType.GetCustomAttributes<BoxNameAttribute>().FirstOrDefault();
+            if (boxNameAttr is null)
+                throw new ArgumentException($"Box name is not defined for type '{boxType.Name}'.");
+
+            return boxNameAttr.Name;
         }
 
 

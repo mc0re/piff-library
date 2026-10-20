@@ -24,6 +24,12 @@ namespace PiffLibrary
 
 
         /// <summary>
+        /// Chunk size for skipping data on a stream that cannot seek.
+        /// </summary>
+        private const ulong DiscardBufferSize = 81920;
+
+
+        /// <summary>
         /// To extract the needed bits from a byte.
         /// Array index is the number of needed bits.
         /// </summary>
@@ -200,7 +206,15 @@ namespace PiffLibrary
             }
 
             BytesLeft -= offset;
-            mUnderlying.Seek((long) offset, SeekOrigin.Current);
+
+            if (mUnderlying.CanSeek)
+            {
+                mUnderlying.Seek((long) offset, SeekOrigin.Current);
+            }
+            else
+            {
+                Discard(offset);
+            }
 
             return res;
         }
@@ -299,6 +313,27 @@ namespace PiffLibrary
             }
 
             return len;
+        }
+
+        #endregion
+
+
+        #region Utility
+
+        /// <summary>
+        /// Read and drop <paramref name="count"/> bytes, for an underlying stream that cannot seek.
+        /// </summary>
+        private void Discard(ulong count)
+        {
+            var buffer = new byte[(int) Math.Min(count, DiscardBufferSize)];
+
+            while (count > 0)
+            {
+                var read = mUnderlying.Read(buffer, 0, (int) Math.Min(count, (ulong) buffer.Length));
+                if (read <= 0) return;
+
+                count -= (ulong) read;
+            }
         }
 
         #endregion

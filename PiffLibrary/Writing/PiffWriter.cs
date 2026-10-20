@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -118,8 +119,7 @@ namespace PiffLibrary
             ctx.Start(box, output.Position);
 
             var type = box.GetType();
-            var boxNameAttr = type.GetCustomAttribute<BoxNameAttribute>();
-            if (boxNameAttr is null)
+            if (!type.GetCustomAttributes<BoxNameAttribute>().Any())
                 throw new ArgumentException($"Box name is not defined for type '{type.Name}'.");
 
             var boxLength = GetBoxLength(box);

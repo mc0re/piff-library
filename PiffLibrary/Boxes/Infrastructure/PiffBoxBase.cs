@@ -113,7 +113,7 @@ namespace PiffLibrary.Boxes
             where TBoxL1 : PiffBoxBase
             where TBoxL2 : PiffBoxBase
         {
-            return FirstOfType<TBoxL1>()?.Children.OfType<TBoxL2>().FirstOrDefault();
+            return FirstOfType<TBoxL1>()?.FirstOfType<TBoxL2>();
         }
 
 
@@ -126,7 +126,7 @@ namespace PiffLibrary.Boxes
             where TBoxL2 : PiffBoxBase
             where TBoxL3 : PiffBoxBase
         {
-            return FirstOfType<TBoxL1, TBoxL2>()?.Children.OfType<TBoxL3>().FirstOrDefault();
+            return FirstOfType<TBoxL1, TBoxL2>()?.FirstOfType<TBoxL3>();
         }
 
 
@@ -140,7 +140,7 @@ namespace PiffLibrary.Boxes
             where TBoxL3 : PiffBoxBase
             where TBoxL4 : PiffBoxBase
         {
-            return FirstOfType<TBoxL1, TBoxL2, TBoxL3>()?.Children.OfType<TBoxL4>().FirstOrDefault();
+            return FirstOfType<TBoxL1, TBoxL2, TBoxL3>()?.FirstOfType<TBoxL4>();
         }
 
 

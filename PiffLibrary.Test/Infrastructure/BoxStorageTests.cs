@@ -103,5 +103,14 @@ namespace PiffLibrary.Test.Infrastructure
             Assert.AreEqual(FindBoxResults.Found, res2);
             Assert.AreEqual(typeof(PiffTrackReferenceHintBox), boxType2);
         }
+
+
+        [TestMethod]
+        public void BoxStorage_GetBoxName_SeveralNames_Ok()
+        {
+            Assert.AreEqual("skip", PiffReader.GetBoxName<PiffSkipBox>());
+            Assert.AreEqual(new PiffSkipBox().BoxType, PiffReader.GetBoxName<PiffSkipBox>());
+            Assert.AreEqual("hint", PiffReader.GetBoxName<PiffItemReferenceItemBox>());
+        }
     }
 }
